@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.3.32825.248
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OKP.Core", "OKP\OKP.Core.csproj", "{5678B65D-1CA5-4E89-900A-B9EAC82E4E46}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OKP.Core", "OKP.Core\OKP.Core.csproj", "{5678B65D-1CA5-4E89-900A-B9EAC82E4E46}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
