@@ -8,5 +8,6 @@ namespace OKP.Core.Interface.Bangumi
 {
     internal class BangumiAdapter: AdapterBase
     {
+
     }
 }
