@@ -1,6 +1,9 @@
 ﻿using BencodeNET.Objects;
 using BencodeNET.Parsing;
 using BencodeNET.Torrents;
+using OKP.Core.Interface;
+using OKP.Core.Interface.Bangumi;
+using OKP.Core.Interface.Dmhy;
 
 namespace OKP
 {
@@ -12,38 +15,54 @@ namespace OKP
             {
                 throw new ArgumentNullException(nameof(args));
             }
-            var parser = new BencodeParser(); // Default encoding is Encoding.UTF8, but you can specify another if you need to
-            var torrent = parser.Parse<Torrent>(args[0]);
+            var torrent = new TorrentContent(args[0]);
             Console.WriteLine(torrent.DisplayName);
-            if (torrent.ExtraFields["info"] is BDictionary infoValue)
+            if (torrent.isV2())
             {
-                if (infoValue["meta version"] is  BNumber versionValue)
+                Console.WriteLine("V2达咩！回去换！");
+                Console.ReadLine();
+                return;
+            }
+            torrent.DisplayFiles();
+            List<AdapterBase> adapterList = new ();
+            if(torrent.IntroTemplate is null)
+            {
+                Console.WriteLine("没有配置发布站你发个啥？");
+                Console.ReadLine();
+                return;
+            }
+            foreach (var site in torrent.IntroTemplate)
+            {
+                if(site.Site is null)
                 {
-                    if (versionValue == 2)
-                    {
-                        Console.WriteLine("V2达咩！回去换！");
-                        Console.ReadLine();
-                        return;
-                    }
+                    Console.WriteLine("没有配置发布站你发个啥？");
+                    Console.ReadLine();
+                    return;
+                }
+                switch (site.Site.ToLower())
+                {
+                    case "dmhy":
+                        adapterList.Add(new DmhyAdapter(torrent, site));
+                        break;
+                    case "bangumi":
+                        adapterList.Add(new BangumiAdapter());
+                        break;
+                    default:
+                        break;
                 }
             }
-            if (torrent.FileMode == TorrentFileMode.Multi)
+            List<Task<HttpResult>> PingTask = new();
+            adapterList.ForEach(p=>PingTask.Add(p.PingAsync()));
+            var PingRes = Task.WhenAll(PingTask).Result;
+            foreach (var res in PingRes)
             {
-                foreach(var file in torrent.Files)
+                if (!res.IsSuccess)
                 {
-                    Console.WriteLine(file.FullPath);
+                    Console.WriteLine(res.Code+"\t"+res.Message);
+                    Console.ReadLine();
+                    return;
                 }
             }
-            foreach(var tracker in torrent.Trackers)
-            {
-                Console.WriteLine(tracker.Count);
-            }
-            var settingFilePath = Path.Combine(Path.GetDirectoryName(args[0]) ?? "", "setting.toml");
-            if (!File.Exists(settingFilePath))
-            {
-                Console.WriteLine("没有配置文件");
-            }
-            var settingList = Directory.GetFiles(Path.GetDirectoryName(args[0]) ?? "","");
         }
     }
 }

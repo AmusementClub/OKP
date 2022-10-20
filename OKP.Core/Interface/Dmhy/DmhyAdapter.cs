@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OKP.Core.Utils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,19 +10,19 @@ namespace OKP.Core.Interface.Dmhy
 {
     internal class DmhyAdapter : AdapterBase
     {
-        bool isActive = false;
         private HttpClient httpClient { get; init; }
         private List<string> Trackers => new();
         private string BaseUrl => "https://share.dmhy.org/";
         private string PingUrl { get => throw new NotImplementedException(); }
         private string PostUtl { get => throw new NotImplementedException(); }
 
-        public DmhyAdapter(TorrentContent torrent)
+        public DmhyAdapter(TorrentContent torrent,Template template)
         {
             httpClient = new() { 
                 BaseAddress=new(BaseUrl)
             };
-            var template = torrent.IntroTemplate?.ToList().Find(p => p.Site?.ToLower() == "dmhy");
+            this.template = template;
+            this.torrent = torrent;
             if(template == null)
             {
                 return;
@@ -30,12 +31,13 @@ namespace OKP.Core.Interface.Dmhy
             httpClient.DefaultRequestHeaders.Add("Cookie", template.Cookie);
         }
 
-        public override Task<int> PingAsync()
+        public override async Task<HttpResult> PingAsync()
         {
-            throw new NotImplementedException();
+            var pingReq = await httpClient.GetAsync(PingUrl);
+            return new((int)pingReq.StatusCode, "", pingReq.IsSuccessStatusCode);
         }
 
-        public override Task<int> PostAsync()
+        public override Task<HttpResult> PostAsync()
         {
             httpClient.BaseAddress = new(BaseUrl);
             MultipartFormDataContent form = new()
@@ -44,7 +46,7 @@ namespace OKP.Core.Interface.Dmhy
                 { new StringContent("2"), "team_id" },
                 { new StringContent("2"), "bt_data_title" },
                 { new StringContent("2"), "poster_url" },
-                { new StringContent("2"), "bt_data_intro" },
+                { new StringContent(CompileTemplate()), "bt_data_intro" },
                 { new StringContent("2"), "tracker" },
                 { new StringContent("2"), "MAX_FILE_SIZE" },
                 { new StringContent("2"), "bt_file", "[SBSUB&LoliHouse] Detective Conan Hannin No Hanzawa San - 02 [WebRip 1080" },
@@ -53,8 +55,9 @@ namespace OKP.Core.Interface.Dmhy
                 { new StringContent("2"), "synckey" },
                 { new StringContent("2"), "submit" }
             };
+            httpClient.PostAsyncWithRetry(PostUtl,form);
             throw new NotImplementedException();
         }
-
+        
     }
 }
