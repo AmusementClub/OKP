@@ -3,25 +3,31 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static OKP.Core.Interface.TorrentContent;
 
 namespace OKP.Core.Interface.Dmhy
 {
     internal class DmhyAdapter : AdapterBase
     {
-        public string? UserAgent { get; set; }
-        public string? Pass { get; set; }
-        public string? Uid { get; set; }
-        public override string? AppToken { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public override HttpClient httpClient { get; init; }
-        public override List<string> Trackers { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public override string Cookie { get => $"pass={Pass};uid={Uid}"; }
-        public override string BaseUrl { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public override string PingUrl { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public override string PostUtl { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        bool isActive = false;
+        private HttpClient httpClient { get; init; }
+        private List<string> Trackers => new();
+        private string BaseUrl => "https://share.dmhy.org/";
+        private string PingUrl { get => throw new NotImplementedException(); }
+        private string PostUtl { get => throw new NotImplementedException(); }
 
-        public DmhyAdapter()
+        public DmhyAdapter(TorrentContent torrent)
         {
-            httpClient = new();
+            httpClient = new() { 
+                BaseAddress=new(BaseUrl)
+            };
+            var template = torrent.IntroTemplate?.ToList().Find(p => p.Site?.ToLower() == "dmhy");
+            if(template == null)
+            {
+                return;
+            }
+            httpClient.DefaultRequestHeaders.Add("UserAgent", template.UserAgent);
+            httpClient.DefaultRequestHeaders.Add("Cookie", template.Cookie);
         }
 
         public override Task<int> PingAsync()
@@ -29,7 +35,7 @@ namespace OKP.Core.Interface.Dmhy
             throw new NotImplementedException();
         }
 
-        public override Task<int> PostAsync(TorrentContent torrent)
+        public override Task<int> PostAsync()
         {
             httpClient.BaseAddress = new(BaseUrl);
             MultipartFormDataContent form = new()
