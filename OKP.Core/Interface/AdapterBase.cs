@@ -9,18 +9,8 @@ namespace OKP.Core.Interface
 {
     internal abstract class AdapterBase
     {
-        internal Template? template;
-        internal TorrentContent? torrent;
         abstract public Task<HttpResult> PingAsync();
         abstract public Task<HttpResult> PostAsync();
-        internal string CompileTemplate()
-        {
-            if (torrent is null || template is null)
-            {
-                throw new NotImplementedException();
-            }
-            return template.Content??"";
-        }
     }
     public class HttpResult
     {
@@ -33,11 +23,5 @@ namespace OKP.Core.Interface
             Message = message;
             IsSuccess = isSuccess;
         }
-    }
-
-    internal interface IAdapter
-    {
-        
-
     }
 }

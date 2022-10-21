@@ -16,12 +16,12 @@ namespace OKP.Core.Interface.Nyaa
         public string PostUtl { get => throw new NotImplementedException(); }
         public string Cookie { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
-        public override Task<int> PingAsync()
+        public override Task<HttpResult> PingAsync()
         {
             throw new NotImplementedException();
         }
 
-        public override Task<int> PostAsync()
+        public override Task<HttpResult> PostAsync()
         {
             throw new NotImplementedException();
         }

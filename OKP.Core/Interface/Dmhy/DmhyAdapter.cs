@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using static OKP.Core.Interface.TorrentContent;
 
@@ -10,54 +11,104 @@ namespace OKP.Core.Interface.Dmhy
 {
     internal class DmhyAdapter : AdapterBase
     {
-        private HttpClient httpClient { get; init; }
-        private List<string> Trackers => new();
-        private string BaseUrl => "https://share.dmhy.org/";
-        private string PingUrl { get => throw new NotImplementedException(); }
-        private string PostUtl { get => throw new NotImplementedException(); }
-
-        public DmhyAdapter(TorrentContent torrent,Template template)
+        private HttpClient HttpClient { get; init; }
+        private Template Template { get; init; }
+        private TorrentContent Torrent { get; init; }
+        private const string BaseUrl = "https://share.dmhy.org/";
+        private const string PingUrl = "topics/add";
+        private const string PostUtl = "topics/add";
+        private readonly Regex teamReg = new(@"\<select name=""team_id"" id=""team_id""\>[\s\S]*\</select\>", RegexOptions.Multiline);
+        private readonly Regex optionReg = new(@"\<option value=""(?<value>\d+)"" label=""(?<name>[^""]+)""");
+        private string teamID = "";
+        public DmhyAdapter(TorrentContent torrent, Template template)
         {
-            httpClient = new() { 
-                BaseAddress=new(BaseUrl)
+            HttpClient = new()
+            {
+                BaseAddress = new(BaseUrl)
             };
-            this.template = template;
-            this.torrent = torrent;
-            if(template == null)
+            Template = template;
+            Torrent = torrent;
+            if (template == null)
             {
                 return;
             }
-            httpClient.DefaultRequestHeaders.Add("UserAgent", template.UserAgent);
-            httpClient.DefaultRequestHeaders.Add("Cookie", template.Cookie);
+            HttpClient.DefaultRequestHeaders.Add("UserAgent", template.UserAgent);
+            HttpClient.DefaultRequestHeaders.Add("Cookie", template.Cookie);
+            HttpClient.BaseAddress = new(BaseUrl);
         }
 
         public override async Task<HttpResult> PingAsync()
         {
-            var pingReq = await httpClient.GetAsync(PingUrl);
-            return new((int)pingReq.StatusCode, "", pingReq.IsSuccessStatusCode);
+            var pingReq = await HttpClient.GetAsync(PingUrl);
+            var raw = await pingReq.Content.ReadAsStringAsync();
+            if (!pingReq.IsSuccessStatusCode)
+            {
+                return new((int)pingReq.StatusCode, raw, false);
+            }
+            if (raw.Contains(@"<div class=""nav_title text_bold""><img src=""/images/login.gif"" align=""middle"" />&nbsp;登入發佈系統</div>"))
+            {
+                return new(403, "Login failed" + raw, false);
+            }
+            var match = teamReg.Match(raw);
+            if (match is not null)
+            {
+                var teams = optionReg.Matches(match.Value);
+                if (Template.Name is null)
+                {
+                    teamID = teams.First().Groups["value"].Value;
+                }
+                else
+                {
+                    foreach (var team in teams.ToList())
+                    {
+                        if (team.Groups["label"].Value == Template.Name)
+                        {
+                            teamID = team.Groups["value"].Value;
+                        }
+                    }
+                }
+            }
+            if (teamID == "")
+            {
+                return new(500, "Cannot find your team number." + raw, false);
+            }
+            return new(200, "Success", true);
         }
 
-        public override Task<HttpResult> PostAsync()
+        public override async Task<HttpResult> PostAsync()
         {
-            httpClient.BaseAddress = new(BaseUrl);
             MultipartFormDataContent form = new()
             {
-                { new StringContent("2"), "sort_id" },
-                { new StringContent("2"), "team_id" },
-                { new StringContent("2"), "bt_data_title" },
-                { new StringContent("2"), "poster_url" },
-                { new StringContent(CompileTemplate()), "bt_data_intro" },
-                { new StringContent("2"), "tracker" },
-                { new StringContent("2"), "MAX_FILE_SIZE" },
-                { new StringContent("2"), "bt_file", "[SBSUB&LoliHouse] Detective Conan Hannin No Hanzawa San - 02 [WebRip 1080" },
-                { new StringContent("2"), "disable_download_seed_file" },
-                { new StringContent("2"), "emule_resource" },
-                { new StringContent("2"), "synckey" },
-                { new StringContent("2"), "submit" }
+                { new StringContent(Torrent.isFinished ? "31": "2"), "sort_id" },
+                { new StringContent(teamID), "team_id" },
+                { new StringContent(Torrent.DisplayName??""), "bt_data_title" },
+                { new StringContent(Torrent.Poster??""), "poster_url" },
+                { new StringContent(Template.Content??""), "bt_data_intro" },
+                { new StringContent(""), "tracker" },
+                { new StringContent("2097152"), "MAX_FILE_SIZE" },
+                { Torrent.ByteArrayContent, "bt_file", Torrent.FileInfo.Name},
+                { new StringContent("0"), "disable_download_seed_file" },
+                { new StringContent(""), "emule_resource" },
+                { new StringContent(""), "synckey" },
+                { new StringContent("提交"), "submit" }
             };
-            httpClient.PostAsyncWithRetry(PostUtl,form);
-            throw new NotImplementedException();
+            var result = await HttpClient.PostAsyncWithRetry(PostUtl, form);
+            var raw = await result.Content.ReadAsStringAsync();
+            if (result.IsSuccessStatusCode)
+            {
+                if (raw.Contains("<ul><li class=\"text_bold text_blue\">上傳成功</li>"))
+                {
+                    return new(200, "Success", true);
+                }
+                else
+                {
+                    return new(500, "Upload failed" + raw, false);
+                }
+            }
+            else
+            {
+                return new((int)result.StatusCode, "Failed" + raw, false);
+            }
         }
-        
     }
 }

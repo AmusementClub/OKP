@@ -14,9 +14,9 @@ namespace OKP.Core.Interface
 {
     internal class TorrentContent
     {
-        public FileInfo? FileInfo;
-        public ByteArrayContent? ByteArrayContent;
-        public Torrent? TorrentObject;
+        public FileInfo FileInfo;
+        public ByteArrayContent ByteArrayContent;
+        public Torrent TorrentObject;
         
         public Template[]? IntroTemplate { get; set; }
         public string? DisplayName { get; set; }
@@ -24,21 +24,16 @@ namespace OKP.Core.Interface
         public string? Poster { get; set; }
         public string? About { get; set; }
         public string? FilenameRegex { get; set; }
-        public AnimeType Type { get; set; }
+        public bool hasSubtitle { get; set; }
+        public bool isFinished { get; set; }
+        //public AnimeType Type { get; set; }
         public class Template
         {
             public string? Site { get; set; }
+            public string? Name { get; set; }
             public string? Content { get; set; }
             public string? Cookie { get; set; }
             public string? UserAgent { get; set; }
-        }
-        public enum AnimeType
-        {
-            Raw,
-            BDRip,
-            BDRipWithSub,
-            WebRip,
-            WebRipWithSub
         }
         public TorrentContent(string filename)
         {
