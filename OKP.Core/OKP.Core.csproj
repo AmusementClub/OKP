@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <PackageReference Include="BencodeNET" Version="4.0.0" />
+    <PackageReference Include="Polly.Extensions.Http" Version="3.0.0" />
   </ItemGroup>
 
 </Project>
