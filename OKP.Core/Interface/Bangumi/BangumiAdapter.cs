@@ -19,24 +19,25 @@ namespace OKP.Core.Interface.Bangumi
         public string PingUrl { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public string PostUtl { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
-        public override Task<int> PingAsync()
+        public override Task<HttpResult> PingAsync()
         {
             throw new NotImplementedException();
         }
 
-        public override Task<int> PostAsync()
+        public override Task<HttpResult> PostAsync()
         {
+
             throw new NotImplementedException();
         }
         private async Task<string> UploadTorrent(TorrentContent torrent)
         {
-            if (torrent.ByteArrayContent is null || torrent.FileInfo is null)
+            if (torrent.Data is null)
             {
                 throw new NotImplementedException();
             }
             var form = new MultipartFormDataContent
             {
-                { torrent.ByteArrayContent, "file", torrent.FileInfo.Name },
+                { torrent.Data.ByteArrayContent, "file", torrent.Data.FileInfo.Name },
                 {new StringContent("xx"),"team_i" }
             };
             var response = await httpClient.PostAsync("/api/v2/torrent/upload", form);

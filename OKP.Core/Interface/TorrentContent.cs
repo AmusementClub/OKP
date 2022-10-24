@@ -9,14 +9,28 @@ using System.Net.Mime;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using Tomlyn;
 
 namespace OKP.Core.Interface
 {
-    internal class TorrentContent
+    public class TorrentContent
     {
-        public FileInfo FileInfo;
-        public ByteArrayContent ByteArrayContent;
-        public Torrent TorrentObject;
+        public class TorrentData
+        {
+            public FileInfo FileInfo;
+            public ByteArrayContent ByteArrayContent;
+            public Torrent TorrentObject;
+            public TorrentData(string filename)
+            {
+                FileInfo = new FileInfo(filename);
+                byte[] bytes = File.ReadAllBytes(filename);
+                ByteArrayContent = new ByteArrayContent(bytes);
+                ByteArrayContent.Headers.ContentType = MediaTypeHeaderValue.Parse("application/x-bittorrent");
+                var parser = new BencodeParser(); // Default encoding is Encoding.UTF8, but you can specify another if you need to
+                TorrentObject = parser.Parse<Torrent>(filename);
+            }
+        }
+        public TorrentData? Data;
         
         public Template[]? IntroTemplate { get; set; }
         public string? DisplayName { get; set; }
@@ -24,9 +38,8 @@ namespace OKP.Core.Interface
         public string? Poster { get; set; }
         public string? About { get; set; }
         public string? FilenameRegex { get; set; }
-        public bool hasSubtitle { get; set; }
-        public bool isFinished { get; set; }
-        //public AnimeType Type { get; set; }
+        public bool HasSubtitle { get; set; }
+        public bool IsFinished { get; set; }
         public class Template
         {
             public string? Site { get; set; }
@@ -35,7 +48,7 @@ namespace OKP.Core.Interface
             public string? Cookie { get; set; }
             public string? UserAgent { get; set; }
         }
-        public TorrentContent(string filename)
+        public static TorrentContent Build(string filename)
         {
             var settingFilePath = Path.Combine(Path.GetDirectoryName(filename) ?? "", "setting.toml");
             if (!File.Exists(settingFilePath))
@@ -44,20 +57,17 @@ namespace OKP.Core.Interface
                 Console.ReadKey();
                 throw new IOException();
             }
-            FileInfo = new FileInfo(filename);
-            byte[] bytes = File.ReadAllBytes(filename);
-            ByteArrayContent = new ByteArrayContent(bytes);
-            ByteArrayContent.Headers.ContentType = MediaTypeHeaderValue.Parse("application/x-bittorrent");
-            var parser = new BencodeParser(); // Default encoding is Encoding.UTF8, but you can specify another if you need to
-            TorrentObject = parser.Parse<Torrent>(filename);
+            var torrentC = Toml.ToModel<TorrentContent>(File.ReadAllText(settingFilePath));
+            torrentC.Data = new(filename);
+            return torrentC;
         }
-        public bool isV2()
+        public bool IsV2()
         {
-            if (TorrentObject is null)
+            if (Data?.TorrentObject is null)
             {
-                throw new ArgumentNullException(nameof(TorrentObject));
+                throw new ArgumentNullException(nameof(Data.TorrentObject));
             }
-            if (TorrentObject.ExtraFields["info"] is BDictionary infoValue)
+            if (Data.TorrentObject.ExtraFields["info"] is BDictionary infoValue)
             {
                 if (infoValue["meta version"] is BNumber versionValue)
                 {
@@ -72,13 +82,13 @@ namespace OKP.Core.Interface
 
         public void DisplayFiles()
         {
-            if (TorrentObject is null)
+            if (Data?.TorrentObject is null)
             {
-                throw new ArgumentNullException(nameof(TorrentObject));
+                throw new ArgumentNullException(nameof(Data.TorrentObject));
             }
-            if (TorrentObject.FileMode == TorrentFileMode.Multi)
+            if (Data.TorrentObject.FileMode == TorrentFileMode.Multi)
             {
-                foreach (var file in TorrentObject.Files)
+                foreach (var file in Data.TorrentObject.Files)
                 {
                     Console.WriteLine(file.FullPath);
                 }

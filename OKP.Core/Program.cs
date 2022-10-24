@@ -15,9 +15,9 @@ namespace OKP
             {
                 throw new ArgumentNullException(nameof(args));
             }
-            var torrent = new TorrentContent(args[0]);
+            var torrent = TorrentContent.Build(args[0]);
             Console.WriteLine(torrent.DisplayName);
-            if (torrent.isV2())
+            if (torrent.IsV2())
             {
                 Console.WriteLine("V2达咩！回去换！");
                 Console.ReadLine();

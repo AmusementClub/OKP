@@ -77,16 +77,20 @@ namespace OKP.Core.Interface.Dmhy
 
         public override async Task<HttpResult> PostAsync()
         {
+            if(Torrent.Data is null)
+            {
+                throw new NotImplementedException();
+            }
             MultipartFormDataContent form = new()
             {
-                { new StringContent(Torrent.isFinished ? "31": "2"), "sort_id" },
+                { new StringContent(Torrent.IsFinished ? "31": "2"), "sort_id" },
                 { new StringContent(teamID), "team_id" },
                 { new StringContent(Torrent.DisplayName??""), "bt_data_title" },
                 { new StringContent(Torrent.Poster??""), "poster_url" },
                 { new StringContent(Template.Content??""), "bt_data_intro" },
                 { new StringContent(""), "tracker" },
                 { new StringContent("2097152"), "MAX_FILE_SIZE" },
-                { Torrent.ByteArrayContent, "bt_file", Torrent.FileInfo.Name},
+                { Torrent.Data.ByteArrayContent, "bt_file", Torrent.Data.FileInfo.Name},
                 { new StringContent("0"), "disable_download_seed_file" },
                 { new StringContent(""), "emule_resource" },
                 { new StringContent(""), "synckey" },
