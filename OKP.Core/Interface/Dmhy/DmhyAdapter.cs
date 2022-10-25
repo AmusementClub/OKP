@@ -32,7 +32,7 @@ namespace OKP.Core.Interface.Dmhy
             {
                 return;
             }
-            HttpClient.DefaultRequestHeaders.Add("UserAgent", template.UserAgent);
+            HttpClient.DefaultRequestHeaders.Add("user-agent", template.UserAgent);
             HttpClient.DefaultRequestHeaders.Add("Cookie", template.Cookie);
             HttpClient.BaseAddress = new(BaseUrl);
         }
@@ -61,7 +61,7 @@ namespace OKP.Core.Interface.Dmhy
                 {
                     foreach (var team in teams.ToList())
                     {
-                        if (team.Groups["label"].Value == Template.Name)
+                        if (team.Groups["name"].Value == Template.Name)
                         {
                             teamID = team.Groups["value"].Value;
                         }

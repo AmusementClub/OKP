@@ -39,17 +39,13 @@ namespace OKP
                     Console.ReadLine();
                     return;
                 }
-                switch (site.Site.ToLower())
+                AdapterBase adapter = site.Site.ToLower() switch
                 {
-                    case "dmhy":
-                        adapterList.Add(new DmhyAdapter(torrent, site));
-                        break;
-                    case "bangumi":
-                        adapterList.Add(new BangumiAdapter());
-                        break;
-                    default:
-                        break;
-                }
+                    "dmhy" => new DmhyAdapter(torrent, site),
+                    "bangumi" => new BangumiAdapter(),
+                    _ => throw new NotImplementedException()
+                };
+                adapterList.Add(adapter);
             }
             List<Task<HttpResult>> PingTask = new();
             adapterList.ForEach(p=>PingTask.Add(p.PingAsync()));
@@ -62,6 +58,8 @@ namespace OKP
                     Console.ReadLine();
                     return;
                 }
+                Console.WriteLine(res.Code + "\t" + res.Message);
+                Console.ReadLine();
             }
         }
     }

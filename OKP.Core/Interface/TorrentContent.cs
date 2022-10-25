@@ -32,7 +32,7 @@ namespace OKP.Core.Interface
         }
         public TorrentData? Data;
         
-        public Template[]? IntroTemplate { get; set; }
+        public List<Template>? IntroTemplate { get; set; }
         public string? DisplayName { get; set; }
         public string? GroupName { get; set; }
         public string? Poster { get; set; }
