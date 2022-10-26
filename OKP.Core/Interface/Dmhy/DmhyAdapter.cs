@@ -11,35 +11,35 @@ namespace OKP.Core.Interface.Dmhy
 {
     internal class DmhyAdapter : AdapterBase
     {
-        private HttpClient HttpClient { get; init; }
-        private Template Template { get; init; }
-        private TorrentContent Torrent { get; init; }
-        private const string BaseUrl = "https://share.dmhy.org/";
-        private const string PingUrl = "topics/add";
-        private const string PostUtl = "topics/add";
+        private readonly HttpClient httpClient;
+        private readonly Template template;
+        private readonly TorrentContent torrent;
+        private const string baseUrl = "https://share.dmhy.org/";
+        private const string pingUrl = "topics/add";
+        private const string postUtl = "topics/add";
         private readonly Regex teamReg = new(@"\<select name=""team_id"" id=""team_id""\>[\s\S]*\</select\>", RegexOptions.Multiline);
         private readonly Regex optionReg = new(@"\<option value=""(?<value>\d+)"" label=""(?<name>[^""]+)""");
         private string teamID = "";
         public DmhyAdapter(TorrentContent torrent, Template template)
         {
-            HttpClient = new()
+            httpClient = new()
             {
-                BaseAddress = new(BaseUrl)
+                BaseAddress = new(baseUrl)
             };
-            Template = template;
-            Torrent = torrent;
+            this.template = template;
+            this.torrent = torrent;
             if (template == null)
             {
                 return;
             }
-            HttpClient.DefaultRequestHeaders.Add("user-agent", template.UserAgent);
-            HttpClient.DefaultRequestHeaders.Add("Cookie", template.Cookie);
-            HttpClient.BaseAddress = new(BaseUrl);
+            httpClient.DefaultRequestHeaders.Add("user-agent", template.UserAgent);
+            httpClient.DefaultRequestHeaders.Add("Cookie", template.Cookie);
+            httpClient.BaseAddress = new(baseUrl);
         }
 
         public override async Task<HttpResult> PingAsync()
         {
-            var pingReq = await HttpClient.GetAsync(PingUrl);
+            var pingReq = await httpClient.GetAsync(pingUrl);
             var raw = await pingReq.Content.ReadAsStringAsync();
             if (!pingReq.IsSuccessStatusCode)
             {
@@ -53,7 +53,7 @@ namespace OKP.Core.Interface.Dmhy
             if (match is not null)
             {
                 var teams = optionReg.Matches(match.Value);
-                if (Template.Name is null)
+                if (template.Name is null)
                 {
                     teamID = teams.First().Groups["value"].Value;
                 }
@@ -61,7 +61,7 @@ namespace OKP.Core.Interface.Dmhy
                 {
                     foreach (var team in teams.ToList())
                     {
-                        if (team.Groups["name"].Value == Template.Name)
+                        if (team.Groups["name"].Value == template.Name)
                         {
                             teamID = team.Groups["value"].Value;
                         }
@@ -77,26 +77,27 @@ namespace OKP.Core.Interface.Dmhy
 
         public override async Task<HttpResult> PostAsync()
         {
-            if(Torrent.Data is null)
+            Console.WriteLine("正在发布dmhy");
+            if(torrent.Data is null)
             {
                 throw new NotImplementedException();
             }
             MultipartFormDataContent form = new()
             {
-                { new StringContent(Torrent.IsFinished ? "31": "2"), "sort_id" },
+                { new StringContent(torrent.IsFinished ? "31": "2"), "sort_id" },
                 { new StringContent(teamID), "team_id" },
-                { new StringContent(Torrent.DisplayName??""), "bt_data_title" },
-                { new StringContent(Torrent.Poster??""), "poster_url" },
-                { new StringContent(Template.Content??""), "bt_data_intro" },
+                { new StringContent(torrent.DisplayName??""), "bt_data_title" },
+                { new StringContent(torrent.Poster??""), "poster_url" },
+                { new StringContent(template.Content??""), "bt_data_intro" },
                 { new StringContent(""), "tracker" },
                 { new StringContent("2097152"), "MAX_FILE_SIZE" },
-                { Torrent.Data.ByteArrayContent, "bt_file", Torrent.Data.FileInfo.Name},
+                { torrent.Data.ByteArrayContent, "bt_file", torrent.Data.FileInfo.Name},
                 { new StringContent("0"), "disable_download_seed_file" },
                 { new StringContent(""), "emule_resource" },
                 { new StringContent(""), "synckey" },
                 { new StringContent("提交"), "submit" }
             };
-            var result = await HttpClient.PostAsyncWithRetry(PostUtl, form);
+            var result = await httpClient.PostAsyncWithRetry(postUtl, form);
             var raw = await result.Content.ReadAsStringAsync();
             if (result.IsSuccessStatusCode)
             {

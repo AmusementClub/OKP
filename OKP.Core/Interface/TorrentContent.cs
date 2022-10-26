@@ -8,6 +8,7 @@ using System.Net.Http.Headers;
 using System.Net.Mime;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Tomlyn;
 
@@ -58,7 +59,29 @@ namespace OKP.Core.Interface
                 throw new IOException();
             }
             var torrentC = Toml.ToModel<TorrentContent>(File.ReadAllText(settingFilePath));
+            if(torrentC.DisplayName is null)
+            {
+                Console.WriteLine("没有配置标题");
+                Console.ReadKey();
+                throw new IOException();
+            }
             torrentC.Data = new(filename);
+            if(torrentC.DisplayName.Contains(@"<ep>") && torrentC.FilenameRegex != null && torrentC.FilenameRegex.Contains("(?<ep>"))
+            {
+                Regex regex = new(torrentC.FilenameRegex);
+                var match = regex.Match(filename);
+                if (match.Success)
+                {
+                    torrentC.DisplayName = torrentC.DisplayName.Replace("<ep>", match.Groups["ep"].Value);
+                }
+                else
+                {
+                    Console.WriteLine("标题替换失败");
+                    Console.ReadKey();
+                    throw new IOException();
+                }
+            }
+            Console.WriteLine("标题：{0}", torrentC.DisplayName);
             return torrentC;
         }
         public bool IsV2()
@@ -86,12 +109,17 @@ namespace OKP.Core.Interface
             {
                 throw new ArgumentNullException(nameof(Data.TorrentObject));
             }
+            Console.WriteLine("文件列表：");
             if (Data.TorrentObject.FileMode == TorrentFileMode.Multi)
             {
                 foreach (var file in Data.TorrentObject.Files)
                 {
                     Console.WriteLine(file.FullPath);
                 }
+            }
+            else
+            {
+                Console.WriteLine(Data.TorrentObject.File.FileName);
             }
         }
     }
