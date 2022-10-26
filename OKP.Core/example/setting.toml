@@ -1,0 +1,81 @@
+#Make sure you have both <ep> in display_name and valid filename_regex. Other wise OKP will not match your ep number.
+display_name="[银色子弹字幕组&LoliHouse] 名侦探柯南 犯人犯泽 / Detective Conan Hannin No Hanzawa San - <ep> [WebRip 1080p HEVC-10bit AAC][简繁内封字幕]"
+group_name="[银色子弹字幕组&LoliHouse]"
+poster="https://p.sda1.dev/7/d35d6f7e8f7673cd80fcf0399a4dfba4/20221014232304.jpg"
+about="https://hanzawasan-file.com/"
+# Use ''' to avoid escape
+filename_regex='''- (?<ep>03) \['''
+has_subtitle=true
+is_finished=false
+
+[[intro_template]]
+site="dmhy"
+name="LoliHouse"
+# Use your own cookie
+cookie="pass=xxx; rsspass=xxx; tid=x; uname=xxx; uid=xxx"
+user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.0.0 Safari/537.36"
+content='''
+<p><img src="https://p.sda1.dev/7/d35d6f7e8f7673cd80fcf0399a4dfba4/20221014232304.jpg" alt="alt" style="width:590px;height:728.655px" /></p>
+<p><strong><strong>名侦探柯南 犯人犯泽 / Detective Conan Hannin No Hanzawa San / </strong>名探偵コナン 犯人の犯沢さん<br />
+</strong></p>
+<p><strong>字幕：银色子弹字幕组</strong></p>
+<p><strong>压制：Rihan @ LoliHouse</strong></p>
+<p><strong>本片与</strong><strong>银色子弹字幕组</strong><strong>合作，感谢字幕组的辛勤劳动。</strong></p>
+<hr />
+<p><strong>为了顺利地观看我们的作品，推荐大家使用以下播放器：</strong></p>
+<p><strong>Windows：<a href="https://sourceforge.net/projects/mpcbe/" target="_blank" rel="external nofollow">MPC-BE</a></strong></p>
+<p><strong>macOS：<a href="https://lhc70000.github.io/iina/" target="_blank" rel="external nofollow">IINA</a></strong></p>
+<p><strong>iOS：<a href="https://itunes.apple.com/us/app/nplayer-lite/id1078835991?mt=8" target="_blank" rel="external nofollow">nPlayer</a></strong></p>
+<p><strong>Android：<a href="https://play.google.com/store/apps/details?id=com.mxtech.videoplayer.ad" target="_blank" rel="external nofollow">MX Player</a></strong></p>
+<hr />
+<p><a href="https://share.dmhy.org/topics/view/599634_LoliHouse_LoliHouse_5th_Anniversary_Announcement.html" rel="external nofollow">点击查看LoliHouse五周年纪念公告（附往年全部礼包）</a></p>
+<hr />
+<p><strong>人人为我，我为人人，为了各位观众能快速下载，请使用<b> uTorrent / qBittorrent </b>等正规 BT 软件下载，并保持开机上传，谢谢~</strong></p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+'''
+
+
+[[intro_template]]
+site="nyaa"
+name="LoliHouse"
+# Use your own cookie
+cookie="session=xxx"
+user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.0.0 Safari/537.36"
+content='''
+![][0]
+
+**名侦探柯南 犯人犯泽 / Detective Conan Hannin No Hanzawa San / 名探偵コナン 犯人の犯沢さん**
+
+**字幕：银色子弹字幕组**
+
+**压制：Rihan @ LoliHouse**
+
+**本片与银色子弹字幕组合作，感谢字幕组的辛勤劳动。**
+
+**为了顺利地观看我们的作品，推荐大家使用以下播放器：**
+
+**Windows：[MPC-BE][1]**
+
+**macOS：[IINA][2]**
+
+**iOS：[nPlayer][3]**
+
+**Android：[MX Player][4]**
+
+- - -
+
+**[点击查看LoliHouse五周年纪念公告（附往年全部礼包）][5]**
+
+- - -
+
+******人人为我，我为人人，为了各位观众能快速下载，请使用**uTorrent / qBittorrent**等正规 BT 软件下载，并保持开机上传，谢谢~**
+
+[0]: https://p.sda1.dev/7/d35d6f7e8f7673cd80fcf0399a4dfba4/20221014232304.jpg
+[1]: https://sourceforge.net/projects/mpcbe/
+[2]: https://lhc70000.github.io/iina/
+[3]: https://itunes.apple.com/us/app/nplayer-lite/id1078835991?mt=8
+[4]: https://play.google.com/store/apps/details?id=com.mxtech.videoplayer.ad
+[5]: https://share.dmhy.org/topics/view/599634_LoliHouse_LoliHouse_5th_Anniversary_Announcement.html
+'''
+
