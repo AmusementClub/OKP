@@ -51,7 +51,11 @@ namespace OKP.Core.Interface.Nyaa
                 return;
             }
             cookieContainer.Add(new Cookie("session", match.Groups[1].Value, "/", "nyaa.si"));
-            Valid();
+            if (!Valid())
+            {
+                Console.ReadLine();
+                throw new();
+            }
         }
 
         public override async Task<HttpResult> PingAsync()
@@ -121,7 +125,20 @@ namespace OKP.Core.Interface.Nyaa
                     return false;
                 }
             }
-            //torrent.Data.TorrentObject.Trackers.Contains()
+            if (template.Content != null && template.Content.ToLower().EndsWith(".md"))
+            {
+                var templateFile = FileHelper.ParseFileFullPath(template.Content, torrent.Data.FileInfo.FullName);
+                if (File.Exists(templateFile))
+                {
+                    template.Content = File.ReadAllText(templateFile);
+                }
+                else
+                {
+                    Console.WriteLine("发布模板看起来是个.md文件，但是这个.md文件不存在");
+                    Console.WriteLine("{0}-->{1}", template.Content, templateFile);
+                    return false;
+                }
+            }
             return true;
         }
     }

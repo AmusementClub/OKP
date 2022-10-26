@@ -35,6 +35,11 @@ namespace OKP.Core.Interface.Dmhy
             httpClient.DefaultRequestHeaders.Add("user-agent", template.UserAgent);
             httpClient.DefaultRequestHeaders.Add("Cookie", template.Cookie);
             httpClient.BaseAddress = new(baseUrl);
+            if (!Valid())
+            {
+                Console.ReadLine();
+                throw new();
+            }
         }
 
         public override async Task<HttpResult> PingAsync()
@@ -114,6 +119,28 @@ namespace OKP.Core.Interface.Dmhy
             {
                 return new((int)result.StatusCode, "Failed" + raw, false);
             }
+        }
+        private bool Valid()
+        {
+            if (torrent.Data?.TorrentObject is null)
+            {
+                throw new ArgumentNullException(nameof(torrent.Data.TorrentObject));
+            }
+            if (template.Content != null && template.Content.ToLower().EndsWith(".html"))
+            {
+                var templateFile = FileHelper.ParseFileFullPath(template.Content, torrent.Data.FileInfo.FullName);
+                if (File.Exists(templateFile))
+                {
+                    template.Content = File.ReadAllText(templateFile);
+                }
+                else
+                {
+                    Console.WriteLine("发布模板看起来是个.html文件，但是这个.html文件不存在");
+                    Console.WriteLine("{0}-->{1}", template.Content, templateFile);
+                    return false;
+                }
+            }
+            return true;
         }
     }
 }
