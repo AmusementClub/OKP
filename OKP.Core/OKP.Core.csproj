@@ -10,6 +10,8 @@
   <ItemGroup>
     <PackageReference Include="BencodeNET" Version="4.0.0" />
     <PackageReference Include="Polly.Extensions.Http" Version="3.0.0" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="4.1.0" />
+    <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
     <PackageReference Include="Tomlyn" Version="0.16.0" />
   </ItemGroup>
 

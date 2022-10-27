@@ -5,6 +5,7 @@ using OKP.Core.Interface;
 using OKP.Core.Interface.Bangumi;
 using OKP.Core.Interface.Dmhy;
 using OKP.Core.Interface.Nyaa;
+using Serilog;
 using System.Text.RegularExpressions;
 
 namespace OKP
@@ -13,77 +14,86 @@ namespace OKP
     {
         static void Main(string[] args)
         {
+            Log.Logger = new LoggerConfiguration()
+            .MinimumLevel.Information()
+            .WriteTo.Console()
+            .WriteTo.File("log.txt",
+                rollingInterval: RollingInterval.Month,
+                rollOnFileSizeLimit: true)
+            .CreateLogger();
+            Log.Debug("Startup args:{Args}",args);
             if (args[0] is null)
             {
+                Log.Fatal("Empty starup args.");
                 throw new ArgumentNullException(nameof(args));
             }
             if (!File.Exists(args[0]))
             {
-                Console.WriteLine("文件不存在！{0}", args[0]);
+                Log.Error("文件不存在！{0}", args[0]);
                 Console.ReadLine();
                 return;
             }
             var torrent = TorrentContent.Build(args[0]);
             if (torrent.IsV2())
             {
-                Console.WriteLine("V2达咩！回去换！");
+                Log.Error("V2达咩！回去换！");
                 Console.ReadLine();
                 return;
             }
             torrent.DisplayFiles();
-            List<AdapterBase> adapterList = new ();
-            if(torrent.IntroTemplate is null)
+            List<AdapterBase> adapterList = new();
+            if (torrent.IntroTemplate is null)
             {
-                Console.WriteLine("没有配置发布站你发个啥？");
+                Log.Error("没有配置发布站你发个啥？");
                 Console.ReadLine();
                 return;
             }
-            Console.WriteLine("即将发布");
+            Log.Information("即将发布");
             foreach (var site in torrent.IntroTemplate)
             {
-                if(site.Site is null)
+                if (site.Site is null)
                 {
-                    Console.WriteLine("没有配置发布站你发个啥？");
+                    Log.Error("没有配置发布站你发个啥？");
                     Console.ReadLine();
                     return;
                 }
-                Console.WriteLine(site.Site);
+                Log.Information(site.Site);
                 AdapterBase adapter = site.Site.ToLower() switch
                 {
                     "dmhy" => new DmhyAdapter(torrent, site),
                     "bangumi" => new BangumiAdapter(),
-                    "nyaa"=>new NyaaAdapter(torrent, site),
+                    "nyaa" => new NyaaAdapter(torrent, site),
                     _ => throw new NotImplementedException()
                 };
                 adapterList.Add(adapter);
             }
             List<Task<HttpResult>> PingTask = new();
-            adapterList.ForEach(p=>PingTask.Add(p.PingAsync()));
+            adapterList.ForEach(p => PingTask.Add(p.PingAsync()));
             var PingRes = Task.WhenAll(PingTask).Result;
             foreach (var res in PingRes)
             {
                 if (!res.IsSuccess)
                 {
-                    Console.WriteLine(res.Code+"\t"+res.Message);
+                    Log.Debug(res.Code + "\t" + res.Message);
                     Console.ReadLine();
                     return;
                 }
             }
-            Console.WriteLine("登录成功，继续发布？");
+            Log.Error("登录成功，继续发布？");
             Console.ReadKey();
             foreach (var item in adapterList)
             {
                 var result = item.PostAsync().Result;
                 if (result.IsSuccess)
                 {
-                    Console.WriteLine("发布成功");
+                    Log.Error("发布成功");
                 }
                 else
                 {
-                    Console.WriteLine("发布失败");
+                    Log.Error("发布失败");
                 }
             }
-            Console.WriteLine("登录完成");
+            Log.Error("登录完成");
             Console.ReadKey();
         }
     }

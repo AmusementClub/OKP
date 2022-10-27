@@ -1,6 +1,7 @@
 ﻿using BencodeNET.Objects;
 using BencodeNET.Parsing;
 using BencodeNET.Torrents;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,7 +33,7 @@ namespace OKP.Core.Interface
             }
         }
         public TorrentData? Data;
-        
+
         public List<Template>? IntroTemplate { get; set; }
         public string? DisplayName { get; set; }
         public string? GroupName { get; set; }
@@ -54,19 +55,19 @@ namespace OKP.Core.Interface
             var settingFilePath = Path.Combine(Path.GetDirectoryName(filename) ?? "", "setting.toml");
             if (!File.Exists(settingFilePath))
             {
-                Console.WriteLine("没有配置文件");
+                Log.Error("没有配置文件");
                 Console.ReadKey();
                 throw new IOException();
             }
             var torrentC = Toml.ToModel<TorrentContent>(File.ReadAllText(settingFilePath));
-            if(torrentC.DisplayName is null)
+            if (torrentC.DisplayName is null)
             {
-                Console.WriteLine("没有配置标题");
+                Log.Error("没有配置标题");
                 Console.ReadKey();
                 throw new IOException();
             }
             torrentC.Data = new(filename);
-            if(torrentC.DisplayName.Contains(@"<ep>") && torrentC.FilenameRegex != null && torrentC.FilenameRegex.Contains("(?<ep>"))
+            if (torrentC.DisplayName.Contains(@"<ep>") && torrentC.FilenameRegex != null && torrentC.FilenameRegex.Contains("(?<ep>"))
             {
                 Regex regex = new(torrentC.FilenameRegex);
                 var match = regex.Match(filename);
@@ -76,18 +77,19 @@ namespace OKP.Core.Interface
                 }
                 else
                 {
-                    Console.WriteLine("标题替换失败");
+                    Log.Error("标题替换失败");
                     Console.ReadKey();
                     throw new IOException();
                 }
             }
-            Console.WriteLine("标题：{0}", torrentC.DisplayName);
+            Log.Information("标题：{0}", torrentC.DisplayName);
             return torrentC;
         }
         public bool IsV2()
         {
             if (Data?.TorrentObject is null)
             {
+                Log.Fatal("Data?.TorrentObject is null");
                 throw new ArgumentNullException(nameof(Data.TorrentObject));
             }
             if (Data.TorrentObject.ExtraFields["info"] is BDictionary infoValue)
@@ -96,6 +98,7 @@ namespace OKP.Core.Interface
                 {
                     if (versionValue == 2)
                     {
+                        Log.Verbose("{@TorrentObject}", Data.TorrentObject);
                         return true;
                     }
                 }
@@ -107,20 +110,23 @@ namespace OKP.Core.Interface
         {
             if (Data?.TorrentObject is null)
             {
+                Log.Fatal("Data?.TorrentObject is null");
                 throw new ArgumentNullException(nameof(Data.TorrentObject));
             }
-            Console.WriteLine("文件列表：");
+            StringBuilder fileList = new();
+
             if (Data.TorrentObject.FileMode == TorrentFileMode.Multi)
             {
                 foreach (var file in Data.TorrentObject.Files)
                 {
-                    Console.WriteLine(file.FullPath);
+                    fileList.AppendLine(file.FullPath);
                 }
             }
             else
             {
-                Console.WriteLine(Data.TorrentObject.File.FileName);
+                fileList.AppendLine(Data.TorrentObject.File.FileName);
             }
+            Log.Information("文件列表：{FileList}", fileList);
         }
     }
 }
