@@ -23,14 +23,6 @@ namespace OKP
                 Console.ReadLine();
                 return;
             }
-            var reg = new Regex(@"\.mkv\.torrent$");
-            var match = reg.Match(args[0]);
-            if (match.Success)
-            {
-                var filename = reg.Replace(args[0], ".torrent");
-                File.Move(args[0], filename);
-                args[0] = filename;
-            }
             var torrent = TorrentContent.Build(args[0]);
             if (torrent.IsV2())
             {
