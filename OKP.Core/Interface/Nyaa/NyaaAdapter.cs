@@ -28,7 +28,10 @@ namespace OKP.Core.Interface.Nyaa
         public NyaaAdapter(TorrentContent torrent, Template template)
         {
             cookieContainer = new();
-            var httpClientHandler = new HttpClientHandler() { CookieContainer = cookieContainer };
+            var httpClientHandler = new HttpClientHandler() { 
+                CookieContainer = cookieContainer,
+                AllowAutoRedirect = false
+            };
             httpClient = new(httpClientHandler)
             {
                 BaseAddress = baseUrl,
