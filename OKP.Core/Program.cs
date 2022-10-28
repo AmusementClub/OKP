@@ -79,7 +79,7 @@ namespace OKP
                     return;
                 }
             }
-            Log.Error("登录成功，继续发布？");
+            Log.Information("登录成功，继续发布？");
             Console.ReadKey();
             foreach (var item in adapterList)
             {
