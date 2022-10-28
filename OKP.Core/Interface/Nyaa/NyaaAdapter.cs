@@ -28,7 +28,8 @@ namespace OKP.Core.Interface.Nyaa
         public NyaaAdapter(TorrentContent torrent, Template template)
         {
             cookieContainer = new();
-            var httpClientHandler = new HttpClientHandler() { 
+            var httpClientHandler = new HttpClientHandler()
+            {
                 CookieContainer = cookieContainer,
                 AllowAutoRedirect = false
             };
@@ -110,19 +111,18 @@ namespace OKP.Core.Interface.Nyaa
                     Log.Information("{Site} post success.{NewLine}{Url}", site, result.Headers.Location);
                     return new(200, "Success", true);
                 }
-                else
-                {
-                    Log.Error("{Site} upload failed. Unknown reson. {NewLine} {Raw}", site, raw);
-                    return new(500, "Upload failed" + raw, false);
-                }
+                Log.Error("{Site} upload failed. Unknown reson. {NewLine} {Raw}", site, raw);
+                return new(500, "Upload failed" + raw, false);
             }
-            else
+            if (raw.Contains("This torrent already exists"))
             {
-                Log.Error("{Site} upload failed.{NewLine}" +
-                    "Code: {Code}{NewLine}" +
-                    "{Raw}", site, result.StatusCode, raw);
-                return new((int)result.StatusCode, "Failed" + raw, false);
+                Log.Information("{Site} has already exist.", site);
+                return new(200, "Success", true);
             }
+            Log.Error("{Site} upload failed.{NewLine}" +
+                "Code: {Code}{NewLine}" +
+                "{Raw}", site, result.StatusCode, raw);
+            return new((int)result.StatusCode, "Failed" + raw, false);
         }
 
         private bool Valid()

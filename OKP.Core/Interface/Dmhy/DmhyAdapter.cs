@@ -114,24 +114,23 @@ namespace OKP.Core.Interface.Dmhy
             var raw = await result.Content.ReadAsStringAsync();
             if (result.IsSuccessStatusCode)
             {
+                if (raw.Contains("<li class=\"text_bold text_blue\">種子已存在，請不要重複上傳﹗</li>"))
+                {
+                    Log.Information("{Site} has already exist.", site);
+                    return new(200, "Success", true);
+                }
                 if (raw.Contains("<ul><li class=\"text_bold text_blue\">上傳成功</li>"))
                 {
                     Log.Information("{Site} post success.", site);
                     return new(200, "Success", true);
                 }
-                else
-                {
-                    Log.Error("{Site} upload failed. Unknown reson. {NewLine} {Raw}", site, raw);
-                    return new(500, "Upload failed" + raw, false);
-                }
+                Log.Error("{Site} upload failed. Unknown reson. {NewLine} {Raw}", site, raw);
+                return new(500, "Upload failed" + raw, false);
             }
-            else
-            {
-                Log.Error("{Site} upload failed.{NewLine}" +
-                    "Code: {Code}{NewLine}" +
-                    "{Raw}", site, result.StatusCode, raw);
-                return new((int)result.StatusCode, "Failed" + raw, false);
-            }
+            Log.Error("{Site} upload failed.{NewLine}" +
+                "Code: {Code}{NewLine}" +
+                "{Raw}", site, result.StatusCode, raw);
+            return new((int)result.StatusCode, "Failed" + raw, false);
         }
         private bool Valid()
         {
