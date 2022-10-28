@@ -18,7 +18,7 @@ namespace OKP.Core.Interface.Nyaa
         private readonly CookieContainer cookieContainer;
         private readonly Template template;
         private readonly TorrentContent torrent;
-        private readonly Regex cookieReg = new(@"session=([a-zA-Z0-9|\.]+)");
+        private readonly Regex cookieReg = new(@"session=([a-zA-Z0-9|\.|_]+)");
         private readonly List<string> trackers = new() { "http://nyaa.tracker.wf:7777/announce" };
 
         private readonly Uri baseUrl = new("https://nyaa.si/");
@@ -49,6 +49,7 @@ namespace OKP.Core.Interface.Nyaa
                 return;
             }
             cookieContainer.Add(new Cookie("session", match.Groups[1].Value, "/", "nyaa.si"));
+            //httpClient.DefaultRequestHeaders.Add("user-agent", template.UserAgent);
             if (!Valid())
             {
                 Console.ReadLine();
