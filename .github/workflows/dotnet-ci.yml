@@ -19,8 +19,8 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
 
-    - name: Install .NET
-      uses: actions/setup-dotnet@v1
+    - name: Setup .NET Core SDK
+      uses: actions/setup-dotnet@v3.0.3
       with:
         dotnet-version: 6.x
 
@@ -48,7 +48,7 @@ jobs:
         TargetPlatform: ${{ matrix.targetplatform }}
 
     - name: Upload build artifacts
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3.1.1
       with:
         name: Package-${{ matrix.configuration }}
         path: |
