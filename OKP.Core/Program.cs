@@ -93,7 +93,7 @@ namespace OKP
                     Log.Error("发布失败");
                 }
             }
-            Log.Error("登录完成");
+            Log.Error("发布完成");
             Console.ReadKey();
         }
     }
