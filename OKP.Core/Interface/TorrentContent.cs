@@ -50,9 +50,9 @@ namespace OKP.Core.Interface
             public string? Cookie { get; set; }
             public string? UserAgent { get; set; }
         }
-        public static TorrentContent Build(string filename)
+        public static TorrentContent Build(string filename, string settingFile)
         {
-            var settingFilePath = Path.Combine(Path.GetDirectoryName(filename) ?? "", "setting.toml");
+            var settingFilePath = Path.Combine(Path.GetDirectoryName(filename) ?? "", settingFile);
             if (!File.Exists(settingFilePath))
             {
                 Log.Error("没有配置文件");

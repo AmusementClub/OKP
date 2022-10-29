@@ -33,7 +33,18 @@ namespace OKP
                 Console.ReadLine();
                 return;
             }
-            var torrent = TorrentContent.Build(args[0]);
+            string settingFile = "setting.toml";
+            if (args[1] is not null)
+            {
+                settingFile = args[1];
+            }
+            if (!File.Exists(args[0]))
+            {
+                Log.Error("文件不存在！{0}", args[0]);
+                Console.ReadLine();
+                return;
+            }
+            var torrent = TorrentContent.Build(args[0], settingFile);
             if (torrent.IsV2())
             {
                 Log.Error("V2达咩！回去换！");
