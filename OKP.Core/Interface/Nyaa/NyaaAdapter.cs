@@ -152,7 +152,7 @@ namespace OKP.Core.Interface.Nyaa
             if (template.Content != null && template.Content.ToLower().EndsWith(".md"))
             {
                 Log.Debug("开始寻找{Site} .md文件 {File}", site, template.Content);
-                var templateFile = FileHelper.ParseFileFullPath(template.Content, torrent.Data.FileInfo.FullName);
+                var templateFile = FileHelper.ParseFileFullPath(template.Content, torrent.SettingPath);
                 if (File.Exists(templateFile))
                 {
                     Log.Debug("找到了{Site} .md文件 {File}", site, template.Content);

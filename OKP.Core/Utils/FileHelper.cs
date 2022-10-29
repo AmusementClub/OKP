@@ -8,7 +8,7 @@ namespace OKP.Core.Utils
 {
     internal class FileHelper
     {
-        public static string? ParseFileFullPath(string file, string rootFile)
+        public static string? ParseFileFullPath(string file, string? rootFile)
         {
             string fullPath = "";
             if (file.StartsWith("\\\\") || file.Contains(":\\"))

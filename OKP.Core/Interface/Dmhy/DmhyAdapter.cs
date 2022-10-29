@@ -142,7 +142,7 @@ namespace OKP.Core.Interface.Dmhy
             if (template.Content != null && template.Content.ToLower().EndsWith(".html"))
             {
                 Log.Debug("开始寻找{Site} html文件 {File}", site, template.Content);
-                var templateFile = FileHelper.ParseFileFullPath(template.Content, torrent.Data.FileInfo.FullName);
+                var templateFile = FileHelper.ParseFileFullPath(template.Content, torrent.SettingPath);
                 if (File.Exists(templateFile))
                 {
                     Log.Debug("找到了{Site} html文件 {File}", site, templateFile);

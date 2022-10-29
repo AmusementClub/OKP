@@ -41,6 +41,7 @@ namespace OKP.Core.Interface
         public string? About { get; set; }
         public string? FilenameRegex { get; set; }
         public string? ResolutionRegex { get; set; }
+        public string? SettingPath { get; set; }
         public bool HasSubtitle { get; set; }
         public bool IsFinished { get; set; }
         public class Template
@@ -54,7 +55,12 @@ namespace OKP.Core.Interface
         }
         public static TorrentContent Build(string filename, string settingFile)
         {
-            var settingFilePath = Path.Combine(Path.GetDirectoryName(filename) ?? "", settingFile);
+            var settingFilePath = settingFile;
+            if (Path.GetDirectoryName(settingFile) == "")
+            {
+                settingFilePath = Path.Combine(Path.GetDirectoryName(filename) ?? "", settingFile);
+            }
+
             if (!File.Exists(settingFilePath))
             {
                 Log.Error("没有配置文件");
@@ -62,6 +68,7 @@ namespace OKP.Core.Interface
                 throw new IOException();
             }
             var torrentC = Toml.ToModel<TorrentContent>(File.ReadAllText(settingFilePath));
+            torrentC.SettingPath = Path.GetDirectoryName(settingFilePath);
             if (torrentC.DisplayName is null)
             {
                 Log.Error("没有配置标题");
