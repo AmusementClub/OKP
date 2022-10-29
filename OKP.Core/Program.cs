@@ -97,14 +97,14 @@ namespace OKP
                 var result = item.PostAsync().Result;
                 if (result.IsSuccess)
                 {
-                    Log.Error("发布成功");
+                    Log.Information("发布成功");
                 }
                 else
                 {
                     Log.Error("发布失败");
                 }
             }
-            Log.Error("发布完成");
+            Log.Information("发布完成");
             Console.ReadKey();
         }
     }
