@@ -53,7 +53,16 @@ namespace OKP.Core.Interface.Nyaa
                 return;
             }
             cookieContainer.Add(new Cookie("session", match.Groups[1].Value, "/", "nyaa.si"));
-            //httpClient.DefaultRequestHeaders.Add("user-agent", template.UserAgent);
+
+            if (template.Proxy is not null)
+            {
+                httpClientHandler.Proxy = new WebProxy(
+                    new Uri(template.Proxy),
+                    BypassOnLocal: false);
+                httpClientHandler.UseProxy = true;
+            }
+
+            httpClient.DefaultRequestHeaders.Add("user-agent", template.UserAgent);
             if (!Valid())
             {
                 Console.ReadLine();

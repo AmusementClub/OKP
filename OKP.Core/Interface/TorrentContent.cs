@@ -49,6 +49,7 @@ namespace OKP.Core.Interface
             public string? Content { get; set; }
             public string? Cookie { get; set; }
             public string? UserAgent { get; set; }
+            public string? Proxy { get; set; }
         }
         public static TorrentContent Build(string filename, string settingFile)
         {

@@ -46,6 +46,7 @@ name="LoliHouse"
 cookie="session=xxx"
 user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.0.0 Safari/537.36"
 content="nyaa.md"
+proxy="http://127.0.0.1:7890"  # Not necessary
 # content='''D:\Users\Source\Repos\OKP\OKP.Core\example\nyaa.md''''
 # content='''
 # ![][0]
