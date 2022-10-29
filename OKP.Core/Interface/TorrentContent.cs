@@ -40,6 +40,7 @@ namespace OKP.Core.Interface
         public string? Poster { get; set; }
         public string? About { get; set; }
         public string? FilenameRegex { get; set; }
+        public string? ResolutionRegex { get; set; }
         public bool HasSubtitle { get; set; }
         public bool IsFinished { get; set; }
         public class Template
@@ -70,15 +71,30 @@ namespace OKP.Core.Interface
             torrentC.Data = new(filename);
             if (torrentC.DisplayName.Contains(@"<ep>") && torrentC.FilenameRegex != null && torrentC.FilenameRegex.Contains("(?<ep>"))
             {
-                Regex regex = new(torrentC.FilenameRegex);
-                var match = regex.Match(filename);
-                if (match.Success)
+                Regex epRegex = new(torrentC.FilenameRegex);
+                var epMatch = epRegex.Match(filename);
+                if (epMatch.Success)
                 {
-                    torrentC.DisplayName = torrentC.DisplayName.Replace("<ep>", match.Groups["ep"].Value);
+                    torrentC.DisplayName = torrentC.DisplayName.Replace("<ep>", epMatch.Groups["ep"].Value);
                 }
                 else
                 {
-                    Log.Error("标题替换失败");
+                    Log.Error("标题集数替换失败");
+                    Console.ReadKey();
+                    throw new IOException();
+                }
+            }
+            if (torrentC.DisplayName.Contains(@"<res>") && torrentC.ResolutionRegex != null && torrentC.ResolutionRegex.Contains("(?<res>"))
+            {
+                Regex resRegex = new(torrentC.ResolutionRegex);
+                var resMatch = resRegex.Match(filename);
+                if (resMatch.Success)
+                {
+                    torrentC.DisplayName = torrentC.DisplayName.Replace("<res>", resMatch.Groups["res"].Value);
+                }
+                else
+                {
+                    Log.Error("标题分辨率替换失败");
                     Console.ReadKey();
                     throw new IOException();
                 }
