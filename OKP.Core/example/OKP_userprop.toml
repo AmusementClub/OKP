@@ -1,0 +1,10 @@
+[[user_prop]]
+site="dmhy"
+name="LoliHouse"
+cookie="pass=xxx; rsspass=xxx; tid=x; uname=xxx; uid=xxx"
+
+[[user_prop]]
+site="nyaa"
+name="LoliHouse"
+cookie="session=xxxxxxxxx"
+proxy="http://127.0.0.1:9890"

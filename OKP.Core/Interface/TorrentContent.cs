@@ -53,7 +53,7 @@ namespace OKP.Core.Interface
             public string? UserAgent { get; set; }
             public string? Proxy { get; set; }
         }
-        public static TorrentContent Build(string filename, string settingFile)
+        public static TorrentContent Build(string filename, string settingFile, string appLocation)
         {
             var settingFilePath = settingFile;
             if (Path.GetDirectoryName(settingFile) == "")
@@ -67,6 +67,7 @@ namespace OKP.Core.Interface
                 Console.ReadKey();
                 throw new IOException();
             }
+
             var torrentC = Toml.ToModel<TorrentContent>(File.ReadAllText(settingFilePath));
             torrentC.SettingPath = Path.GetDirectoryName(settingFilePath);
             if (torrentC.DisplayName is null)
@@ -107,6 +108,30 @@ namespace OKP.Core.Interface
                 }
             }
             Log.Information("标题：{0}", torrentC.DisplayName);
+
+            /// user properties, it will overlap some existing private config from setting config, such as proxy, cookie and user_agent
+            var userPropPath = Path.Combine(appLocation, "OKP_userprop.toml");
+            if (File.Exists(userPropPath))
+            {
+                var userProp = Toml.ToModel<UserProperties>(File.ReadAllText(userPropPath));
+
+                foreach (var p in userProp.UserProp)
+                {
+                    if (torrentC.IntroTemplate is not null)
+                    {
+                        foreach (var tp in torrentC.IntroTemplate)
+                        {
+                            if (p.Name == tp.Name && p.Site == tp.Site)
+                            {
+                                tp.Proxy = p.Proxy ?? tp.Proxy;
+                                tp.Cookie = p.Cookie ?? tp.Cookie;
+                                tp.UserAgent = p.UserAgent ?? tp.UserAgent;
+                            }
+                        }
+                    }
+                }
+            }
+
             return torrentC;
         }
         public bool IsV2()
@@ -152,5 +177,10 @@ namespace OKP.Core.Interface
             }
             Log.Information("文件列表：{FileList}", fileList);
         }
+    }
+
+    public class UserProperties
+    {
+        public List<TorrentContent.Template> UserProp { get; set; }
     }
 }

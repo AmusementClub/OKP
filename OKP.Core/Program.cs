@@ -44,7 +44,7 @@ namespace OKP
                 Console.ReadLine();
                 return;
             }
-            var torrent = TorrentContent.Build(args[0], settingFile);
+            var torrent = TorrentContent.Build(args[0], settingFile, AppDomain.CurrentDomain.BaseDirectory);
             if (torrent.IsV2())
             {
                 Log.Error("V2达咩！回去换！");
