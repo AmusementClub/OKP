@@ -33,8 +33,9 @@ namespace OKP
                 Console.ReadLine();
                 return;
             }
+
             string settingFile = "setting.toml";
-            if (args[1] is not null)
+            if (args.Count() > 1 && args[1] is not null)
             {
                 settingFile = args[1];
             }
