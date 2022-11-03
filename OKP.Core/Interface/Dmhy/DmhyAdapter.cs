@@ -35,7 +35,7 @@ namespace OKP.Core.Interface.Dmhy
             httpClient.BaseAddress = new(baseUrl);
             if (!Valid())
             {
-                Console.ReadLine();
+                IOHelper.ReadLine();
                 throw new();
             }
         }
@@ -64,7 +64,7 @@ namespace OKP.Core.Interface.Dmhy
                 {
                     teamID = teams.First().Groups["value"].Value;
                     Log.Warning("你没有设置{Site}的发布身份，将使用默认身份 {Team}{NewLine}按任意键继续发布", site, teams.First().Groups["name"].Value);
-                    Console.ReadKey();
+                    IOHelper.ReadLine();
                 }
                 else
                 {

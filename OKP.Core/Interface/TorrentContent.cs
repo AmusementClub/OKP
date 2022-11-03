@@ -1,6 +1,7 @@
 ﻿using BencodeNET.Objects;
 using BencodeNET.Parsing;
 using BencodeNET.Torrents;
+using OKP.Core.Utils;
 using Serilog;
 using System;
 using System.Collections.Generic;
@@ -64,7 +65,7 @@ namespace OKP.Core.Interface
             if (!File.Exists(settingFilePath))
             {
                 Log.Error("没有配置文件");
-                Console.ReadKey();
+                IOHelper.ReadLine();
                 throw new IOException();
             }
 
@@ -73,7 +74,7 @@ namespace OKP.Core.Interface
             if (torrentC.DisplayName is null)
             {
                 Log.Error("没有配置标题");
-                Console.ReadKey();
+                IOHelper.ReadLine();
                 throw new IOException();
             }
             torrentC.Data = new(filename);
@@ -88,7 +89,7 @@ namespace OKP.Core.Interface
                 else
                 {
                     Log.Error("标题集数替换失败");
-                    Console.ReadKey();
+                    IOHelper.ReadLine();
                     throw new IOException();
                 }
             }
@@ -103,7 +104,7 @@ namespace OKP.Core.Interface
                 else
                 {
                     Log.Error("标题分辨率替换失败");
-                    Console.ReadKey();
+                    IOHelper.ReadLine();
                     throw new IOException();
                 }
             }
