@@ -72,7 +72,6 @@ namespace OKP
             {
                 Log.Error("文件不存在！{0}", file);
                 IOHelper.ReadLine();
-
                 return;
             }
             settingFile ??= "setting.toml";
