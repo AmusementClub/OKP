@@ -1,55 +1,85 @@
 ﻿using BencodeNET.Objects;
 using BencodeNET.Parsing;
 using BencodeNET.Torrents;
+using CommandLine.Text;
+using CommandLine;
 using OKP.Core.Interface;
 using OKP.Core.Interface.Bangumi;
 using OKP.Core.Interface.Dmhy;
 using OKP.Core.Interface.Nyaa;
 using Serilog;
 using System.Text.RegularExpressions;
+using Serilog.Core;
+using Serilog.Events;
+using OKP.Core.Utils;
 
 namespace OKP
 {
     internal class Program
     {
+        class Options
+        {
+            [Value(0, Min = 1, Required = true, MetaName = "torrent", HelpText = "Torrents to be published.")]
+            public IEnumerable<string>? TorrentFile { get; set; }
+            [Option('s', "setting", Required = false, HelpText = "(Not required) Specific setting file.")]
+            public string? SettingFile { get; set; }
+            [Option('l', "log_level", Default = "Debug", HelpText = "Log level.")]
+            public string? LogLevel { get; set; }
+            [Option("log_file", Default = "log.txt")]
+            public string? LogFile { get; set; }
+            [Option('y', HelpText = "Skip reaction.")]
+            public bool NoReaction { get; set; }
+        }
         static void Main(string[] args)
         {
-            Log.Logger = new LoggerConfiguration()
-            .MinimumLevel.Information()
-            .WriteTo.Console()
-            .WriteTo.File("log.txt",
-                rollingInterval: RollingInterval.Month,
-                rollOnFileSizeLimit: true)
-            .CreateLogger();
-            Log.Debug("Startup args:{Args}",args);
-            if (args[0] is null)
-            {
-                Log.Fatal("Empty starup args.");
-                throw new ArgumentNullException(nameof(args));
-            }
-            if (!File.Exists(args[0]))
-            {
-                Log.Error("文件不存在！{0}", args[0]);
-                Console.ReadLine();
-                return;
-            }
+            Parser.Default.ParseArguments<Options>(args)
+                   .WithParsed(o =>
+                   {
+                       var levelSwitch = new LoggingLevelSwitch
+                       {
+                           MinimumLevel = o.LogLevel?.ToLower() switch
+                           {
+                               "verbose" => LogEventLevel.Verbose,
+                               "debug" => LogEventLevel.Debug,
+                               "info" => LogEventLevel.Information,
+                               _ => LogEventLevel.Debug
+                           }
+                       };
+                       Log.Logger = new LoggerConfiguration()
+                       .MinimumLevel.ControlledBy(levelSwitch)
+                       .WriteTo.Console()
+                       .WriteTo.File(o.LogFile ?? "log.txt",
+                           rollingInterval: RollingInterval.Month,
+                           rollOnFileSizeLimit: true)
+                       .CreateLogger();
+                       IOHelper.NoReaction = o.NoReaction;
+                       if (o.TorrentFile is null)
+                       {
+                           Log.Fatal("o.TorrentFile is null");
+                           return;
+                       }
+                       foreach (var file in o.TorrentFile)
+                       {
+                           Log.Information("正在发布{0}", file);
+                           SinglePublish(file, o.SettingFile);
+                       }
+                   });
+        }
+        static void SinglePublish(string file, string? settingFile)
+        {
 
-            string settingFile = "setting.toml";
-            if (args.Count() > 1 && args[1] is not null)
+            if (!File.Exists(file))
             {
-                settingFile = args[1];
-            }
-            if (!File.Exists(args[0]))
-            {
-                Log.Error("文件不存在！{0}", args[0]);
-                Console.ReadLine();
+                Log.Error("文件不存在！{0}", file);
+                IOHelper.ReadLine();
                 return;
             }
-            var torrent = TorrentContent.Build(args[0], settingFile, AppDomain.CurrentDomain.BaseDirectory);
+            settingFile ??= "setting.toml";
+            var torrent = TorrentContent.Build(file, settingFile, AppDomain.CurrentDomain.BaseDirectory);
             if (torrent.IsV2())
             {
                 Log.Error("V2达咩！回去换！");
-                Console.ReadLine();
+                IOHelper.ReadLine();
                 return;
             }
             torrent.DisplayFiles();
@@ -57,7 +87,7 @@ namespace OKP
             if (torrent.IntroTemplate is null)
             {
                 Log.Error("没有配置发布站你发个啥？");
-                Console.ReadLine();
+                IOHelper.ReadLine();
                 return;
             }
             Log.Information("即将发布");
@@ -66,7 +96,7 @@ namespace OKP
                 if (site.Site is null)
                 {
                     Log.Error("没有配置发布站你发个啥？");
-                    Console.ReadLine();
+                    IOHelper.ReadLine();
                     return;
                 }
                 Log.Information(site.Site);
@@ -87,12 +117,12 @@ namespace OKP
                 if (!res.IsSuccess)
                 {
                     Log.Debug(res.Code + "\t" + res.Message);
-                    Console.ReadLine();
+                    IOHelper.ReadLine();
                     return;
                 }
             }
             Log.Information("登录成功，继续发布？");
-            Console.ReadKey();
+            IOHelper.ReadLine();
             foreach (var item in adapterList)
             {
                 var result = item.PostAsync().Result;
@@ -106,7 +136,7 @@ namespace OKP
                 }
             }
             Log.Information("发布完成");
-            Console.ReadKey();
+            IOHelper.ReadLine();
         }
     }
 }

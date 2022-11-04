@@ -1,6 +1,7 @@
 ﻿using BencodeNET.Objects;
 using BencodeNET.Parsing;
 using BencodeNET.Torrents;
+using OKP.Core.Utils;
 using Serilog;
 using System;
 using System.Collections.Generic;
@@ -8,6 +9,8 @@ using System.Linq;
 using System.Net.Http.Headers;
 using System.Net.Mime;
 using System.Runtime.CompilerServices;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -20,14 +23,23 @@ namespace OKP.Core.Interface
         public class TorrentData
         {
             public FileInfo FileInfo;
-            public ByteArrayContent ByteArrayContent;
+            public ByteArrayContent ByteArrayContent
+            {
+                //When adding this content into a MultipartFormDataContent, the filename prop will be stored in this ByteArrayContent object, which cannot be overwrite.
+                //Use a setter to return a new object everytime.
+                get
+                {
+                    var ByteArrayContent = new ByteArrayContent(bytes);
+                    ByteArrayContent.Headers.ContentType = MediaTypeHeaderValue.Parse("application/x-bittorrent");
+                    return ByteArrayContent;
+                }
+            }
             public Torrent TorrentObject;
+            private readonly byte[] bytes;
             public TorrentData(string filename)
             {
                 FileInfo = new FileInfo(filename);
-                byte[] bytes = File.ReadAllBytes(filename);
-                ByteArrayContent = new ByteArrayContent(bytes);
-                ByteArrayContent.Headers.ContentType = MediaTypeHeaderValue.Parse("application/x-bittorrent");
+                bytes = File.ReadAllBytes(filename);
                 var parser = new BencodeParser(); // Default encoding is Encoding.UTF8, but you can specify another if you need to
                 TorrentObject = parser.Parse<Torrent>(filename);
             }
@@ -64,7 +76,7 @@ namespace OKP.Core.Interface
             if (!File.Exists(settingFilePath))
             {
                 Log.Error("没有配置文件");
-                Console.ReadKey();
+                IOHelper.ReadLine();
                 throw new IOException();
             }
 
@@ -73,7 +85,7 @@ namespace OKP.Core.Interface
             if (torrentC.DisplayName is null)
             {
                 Log.Error("没有配置标题");
-                Console.ReadKey();
+                IOHelper.ReadLine();
                 throw new IOException();
             }
             torrentC.Data = new(filename);
@@ -88,7 +100,7 @@ namespace OKP.Core.Interface
                 else
                 {
                     Log.Error("标题集数替换失败");
-                    Console.ReadKey();
+                    IOHelper.ReadLine();
                     throw new IOException();
                 }
             }
@@ -103,7 +115,7 @@ namespace OKP.Core.Interface
                 else
                 {
                     Log.Error("标题分辨率替换失败");
-                    Console.ReadKey();
+                    IOHelper.ReadLine();
                     throw new IOException();
                 }
             }

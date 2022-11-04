@@ -42,14 +42,14 @@ namespace OKP.Core.Interface.Nyaa
             if (template.Cookie is null)
             {
                 Log.Error("Empty {Site} cookie", site);
-                Console.ReadKey();
+                IOHelper.ReadLine();
                 return;
             }
             var match = cookieReg.Match(template.Cookie);
             if (!match.Success)
             {
                 Log.Error("Wrong {Site} cookie", site);
-                Console.ReadKey();
+                IOHelper.ReadLine();
                 return;
             }
             cookieContainer.Add(new Cookie("session", match.Groups[1].Value, "/", "nyaa.si"));
@@ -65,7 +65,7 @@ namespace OKP.Core.Interface.Nyaa
             httpClient.DefaultRequestHeaders.Add("user-agent", template.UserAgent);
             if (!Valid())
             {
-                Console.ReadLine();
+                IOHelper.ReadLine();
                 throw new();
             }
         }
