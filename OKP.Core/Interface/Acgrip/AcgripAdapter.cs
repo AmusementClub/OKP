@@ -60,7 +60,7 @@ namespace OKP.Core.Interface.Acgrip
             var match = teamReg.Match(raw);
             if (match is null || match.Groups[1].Value != template.Name)
             {
-                Log.Error("你设置了{Site}的发布身份为{Team},但是你的Cookie对应的账户是{Nmae}。", site, template.Name, match?.Groups[1].Value ?? "undefined");
+                Log.Error("你设置了{Site}的发布身份为{Team},但是你的Cookie对应的账户是{Name}。", site, template.Name, match?.Groups[1].Value ?? "undefined");
                 return new(500, "Cannot find your team number." + raw, false);
             }
             var tokenMatch = tokenReg.Match(raw);
