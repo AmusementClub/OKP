@@ -89,6 +89,7 @@ namespace OKP.Core.Interface.Acgrip
                 { new StringContent("2022"), "year" },
                 { new StringContent("0"), "post[series_id]" },
                 { torrent.Data.ByteArrayContent, "post[torrent]", torrent.Data.FileInfo.Name},
+                { new StringContent(torrent.DisplayName??""), "post[title]" },
                 { new StringContent(template.Content??""), "post[content]" },
                 { new StringContent("发布"), "commit" }
             };
