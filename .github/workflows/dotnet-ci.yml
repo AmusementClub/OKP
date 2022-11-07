@@ -26,11 +26,11 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore --runtime ${{ matrix.runtime-identifier }}
 
-    - name: Publish the Application Project
+    - name: Publish the application
       run: dotnet publish OKP.Core --configuration ${{ matrix.configuration }} --no-restore --runtime ${{ matrix.runtime-identifier }} --self-contained false
 
     - name: Upload build artifacts
-      uses: actions/upload-artifact@v3.1.1
+      uses: actions/upload-artifact@v3
       with:
         name: Package-${{ matrix.runtime-identifier }}-${{ matrix.configuration }}
         path: |
