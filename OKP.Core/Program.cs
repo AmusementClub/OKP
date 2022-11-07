@@ -100,11 +100,12 @@ namespace OKP
                     return;
                 }
                 Log.Information(site.Site);
-                AdapterBase adapter = site.Site.ToLower() switch
+                AdapterBase adapter = site.Site.ToLower().Remove('.') switch
                 {
                     "dmhy" => new DmhyAdapter(torrent, site),
                     "bangumi" => new BangumiAdapter(),
                     "nyaa" => new NyaaAdapter(torrent, site),
+                    "acgrip"=> new NyaaAdapter(torrent,site),
                     _ => throw new NotImplementedException()
                 };
                 adapterList.Add(adapter);
