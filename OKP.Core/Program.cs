@@ -12,6 +12,7 @@ using System.Text.RegularExpressions;
 using Serilog.Core;
 using Serilog.Events;
 using OKP.Core.Utils;
+using OKP.Core.Interface.Acgrip;
 
 namespace OKP
 {
@@ -100,11 +101,12 @@ namespace OKP
                     return;
                 }
                 Log.Information(site.Site);
-                AdapterBase adapter = site.Site.ToLower() switch
+                AdapterBase adapter = site.Site.ToLower().Replace(".","") switch
                 {
                     "dmhy" => new DmhyAdapter(torrent, site),
                     "bangumi" => new BangumiAdapter(),
                     "nyaa" => new NyaaAdapter(torrent, site),
+                    "acgrip"=> new AcgripAdapter(torrent,site),
                     _ => throw new NotImplementedException()
                 };
                 adapterList.Add(adapter);
