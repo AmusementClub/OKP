@@ -131,18 +131,18 @@ namespace OKP.Core.Interface.Acgrip
                     return false;
                 }
             }
-            if (template.Content != null && template.Content.ToLower().EndsWith(".bbc"))
+            if (template.Content != null && template.Content.ToLower().EndsWith(".bbcode"))
             {
-                Log.Debug("开始寻找{Site} bbc文件 {File}", site, template.Content);
+                Log.Debug("开始寻找{Site} bbcode文件 {File}", site, template.Content);
                 var templateFile = FileHelper.ParseFileFullPath(template.Content, torrent.SettingPath);
                 if (File.Exists(templateFile))
                 {
-                    Log.Debug("找到了{Site} bbc文件 {File}", site, templateFile);
+                    Log.Debug("找到了{Site} bbcode文件 {File}", site, templateFile);
                     template.Content = File.ReadAllText(templateFile);
                 }
                 else
                 {
-                    Log.Error("发布模板看起来是个.bbc文件，但是这个.bbc文件不存在{NewLine}" +
+                    Log.Error("发布模板看起来是个.bbcode文件，但是这个.bbcode文件不存在{NewLine}" +
                         "{Source}-->{Dest}", template.Content, templateFile);
                     return false;
                 }
