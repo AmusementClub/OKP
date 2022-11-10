@@ -49,7 +49,7 @@ namespace OKP.Core.Interface.Acgrip
             {
                 Log.Error("Cannot connect to {Site}.{NewLine}" +
                    "Code: {Code}{NewLine}" +
-                   "Raw: {Raw}", site, pingReq.StatusCode, raw);
+                   "Raw: {Raw}", site, Environment.NewLine, pingReq.StatusCode, Environment.NewLine, raw);
                 return new((int)pingReq.StatusCode, raw, false);
             }
             if (raw.Contains(@"继续操作前请注册或者登录"))
@@ -108,12 +108,12 @@ namespace OKP.Core.Interface.Acgrip
                     Log.Information("{Site} post success.", site);
                     return new(200, "Success", true);
                 }
-                Log.Error("{Site} upload failed. Unknown reson. {NewLine} {Raw}", site, raw);
+                Log.Error("{Site} upload failed. Unknown reson. {NewLine} {Raw}", Environment.NewLine, site, raw);
                 return new(500, "Upload failed" + raw, false);
             }
             Log.Error("{Site} upload failed.{NewLine}" +
                 "Code: {Code}{NewLine}" +
-                "{Raw}", site, result.StatusCode, raw);
+                "{Raw}", site, Environment.NewLine, result.StatusCode, Environment.NewLine, raw);
             return new((int)result.StatusCode, "Failed" + raw, false);
         }
         private bool Valid()
@@ -143,7 +143,7 @@ namespace OKP.Core.Interface.Acgrip
                 else
                 {
                     Log.Error("发布模板看起来是个.bbcode文件，但是这个.bbcode文件不存在{NewLine}" +
-                        "{Source}-->{Dest}", template.Content, templateFile);
+                        "{Source}-->{Dest}", Environment.NewLine, template.Content, templateFile);
                     return false;
                 }
             }

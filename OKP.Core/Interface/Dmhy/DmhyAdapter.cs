@@ -48,7 +48,7 @@ namespace OKP.Core.Interface.Dmhy
             {
                 Log.Error("Cannot connect to {Site}.{NewLine}" +
                    "Code: {Code}{NewLine}" +
-                   "Raw: {Raw}", site, pingReq.StatusCode, raw);
+                   "Raw: {Raw}", site, Environment.NewLine, pingReq.StatusCode, Environment.NewLine, raw);
                 return new((int)pingReq.StatusCode, raw, false);
             }
             if (raw.Contains(@"<div class=""nav_title text_bold""><img src=""/images/login.gif"" align=""middle"" />&nbsp;登入發佈系統</div>"))
@@ -63,7 +63,7 @@ namespace OKP.Core.Interface.Dmhy
                 if (template.Name is null)
                 {
                     teamID = teams.First().Groups["value"].Value;
-                    Log.Warning("你没有设置{Site}的发布身份，将使用默认身份 {Team}{NewLine}按任意键继续发布", site, teams.First().Groups["name"].Value);
+                    Log.Warning("你没有设置{Site}的发布身份，将使用默认身份 {Team}{NewLine}按任意键继续发布", site, teams.First().Groups["name"].Value, Environment.NewLine);
                     IOHelper.ReadLine();
                 }
                 else
@@ -124,12 +124,12 @@ namespace OKP.Core.Interface.Dmhy
                     Log.Information("{Site} post success.", site);
                     return new(200, "Success", true);
                 }
-                Log.Error("{Site} upload failed. Unknown reson. {NewLine} {Raw}", site, raw);
+                Log.Error("{Site} upload failed. Unknown reson. {NewLine} {Raw}", site, Environment.NewLine, raw);
                 return new(500, "Upload failed" + raw, false);
             }
             Log.Error("{Site} upload failed.{NewLine}" +
                 "Code: {Code}{NewLine}" +
-                "{Raw}", site, result.StatusCode, raw);
+                "{Raw}", site, Environment.NewLine, result.StatusCode, Environment.NewLine, raw);
             return new((int)result.StatusCode, "Failed" + raw, false);
         }
         private bool Valid()
@@ -151,7 +151,7 @@ namespace OKP.Core.Interface.Dmhy
                 else
                 {
                     Log.Error("发布模板看起来是个.html文件，但是这个.html文件不存在{NewLine}" +
-                        "{Source}-->{Dest}", template.Content, templateFile);
+                        "{Source}-->{Dest}", template.Content, Environment.NewLine, templateFile);
                     return false;
                 }
             }

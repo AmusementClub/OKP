@@ -78,7 +78,7 @@ namespace OKP.Core.Interface.Nyaa
             {
                 Log.Error("Cannot connect to {Site}.{NewLine}" +
                     "Code: {Code}{NewLine}" +
-                    "Raw: {Raw}", site, pingReq.StatusCode, raw);
+                    "Raw: {Raw}", site, Environment.NewLine, pingReq.StatusCode, Environment.NewLine, raw);
                 return new((int)pingReq.StatusCode, raw, false);
             }
             if (raw.Contains(@"You are not logged in"))
@@ -117,10 +117,10 @@ namespace OKP.Core.Interface.Nyaa
             {
                 if (raw.Contains("You should be redirected automatically to target URL"))
                 {
-                    Log.Information("{Site} post success.{NewLine}{Url}", site, result.Headers.Location);
+                    Log.Information("{Site} post success.{NewLine}{Url}", site, Environment.NewLine, result.Headers.Location);
                     return new(200, "Success", true);
                 }
-                Log.Error("{Site} upload failed. Unknown reson. {NewLine} {Raw}", site, raw);
+                Log.Error("{Site} upload failed. Unknown reson. {NewLine} {Raw}", site, Environment.NewLine, raw);
                 return new(500, "Upload failed" + raw, false);
             }
             if (raw.Contains("This torrent already exists"))
@@ -130,7 +130,7 @@ namespace OKP.Core.Interface.Nyaa
             }
             Log.Error("{Site} upload failed.{NewLine}" +
                 "Code: {Code}{NewLine}" +
-                "{Raw}", site, result.StatusCode, raw);
+                "{Raw}", site, Environment.NewLine, result.StatusCode, Environment.NewLine, raw);
             return new((int)result.StatusCode, "Failed" + raw, false);
         }
 
@@ -161,7 +161,7 @@ namespace OKP.Core.Interface.Nyaa
                 else
                 {
                     Log.Error("发布模板看起来是个.md文件，但是这个.md文件不存在{NewLine}" +
-                        "{Source}-->{Dest}", template.Content, templateFile);
+                        "{Source}-->{Dest}", Environment.NewLine, template.Content, templateFile);
                     return false;
                 }
             }
