@@ -83,7 +83,7 @@ namespace OKP
                 IOHelper.ReadLine();
                 return;
             }
-            torrent.DisplayFiles();
+            torrent.DisplayFileTree();
             List<AdapterBase> adapterList = new();
             if (torrent.IntroTemplate is null)
             {

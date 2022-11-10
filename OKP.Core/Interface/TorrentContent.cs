@@ -189,10 +189,27 @@ namespace OKP.Core.Interface
             }
             Log.Information("文件列表：{FileList}", fileList);
         }
+
+        public void DisplayFileTree()
+        {
+            if (Data?.TorrentObject is null)
+            {
+                Log.Fatal("Data?.TorrentObject is null");
+                throw new ArgumentNullException(nameof(Data.TorrentObject));
+            }
+            StringBuilder fileList = new();
+            
+            Node rootNode = Data.TorrentObject.FileMode == TorrentFileMode.Multi ? new Node(Data.TorrentObject.Files) : new Node(Data.TorrentObject.File);
+            foreach (var line in Node.GetFileTree(rootNode))
+            {
+                fileList.AppendLine(line);
+            }
+            Log.Information("文件列表：\n{FileList}", fileList);
+        }
     }
 
     public class UserProperties
     {
-        public List<TorrentContent.Template> UserProp { get; set; }
+        public List<TorrentContent.Template>? UserProp { get; set; }
     }
 }

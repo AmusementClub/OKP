@@ -1,4 +1,6 @@
 ﻿
+using BencodeNET.Torrents;
+
 namespace OKP.Core.Utils
 {
     public class FileSize
@@ -7,15 +9,15 @@ namespace OKP.Core.Utils
 
         private static readonly string[] SizeTail = { "B", "KB", "MB", "GB", "TB", "PB" };
 
-        private static string _toString(long length)
+        private static string ToString(long length)
         {
             var scale = length == 0 ? 0 : (int)Math.Floor(Math.Log(length, 1024));
             return $"{length / Math.Pow(1024, scale):F3}{SizeTail[scale]}";
         }
 
-        public override string ToString() => _toString(Length);
+        public override string ToString() => ToString(Length);
 
-        public static string FileSizeToString(long length) => _toString(length);
+        public static string FileSizeToString(long length) => ToString(length);
 
         public FileSize(long length)
         {
@@ -25,9 +27,9 @@ namespace OKP.Core.Utils
 
     public class Node : Dictionary<string, Node>
     {
-        public FileSize Attribute { get; private set; }
+        public FileSize Attribute { get; private set; } = new FileSize(0);
 
-        private Node ParentNode { get; set; }
+        private Node? ParentNode { get; set; }
 
         public string NodeName { get; } = ".";
 
@@ -45,17 +47,29 @@ namespace OKP.Core.Utils
 
         public Node(IEnumerable<(IEnumerable<string> path, FileSize size)> fileList)
         {
-            foreach (var list in fileList)
+            foreach (var (path, size) in fileList)
             {
-                Insert(list.path, list.size);
+                Insert(path, size);
             }
+        }
+
+        public Node(MultiFileInfoList multiFileInfos)
+        {
+            foreach (var fileInfo in multiFileInfos)
+            {
+                Insert(fileInfo.Path, new FileSize(fileInfo.FileSize));
+            }
+        }
+
+        public Node(SingleFileInfo singleFileInfo)
+        {
+            Insert(new[] { singleFileInfo.FileName }, new FileSize(singleFileInfo.FileSize));
         }
 
         private Node(string node)
         {
             NodeName = node;
         }
-
 
         public enum NodeTypeEnum
         {
@@ -95,7 +109,7 @@ namespace OKP.Core.Utils
             }
         }
 
-        public Node Insert(IEnumerable<string> nodes, FileSize attribute = null)
+        public Node Insert(IEnumerable<string> nodes, FileSize? attribute = null)
         {
             var currentNode = this;
             foreach (var node in nodes)
@@ -107,7 +121,10 @@ namespace OKP.Core.Utils
                 }
                 currentNode = currentNode[node];
             }
-            currentNode.Attribute = attribute;
+            if (attribute != null)
+            {
+                currentNode.Attribute = attribute;
+            }
             return currentNode;
         }
 
@@ -117,6 +134,22 @@ namespace OKP.Core.Utils
         {
             foreach (var file in currentNode.GetDirectories().SelectMany(GetFileListInner)) yield return file;
             foreach (var node in currentNode.GetFiles()) yield return node.FullPath;
+        }
+
+        public static IEnumerable<string> GetFileTree(Node currentNode, int indent = 0)
+        {
+            foreach (var dir in currentNode.GetDirectories())
+            {
+                yield return string.Format("{0}+{1}", string.Concat(Enumerable.Repeat("|  ", indent)), dir.NodeName);
+                foreach (var childNode in  GetFileTree(dir, indent + 1))
+                {
+                    yield return childNode;
+                }
+            }
+            foreach (var node in currentNode.GetFiles())
+            {
+                yield return string.Format("{0}{1}({2}", string.Concat(Enumerable.Repeat("|  ", indent)), node.NodeName, node.Attribute);
+            }
         }
     }
 }
