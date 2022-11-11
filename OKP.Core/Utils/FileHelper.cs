@@ -10,8 +10,8 @@ namespace OKP.Core.Utils
     {
         public static string? ParseFileFullPath(string file, string? rootFile)
         {
-            string fullPath = "";
-            if (file.StartsWith("\\\\") || file.Contains(":\\"))
+            var fullPath = "";
+            if (Path.IsPathRooted(file))
             {
                 fullPath = file;
             }

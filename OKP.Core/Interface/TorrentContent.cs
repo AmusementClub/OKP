@@ -121,12 +121,14 @@ namespace OKP.Core.Interface
             }
             Log.Information("标题：{0}", torrentC.DisplayName);
 
-            /// user properties, it will overlap some existing private config from setting config, such as proxy, cookie and user_agent
-            var userPropPath = Path.Combine(appLocation, "OKP_userprop.toml");
+            // user properties, it will overlap some existing private config from setting config, such as proxy, cookie and user_agent
+            var userPropPath = Path.Combine(appLocation, Constants.UserPropertiesFileName);
             if (File.Exists(userPropPath))
             {
                 var userProp = Toml.ToModel<UserProperties>(File.ReadAllText(userPropPath));
 
+                if (userProp.UserProp == null)
+                    return torrentC;
                 foreach (var p in userProp.UserProp)
                 {
                     if (torrentC.IntroTemplate is not null)
@@ -204,7 +206,7 @@ namespace OKP.Core.Interface
             {
                 fileList.AppendLine(line);
             }
-            Log.Information("文件列表：\n{FileList}", fileList);
+            Log.Information("文件列表：{NewLine}{FileList}", Environment.NewLine, fileList);
         }
     }
 

@@ -1,37 +1,37 @@
-﻿using BencodeNET.Objects;
-using BencodeNET.Parsing;
-using BencodeNET.Torrents;
-using CommandLine.Text;
-using CommandLine;
+﻿using CommandLine;
 using OKP.Core.Interface;
 using OKP.Core.Interface.Bangumi;
 using OKP.Core.Interface.Dmhy;
 using OKP.Core.Interface.Nyaa;
 using Serilog;
-using System.Text.RegularExpressions;
 using Serilog.Core;
 using Serilog.Events;
 using OKP.Core.Utils;
 using OKP.Core.Interface.Acgrip;
+using Constants = OKP.Core.Utils.Constants;
 
-namespace OKP
+namespace OKP.Core
 {
     internal class Program
     {
-        class Options
+#pragma warning disable CS8618
+        
+        private class Options
         {
             [Value(0, Min = 1, Required = true, MetaName = "torrent", HelpText = "Torrents to be published.")]
             public IEnumerable<string>? TorrentFile { get; set; }
-            [Option('s', "setting", Required = false, HelpText = "(Not required) Specific setting file.")]
-            public string? SettingFile { get; set; }
+            [Option('s', "setting", Required = false, Default = Constants.DefaultSettingFileName, HelpText = "(Not required) Specific setting file.")]
+            public string SettingFile { get; set; }
             [Option('l', "log_level", Default = "Debug", HelpText = "Log level.")]
             public string? LogLevel { get; set; }
-            [Option("log_file", Default = "log.txt")]
-            public string? LogFile { get; set; }
+            [Option("log_file", Required = false, Default = Constants.DefaultLogFileName, HelpText = "Log file.")]
+            public string LogFile { get; set; }
             [Option('y', HelpText = "Skip reaction.")]
             public bool NoReaction { get; set; }
         }
-        static void Main(string[] args)
+#pragma warning restore CS8618
+
+        public static void Main(string[] args)
         {
             Parser.Default.ParseArguments<Options>(args)
                    .WithParsed(o =>
@@ -49,7 +49,7 @@ namespace OKP
                        Log.Logger = new LoggerConfiguration()
                        .MinimumLevel.ControlledBy(levelSwitch)
                        .WriteTo.Console()
-                       .WriteTo.File(o.LogFile ?? "log.txt",
+                       .WriteTo.File(o.LogFile,
                            rollingInterval: RollingInterval.Month,
                            rollOnFileSizeLimit: true)
                        .CreateLogger();
@@ -61,21 +61,19 @@ namespace OKP
                        }
                        foreach (var file in o.TorrentFile)
                        {
-                           Log.Information("正在发布{0}", file);
+                           Log.Information("正在发布 {File}", file);
                            SinglePublish(file, o.SettingFile);
                        }
                    });
         }
-        static void SinglePublish(string file, string? settingFile)
+        private static void SinglePublish(string file, string settingFile)
         {
-
             if (!File.Exists(file))
             {
-                Log.Error("文件不存在！{0}", file);
+                Log.Error("文件不存在！{File}", file);
                 IOHelper.ReadLine();
                 return;
             }
-            settingFile ??= "setting.toml";
             var torrent = TorrentContent.Build(file, settingFile, AppDomain.CurrentDomain.BaseDirectory);
             if (torrent.IsV2())
             {
@@ -100,7 +98,7 @@ namespace OKP
                     IOHelper.ReadLine();
                     return;
                 }
-                Log.Information(site.Site);
+                Log.Information("site: {Site}", site.Site);
                 AdapterBase adapter = site.Site.ToLower().Replace(".","") switch
                 {
                     "dmhy" => new DmhyAdapter(torrent, site),
@@ -111,23 +109,22 @@ namespace OKP
                 };
                 adapterList.Add(adapter);
             }
-            List<Task<HttpResult>> PingTask = new();
-            adapterList.ForEach(p => PingTask.Add(p.PingAsync()));
-            var PingRes = Task.WhenAll(PingTask).Result;
-            foreach (var res in PingRes)
+            List<Task<HttpResult>> pingTask = new();
+            adapterList.ForEach(p => pingTask.Add(p.PingAsync()));
+            var pingRes = Task.WhenAll(pingTask).Result;
+            foreach (var res in pingRes)
             {
                 if (!res.IsSuccess)
                 {
-                    Log.Debug(res.Code + "\t" + res.Message);
+                    Log.Debug("Code: {Code}\tMessage: {Message}", res.Code, res.Message);
                     IOHelper.ReadLine();
                     return;
                 }
             }
             Log.Information("登录成功，继续发布？");
             IOHelper.ReadLine();
-            foreach (var item in adapterList)
+            foreach (var result in adapterList.Select(item => item.PostAsync().Result))
             {
-                var result = item.PostAsync().Result;
                 if (result.IsSuccess)
                 {
                     Log.Information("发布成功");
