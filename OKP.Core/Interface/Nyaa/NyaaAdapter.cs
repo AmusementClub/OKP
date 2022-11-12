@@ -23,7 +23,7 @@ namespace OKP.Core.Interface.Nyaa
 
         private readonly Uri baseUrl = new("https://nyaa.si/");
         private readonly string pingUrl = "upload";
-        private readonly string postUtl = "upload";
+        private readonly string postUrl = "upload";
         const string site = "nyaa";
         public NyaaAdapter(TorrentContent torrent, Template template)
         {
@@ -111,7 +111,7 @@ namespace OKP.Core.Interface.Nyaa
                 { new StringContent(template.Content??""), "description" },
             };
             Log.Verbose("{Site} formdata content: {@MultipartFormDataContent}", site, form);
-            var result = await httpClient.PostAsyncWithRetry(postUtl, form);
+            var result = await httpClient.PostAsyncWithRetry(postUrl, form);
             var raw = await result.Content.ReadAsStringAsync();
             if (result.StatusCode == HttpStatusCode.Redirect)
             {
