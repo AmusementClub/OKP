@@ -58,9 +58,15 @@ namespace OKP.Core.Interface.Acgrip
                 Log.Error("{Site} login failed", site);
                 return new(403, "Login failed" + raw, false);
             }
+            
             // Some accounts don’t belong to team
-            var match = teamReg.Match(raw) ?? personalReg.Match(raw);
-            if (match is null || match.Groups[1].Value != template.Name)
+            var match = teamReg.Match(raw);
+            if (match == Match.Empty)
+            {
+                match = personalReg.Match(raw);
+            }
+
+            if (match == Match.Empty || match.Groups[1].Value != template.Name)
             {
                 Log.Error("你设置了{Site}的发布身份为{Team},但是你的Cookie对应的账户是{Name}。", site, template.Name, match?.Groups[1].Value ?? "undefined");
                 return new(500, "Cannot find your team number." + raw, false);
