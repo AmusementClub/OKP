@@ -148,7 +148,7 @@ namespace OKP.Core.Utils
             }
             foreach (var node in currentNode.GetFiles())
             {
-                yield return $"{string.Concat(Enumerable.Repeat("|  ", indent))}{node.NodeName}({node.Attribute}";
+                yield return $"{string.Concat(Enumerable.Repeat("|  ", indent))}{node.NodeName} ({node.Attribute})";
             }
         }
     }
