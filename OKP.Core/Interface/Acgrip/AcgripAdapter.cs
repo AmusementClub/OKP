@@ -117,6 +117,11 @@ namespace OKP.Core.Interface.Acgrip
                     Log.Information("{Site} post success.", site);
                     return new(200, "Success", true);
                 }
+                if (raw.Contains("<div class=\"alert alert-warning\">种子内的资源太小</div>"))
+                {
+                    Log.Error("{Site} upload failed.", site);
+                    return new(500, "Upload failed, files too small.", false);
+                }
                 Log.Error("{Site} upload failed. Unknown reson. {NewLine} {Raw}", Environment.NewLine, site, raw);
                 return new(500, "Upload failed" + raw, false);
             }
