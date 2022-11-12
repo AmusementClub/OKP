@@ -18,7 +18,8 @@ namespace OKP.Core.Interface.Acgrip
         private const string baseUrl = "https://acg.rip/";
         private const string pingUrl = "cp/posts/upload";
         private const string postUtl = "cp/posts";
-        private readonly Regex teamReg = new(@"class=""panel-title""\>(\w+)\</div\>");
+        private readonly Regex personalReg = new(@"class=""panel-title""\>(\w+)\</div\>");
+        private readonly Regex teamReg = new(@"class=""panel-title-right""\>(\w+)\</div\>");
         private readonly Regex tokenReg = new(@"\<meta\sname=""csrf-token""\scontent=""(.*)""\s/\>");
         private readonly List<string> trackers = new() { "http://t.acg.rip:6699/announce" };
         private string authenticityToken = "";
@@ -57,7 +58,8 @@ namespace OKP.Core.Interface.Acgrip
                 Log.Error("{Site} login failed", site);
                 return new(403, "Login failed" + raw, false);
             }
-            var match = teamReg.Match(raw);
+            // Some accounts don’t belong to team
+            var match = teamReg.Match(raw) ?? personalReg.Match(raw);
             if (match is null || match.Groups[1].Value != template.Name)
             {
                 Log.Error("你设置了{Site}的发布身份为{Team},但是你的Cookie对应的账户是{Name}。", site, template.Name, match?.Groups[1].Value ?? "undefined");
@@ -86,8 +88,9 @@ namespace OKP.Core.Interface.Acgrip
             {
                 { new StringContent(authenticityToken), "authenticity_token" },
                 { new StringContent("1"), "post[category_id]" },
-                { new StringContent("2022"), "year" },
-                { new StringContent("0"), "post[series_id]" },
+                // { new StringContent("2022"), "year" },
+                // { new StringContent("0"), "post[series_id]" },
+                { new StringContent("1"), "post[post_as_team]"},
                 { torrent.Data.ByteArrayContent, "post[torrent]", torrent.Data.FileInfo.Name},
                 { new StringContent(torrent.DisplayName??""), "post[title]" },
                 { new StringContent(template.Content??""), "post[content]" },
