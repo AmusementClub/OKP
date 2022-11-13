@@ -3,6 +3,8 @@ using Serilog;
 using System.Net;
 using static OKP.Core.Interface.TorrentContent;
 using System.Net.Http.Json;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace OKP.Core.Interface.Acgnx
 {
@@ -76,7 +78,7 @@ namespace OKP.Core.Interface.Acgnx
                     BypassOnLocal: false);
                 httpClientHandler.UseProxy = true;
             }
-            httpClient.DefaultRequestHeaders.Add("user-agent", template.UserAgent);
+
             if (!Valid())
             {
                 IOHelper.ReadLine();
@@ -86,18 +88,24 @@ namespace OKP.Core.Interface.Acgnx
 
         public override async Task<HttpResult> PingAsync()
         {
-            MultipartFormDataContent form = new()
+            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, apiUrl);
+            request.Content = new MultipartFormDataContent()
             {
                 { new StringContent("upload"), "mod" },
                 { new StringContent(template.Name??""), "uid" },
                 { new StringContent(template.Cookie??""), "api_token" }
             };
-            Log.Verbose("{Site} formdata content: {@MultipartFormDataContent}", site, form);
-            var result = await httpClient.PostAsyncWithRetry(apiUrl, form);
+            Log.Verbose("{Site} formdata content: {@MultipartFormDataContent}", site, request.Content);
+            var result = await httpClient.SendAsync(request);
+            var raw = await result.Content.ReadAsStringAsync();
 
-            if (result.IsSuccessStatusCode)
+            if (result.IsSuccessStatusCode && !raw.Contains("<html"))
             {
-                var apiContent = await result.Content.ReadFromJsonAsync<AcgnxApiStatus>();
+                var apiContent = await result.Content.ReadFromJsonAsync<AcgnxApiStatus>(new JsonSerializerOptions
+                {
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                    NumberHandling = JsonNumberHandling.AllowReadingFromString
+                });
                 if (apiContent == null)
                 {
                     Log.Error("{Site} api server down", site);
@@ -119,7 +127,6 @@ namespace OKP.Core.Interface.Acgnx
             }
             else
             {
-                var raw = await result.Content.ReadAsStringAsync();
                 Log.Error("Cannot connect to {Site}.{NewLine}" +
                     "Code: {Code}{NewLine}" +
                     "Raw: {Raw}", site, Environment.NewLine, result.StatusCode, Environment.NewLine, raw);
@@ -152,8 +159,14 @@ namespace OKP.Core.Interface.Acgnx
             };
             Log.Verbose("{Site} formdata content: {@MultipartFormDataContent}", site, form);
             var result = await httpClient.PostAsyncWithRetry(apiUrl, form);
-            var apiContent = await result.Content.ReadFromJsonAsync<AcgnxApiStatus>();
-            if (result.StatusCode == HttpStatusCode.Redirect && apiContent != null)
+            var raw = await result.Content.ReadAsStringAsync();
+            var apiContent = await result.Content.ReadFromJsonAsync<AcgnxApiStatus>(new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                NumberHandling = JsonNumberHandling.AllowReadingFromString
+            });
+
+            if (result.StatusCode == HttpStatusCode.OK && apiContent != null && !raw.Contains("<html"))
             {
                 switch (apiContent.Code)
                 {
@@ -170,7 +183,6 @@ namespace OKP.Core.Interface.Acgnx
             }
             else
             {
-                var raw = await result.Content.ReadAsStringAsync();
                 return new((int)result.StatusCode, "Failed" + raw, false);
             }
         }
@@ -205,10 +217,10 @@ namespace OKP.Core.Interface.Acgnx
 
     internal class AcgnxApiStatus
     {
-        internal string? Status { get; set; }
-        internal ushort Code { get; set; }
-        internal string? Value { get; set; }
-        internal string? Infohash { get; set; }
-        internal string? Title { get; set; }
+        public string? Status { get; set; }
+        public ushort Code { get; set; }
+        public string? Value { get; set; }
+        public string? Infohash { get; set; }
+        public string? Title { get; set; }
     }
 }
