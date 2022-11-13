@@ -3,6 +3,7 @@ using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -24,7 +25,8 @@ namespace OKP.Core.Interface.Dmhy
         const string site = "dmhy";
         public DmhyAdapter(TorrentContent torrent, Template template)
         {
-            httpClient = new()
+            var handler = new HttpClientHandler();
+            httpClient = new(handler)
             {
                 BaseAddress = new(baseUrl)
             };
@@ -33,6 +35,14 @@ namespace OKP.Core.Interface.Dmhy
             httpClient.DefaultRequestHeaders.Add("user-agent", template.UserAgent);
             httpClient.DefaultRequestHeaders.Add("Cookie", template.Cookie);
             httpClient.BaseAddress = new(baseUrl);
+
+            if (template.Proxy is not null)
+            {
+                handler.Proxy = new WebProxy(
+                    new Uri(template.Proxy),
+                    BypassOnLocal: false);
+            }
+
             if (!Valid())
             {
                 IOHelper.ReadLine();
