@@ -8,6 +8,7 @@ using Serilog.Core;
 using Serilog.Events;
 using OKP.Core.Utils;
 using OKP.Core.Interface.Acgrip;
+using OKP.Core.Interface.Acgnx;
 using Constants = OKP.Core.Utils.Constants;
 
 namespace OKP.Core
@@ -104,7 +105,9 @@ namespace OKP.Core
                     "dmhy" => new DmhyAdapter(torrent, site),
                     "bangumi" => new BangumiAdapter(),
                     "nyaa" => new NyaaAdapter(torrent, site),
-                    "acgrip"=> new AcgripAdapter(torrent,site),
+                    "acgrip" => new AcgripAdapter(torrent, site),
+                    "acgnx_asia" => new AcgnxAdapter(torrent, site, "asia"),
+                    "acgnx_global" => new AcgnxAdapter(torrent, site, "global"),
                     _ => throw new NotImplementedException()
                 };
                 adapterList.Add(adapter);
