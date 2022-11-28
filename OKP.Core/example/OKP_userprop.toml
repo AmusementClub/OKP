@@ -1,10 +1,7 @@
-[[user_prop]]
-site="dmhy"
-name="LoliHouse"
-cookie="pass=xxx; rsspass=xxx; tid=x; uname=xxx; uid=xxx"
-
-[[user_prop]]
-site="nyaa"
-name="LoliHouse"
-cookie="session=xxxxxxxxx"
-proxy="http://127.0.0.1:9890"
+# You can put any string-string pair here. These strings will be automaticlly replaced when loading the setting file.
+# For prop name, only [a-zA-Z0-9_] is allowed.
+dmhyCookie = "pass=xxx; rsspass=xxx; tid=x; uname=xxx; uid=xxx"
+proxyAsia = "http://127.0.0.1:9890"
+proxyEu = "http://127.0.0.1:7890"
+name1 = "Lolihouse"
+name2 = "Bilibili"

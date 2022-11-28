@@ -65,7 +65,7 @@ namespace OKP.Core.Interface
             public string? UserAgent { get; set; }
             public string? Proxy { get; set; }
         }
-        public static TorrentContent Build(string filename, string settingFile, string appLocation)
+        public static TorrentContent Build(string filename, string settingFile, string appLocation, string userProps)
         {
             var settingFilePath = settingFile;
             if (Path.GetDirectoryName(settingFile) == "")
@@ -79,8 +79,35 @@ namespace OKP.Core.Interface
                 IOHelper.ReadLine();
                 throw new IOException();
             }
-
-            var torrentC = Toml.ToModel<TorrentContent>(File.ReadAllText(settingFilePath));
+            //Replace user props
+            var userPropList = Toml.ToModel<Dictionary<string, string>>(File.ReadAllText(userProps));
+            var settingText = File.ReadAllText(settingFilePath);
+            settingText = Regex.Replace(settingText, @"#.*", ""); // remove comments
+            var matches = Regex.Matches(settingText, @"\{(\w+)\}");
+            var misMatch = new List<string>();
+            foreach (var match in matches.Cast<Match>())
+            {
+                if (userPropList.TryGetValue(match.Groups[1].Value, out var prop))
+                {
+                    settingText = settingText.Replace(match.Value, prop);
+                }
+                else
+                {
+                    misMatch.Add(match.Value);
+                }
+            }
+            if (misMatch.Count > 0)
+            {
+                Log.Error("存在未匹配的UserProps");
+                foreach (var item in misMatch)
+                {
+                    Log.Error("Missing prop: {Prop}", item);
+                }
+                IOHelper.ReadLine();
+                throw new IOException();
+            }
+            Log.Verbose("Setting file content:{settingText}", settingText);
+            var torrentC = Toml.ToModel<TorrentContent>(settingText);
             torrentC.SettingPath = Path.GetDirectoryName(settingFilePath);
             if (torrentC.DisplayName is null)
             {
@@ -120,32 +147,6 @@ namespace OKP.Core.Interface
                 }
             }
             Log.Information("标题：{0}", torrentC.DisplayName);
-
-            // user properties, it will overlap some existing private config from setting config, such as proxy, cookie and user_agent
-            var userPropPath = Path.Combine(appLocation, Constants.UserPropertiesFileName);
-            if (File.Exists(userPropPath))
-            {
-                var userProp = Toml.ToModel<UserProperties>(File.ReadAllText(userPropPath));
-
-                if (userProp.UserProp == null)
-                    return torrentC;
-                foreach (var p in userProp.UserProp)
-                {
-                    if (torrentC.IntroTemplate is not null)
-                    {
-                        foreach (var tp in torrentC.IntroTemplate)
-                        {
-                            if (p.Name == tp.Name && p.Site == tp.Site)
-                            {
-                                tp.Proxy = p.Proxy ?? tp.Proxy;
-                                tp.Cookie = p.Cookie ?? tp.Cookie;
-                                tp.UserAgent = p.UserAgent ?? tp.UserAgent;
-                            }
-                        }
-                    }
-                }
-            }
-
             return torrentC;
         }
         public bool IsV2()
@@ -200,7 +201,7 @@ namespace OKP.Core.Interface
                 throw new ArgumentNullException(nameof(Data.TorrentObject));
             }
             StringBuilder fileList = new();
-            
+
             Node rootNode = Data.TorrentObject.FileMode == TorrentFileMode.Multi ? new Node(Data.TorrentObject.Files) : new Node(Data.TorrentObject.File);
             foreach (var line in Node.GetFileTree(rootNode))
             {

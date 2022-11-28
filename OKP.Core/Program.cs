@@ -10,13 +10,14 @@ using OKP.Core.Utils;
 using OKP.Core.Interface.Acgrip;
 using OKP.Core.Interface.Acgnx;
 using Constants = OKP.Core.Utils.Constants;
+using Tomlyn;
 
 namespace OKP.Core
 {
     internal class Program
     {
 #pragma warning disable CS8618
-        
+
         private class Options
         {
             [Value(0, Min = 1, Required = true, MetaName = "torrent", HelpText = "Torrents to be published.")]
@@ -29,6 +30,8 @@ namespace OKP.Core
             public string LogFile { get; set; }
             [Option('y', HelpText = "Skip reaction.")]
             public bool NoReaction { get; set; }
+            [Option('p', "Props", Default = Constants.UserPropertiesFileName, HelpText = "User properties file. Should be a list of Dictionary<string, string>")]
+            public string UserProperties { get; set; }
         }
 #pragma warning restore CS8618
 
@@ -63,11 +66,11 @@ namespace OKP.Core
                        foreach (var file in o.TorrentFile)
                        {
                            Log.Information("正在发布 {File}", file);
-                           SinglePublish(file, o.SettingFile);
+                           SinglePublish(file, o.SettingFile, o.UserProperties);
                        }
                    });
         }
-        private static void SinglePublish(string file, string settingFile)
+        private static void SinglePublish(string file, string settingFile, string userProps)
         {
             if (!File.Exists(file))
             {
@@ -75,7 +78,7 @@ namespace OKP.Core
                 IOHelper.ReadLine();
                 return;
             }
-            var torrent = TorrentContent.Build(file, settingFile, AppDomain.CurrentDomain.BaseDirectory);
+            var torrent = TorrentContent.Build(file, settingFile, AppDomain.CurrentDomain.BaseDirectory, userProps);
             if (torrent.IsV2())
             {
                 Log.Error("V2达咩！回去换！");
@@ -100,7 +103,7 @@ namespace OKP.Core
                     return;
                 }
                 Log.Information("site: {Site}", site.Site);
-                AdapterBase adapter = site.Site.ToLower().Replace(".","") switch
+                AdapterBase adapter = site.Site.ToLower().Replace(".", "") switch
                 {
                     "dmhy" => new DmhyAdapter(torrent, site),
                     "bangumi" => new BangumiAdapter(),

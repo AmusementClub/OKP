@@ -1,4 +1,5 @@
 #Make sure you have both <ep> in display_name and valid filename_regex. Other wise OKP will not match your ep number.
+#You can use any prop which is defined in the OKP_userprop.toml. You can use {prop name} as a place holder and it will be replaced by the value defined in the OKP_userprop.toml. See example below.
 display_name="[银色子弹字幕组&LoliHouse] 名侦探柯南 犯人犯泽 / Detective Conan Hannin No Hanzawa San - <ep> [WebRip <res>p HEVC-10bit AAC][简繁内封字幕]"
 group_name="[银色子弹字幕组&LoliHouse]"
 poster="https://p.sda1.dev/7/d35d6f7e8f7673cd80fcf0399a4dfba4/20221014232304.jpg"
@@ -11,7 +12,7 @@ is_finished=false
 
 [[intro_template]]
 site="dmhy"
-name="LoliHouse"
+name="{name1}"
 # Use your own cookie
 cookie="pass=xxx; rsspass=xxx; tid=x; uname=xxx; uid=xxx"
 user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.0.0 Safari/537.36"
@@ -42,12 +43,12 @@ content="dmhy.html"
 
 [[intro_template]]
 site="nyaa"
-name="LoliHouse"
+name="{name2}"
 # Use your own cookie
 cookie="session=xxx"
 user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.0.0 Safari/537.36"
 content="nyaa.md"
-proxy="http://127.0.0.1:7890"  # Not necessary
+proxy="{proxyAsia}"  # Not necessary
 # content='''D:\Users\Source\Repos\OKP\OKP.Core\example\nyaa.md''''
 # content='''
 # ![][0]
