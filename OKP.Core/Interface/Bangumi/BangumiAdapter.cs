@@ -74,17 +74,19 @@ namespace OKP.Core.Interface.Bangumi
                 Log.Warning("你没有设置{Site}的发布身份，将使用默认身份 {Team}{NewLine}按任意键继续发布", site, teamList.First().name, Environment.NewLine);
                 IOHelper.ReadLine();
             }
-            foreach (var team in teamList.Where(team => team.name.ToLower() == template.Name.ToLower()))
+            else
             {
-                teamID = team._id;
-                tagID = team.tag_id;
+                foreach (var team in teamList.Where(team => team.name.ToLower() == template.Name.ToLower()))
+                {
+                    teamID = team._id;
+                    tagID = team.tag_id;
+                }
+                if (teamID.Equals(""))
+                {
+                    Log.Error("你设置了{Site}的发布身份为{Team},但是你的账户中没有这个身份。", site, template.Name);
+                    return new(500, "Cannot find your team number." + raw, false);
+                }
             }
-            if (teamID.Equals(""))
-            {
-                Log.Error("你设置了{Site}的发布身份为{Team},但是你的账户中没有这个身份。", site, template.Name);
-                return new(500, "Cannot find your team number." + raw, false);
-            }
-
             Log.Debug("{Site} login success", site);
             return new(200, "Success", true);
         }
