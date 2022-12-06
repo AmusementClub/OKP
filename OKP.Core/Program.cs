@@ -16,7 +16,7 @@ namespace OKP.Core
     internal class Program
     {
 #pragma warning disable CS8618
-        
+
         private class Options
         {
             [Value(0, Min = 1, Required = true, MetaName = "torrent", HelpText = "Torrents to be published.")]
@@ -100,10 +100,10 @@ namespace OKP.Core
                     return;
                 }
                 Log.Information("site: {Site}", site.Site);
-                AdapterBase adapter = site.Site.ToLower().Replace(".","") switch
+                AdapterBase adapter = site.Site.ToLower().Replace(".", "") switch
                 {
                     "dmhy" => new DmhyAdapter(torrent, site),
-                    "bangumi" => new BangumiAdapter(),
+                    "bangumi" => new BangumiAdapter(torrent, site),
                     "nyaa" => new NyaaAdapter(torrent, site),
                     "acgrip" => new AcgripAdapter(torrent, site),
                     "acgnx_asia" => new AcgnxAdapter(torrent, site, "asia"),

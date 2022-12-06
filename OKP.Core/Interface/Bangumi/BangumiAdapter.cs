@@ -9,6 +9,7 @@ using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using static OKP.Core.Interface.Bangumi.BangumiModels;
 using static OKP.Core.Interface.TorrentContent;
 
 namespace OKP.Core.Interface.Bangumi
@@ -24,7 +25,7 @@ namespace OKP.Core.Interface.Bangumi
         private const string uploadUrl = "v2/torrent/upload";
         private string teamID = "";
         private string tagID = "";
-        const string site = "dmhy";
+        const string site = "bangumi";
 
         public BangumiAdapter(TorrentContent torrent, Template template)
         {
@@ -55,7 +56,7 @@ namespace OKP.Core.Interface.Bangumi
         {
             var pingReq = await httpClient.GetAsync(pingUrl);
             var raw = await pingReq.Content.ReadAsStringAsync();
-            var teamList = await pingReq.Content.ReadFromJsonAsync<BangumiModels.TeamList>();
+            var teamList = await pingReq.Content.ReadFromJsonAsync<TeamInfo[]>();
             if (!pingReq.IsSuccessStatusCode || teamList == null)
             {
                 Log.Error("Cannot connect to {Site}.{NewLine}" +
@@ -63,19 +64,19 @@ namespace OKP.Core.Interface.Bangumi
                    "Raw: {Raw}", site, Environment.NewLine, pingReq.StatusCode, Environment.NewLine, raw);
                 return new((int)pingReq.StatusCode, raw, false);
             }
-            if (teamList.Teams.Length == 0)
+            if (teamList.Length == 0)
             {
                 Log.Error("{Site} login failed", site);
                 return new(403, "Login failed" + raw, false);
             }
-            teamID = teamList.Teams.First()._id;
-            tagID = teamList.Teams.First().tag_id;
+            teamID = teamList.First()._id;
+            tagID = teamList.First().tag_id;
             if (template.Name is null)
             {
-                Log.Warning("你没有设置{Site}的发布身份，将使用默认身份 {Team}{NewLine}按任意键继续发布", site, teamList.Teams.First().name, Environment.NewLine);
+                Log.Warning("你没有设置{Site}的发布身份，将使用默认身份 {Team}{NewLine}按任意键继续发布", site, teamList.First().name, Environment.NewLine);
                 IOHelper.ReadLine();
             }
-            else if (template.Name.ToLower() != teamList.Teams.First().name.ToLower())
+            else if (template.Name.ToLower() != teamList.First().name.ToLower())
             {
                 Log.Error("你设置了{Site}的发布身份为{Team},但是你的账户中没有这个身份。", site, template.Name);
                 return new(500, "Cannot find your team number." + raw, false);
