@@ -69,18 +69,22 @@ namespace OKP.Core.Interface.Bangumi
                 Log.Error("{Site} login failed", site);
                 return new(403, "Login failed" + raw, false);
             }
-            teamID = teamList.First()._id;
-            tagID = teamList.First().tag_id;
             if (template.Name is null)
             {
                 Log.Warning("你没有设置{Site}的发布身份，将使用默认身份 {Team}{NewLine}按任意键继续发布", site, teamList.First().name, Environment.NewLine);
                 IOHelper.ReadLine();
             }
-            else if (template.Name.ToLower() != teamList.First().name.ToLower())
+            foreach (var team in teamList.Where(team => team.name.ToLower() == template.Name.ToLower()))
+            {
+                teamID = team._id;
+                tagID = team.tag_id;
+            }
+            if (teamID.Equals(""))
             {
                 Log.Error("你设置了{Site}的发布身份为{Team},但是你的账户中没有这个身份。", site, template.Name);
                 return new(500, "Cannot find your team number." + raw, false);
             }
+
             Log.Debug("{Site} login success", site);
             return new(200, "Success", true);
         }
@@ -101,7 +105,7 @@ namespace OKP.Core.Interface.Bangumi
                 introduction = template.Content ?? "",
                 tag_ids = new string[] { tagID },
                 team_id = teamID,
-                teamsync = "0",
+                // teamsync = "0",
                 file_id = fileId,
             };
             var reponse = await httpClient.PostAsJsonAsyncWithRetry(postUrl, addRequest);
