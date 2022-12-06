@@ -86,10 +86,11 @@ One-Key-Publish，一键发布 Torrent 到常见 BT 站。
 可以使用它来指定一些不方便写在 setting 中的敏感信息，现在支持 `cookie`、`user_agent`、`proxy`。二者同时指定时，userprop 中的数据会覆盖 setting 的数据。
 
 1. `cookie`
-    - dmhy: `"pass=xxx; rsspass=xxx; tid=x; uname=xxx; uid=xxx"`
+    - dmhy: `pass=xxx; rsspass=xxx; tid=x; uname=xxx; uid=xxx`
     - nyaa: `session=xxx`
     - acgrip: `remember_user_token=xxx`
     - acgnx 站点使用 api 的 token
+    - bangumi: `koa:sess=xxx; koa:sess.sig=xxx`
 2. 想要替换 / 指定的配置需要与 setting 中的 `site` 和 `name` 相同
 
 ## 支持站点
@@ -103,10 +104,11 @@ One-Key-Publish，一键发布 Torrent 到常见 BT 站。
 [ACG.RIP](https://share.dmhy.org/) | acgrip | [.bbcode](https://github.com/AmusementClub/OKP/blob/master/OKP.Core/example/acgrip.bbcode)
 [末日動漫資源庫](https://share.acgnx.se/) | acgnx_asia | [.html](https://github.com/AmusementClub/OKP/blob/master/OKP.Core/example/dmhy.html)
 [AcgnX Torrent Global](https://www.acgnx.se/) | acgnx_global | [.html](https://github.com/AmusementClub/OKP/blob/master/OKP.Core/example/dmhy.html)
-*[萌番组](https://bangumi.moe/)*  *TODO*
+[萌番组](https://bangumi.moe/) | bangumi | [.html](https://github.com/AmusementClub/OKP/blob/master/OKP.Core/example/dmhy.html)
 
 最新支持站点请看 [这](https://github.com/AmusementClub/OKP/blob/master/OKP.Core/Utils/Constants.cs#L8)
 
 注：
 1. acgrip cookie 失效后会刷新，退出登录疑似会直接失效，ua 不同也会登录失败
 2. acgnx 站点登录可能会被 Cloudflare 风控，鉴于其站点会同步 nyaa、dmhy、acgrip 的种子，可以选择不使用其上传
+3. 萌番组暂不支持自定义TAG，目前仅支持 *Team ID* 和 *动画* 两个TAG

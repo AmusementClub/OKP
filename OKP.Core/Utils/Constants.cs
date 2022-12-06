@@ -5,8 +5,8 @@ public static class Constants
     public const string DefaultSettingFileName = "setting.toml";
     public const string DefaultLogFileName = "log.txt";
     public const string UserPropertiesFileName = "OKP_userprop.toml";
-    public static readonly string[] SupportSiteName = { "nyaa", "dmhy", "acgrip", "acgnx_asia", "acgnx_global" };
-    
+    public static readonly string[] SupportSiteName = { "nyaa", "dmhy", "acgrip", "acgnx_asia", "acgnx_global", "bangumi" };
+
     public enum categoryAcgnxAsia : ushort
     {
         Anime = 1,

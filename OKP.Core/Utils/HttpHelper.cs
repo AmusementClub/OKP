@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http.Json;
 using System.Reflection.Metadata;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using OKP.Core.Interface;
 using Polly;
@@ -24,6 +26,10 @@ namespace OKP.Core.Utils
         public static Task<HttpResponseMessage> GetAsyncWithRetry(this HttpClient httpClient, string? uri)
         {
             return policy.ExecuteAsync(() => httpClient.GetAsync(uri));
+        }
+        public static Task<HttpResponseMessage> PostAsJsonAsyncWithRetry<TValue>(this HttpClient httpClient, string? uri, TValue content, JsonSerializerOptions? options = null, CancellationToken cancellationToken = default)
+        {
+            return policy.ExecuteAsync(() => httpClient.PostAsJsonAsync(uri, content, options, cancellationToken));
         }
     }
 }
