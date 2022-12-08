@@ -100,19 +100,19 @@ namespace OKP.Core.Interface.Bangumi
                 Log.Fatal("{Site} torrent.Data is null", site);
                 throw new NotImplementedException();
             }
-            BangumiModels.AddRequest addRequest = new()
+            AddRequest addRequest = new()
             {
                 category_tag_id = "549ef207fe682f7549f1ea90",
                 title = torrent.DisplayName ?? "",
                 introduction = template.Content ?? "",
                 tag_ids = new string[] { tagID },
                 team_id = teamID,
-                // teamsync = "0",
+                teamsync = false,
                 file_id = fileId,
             };
             var reponse = await httpClient.PostAsJsonAsyncWithRetry(postUrl, addRequest);
             var raw = await reponse.Content.ReadAsStringAsync();
-            var result = await reponse.Content.ReadFromJsonAsync<BangumiModels.AddResponse>();
+            var result = await reponse.Content.ReadFromJsonAsync<AddResponse>();
             if (!reponse.IsSuccessStatusCode || result == null)
             {
                 Log.Error("{Site} upload failed. Unknown reson. {NewLine} {Raw}", site, Environment.NewLine, raw);
@@ -138,7 +138,7 @@ namespace OKP.Core.Interface.Bangumi
                 {new StringContent(teamID),"team_i" }
             };
             var response = await httpClient.PostAsyncWithRetry(uploadUrl, form);
-            var result = await response.Content.ReadFromJsonAsync<BangumiModels.UploadResponse>();
+            var result = await response.Content.ReadFromJsonAsync<UploadResponse>();
             if (result == null || !result.success || result.file_id == null)
             {
                 throw new HttpRequestException("Failed to upload torrent file");
