@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Reflection.Metadata;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using OKP.Core.Interface;
 using Polly;
@@ -14,6 +16,7 @@ namespace OKP.Core.Utils
 {
     internal static class HttpHelper
     {
+        public static CookieContainer GlobalCookieContainer = new ();
         private static readonly AsyncRetryPolicy<HttpResponseMessage> policy = HttpPolicyExtensions
                 .HandleTransientHttpError()
                 .WaitAndRetryAsync(5, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)));
@@ -24,6 +27,23 @@ namespace OKP.Core.Utils
         public static Task<HttpResponseMessage> GetAsyncWithRetry(this HttpClient httpClient, string? uri)
         {
             return policy.ExecuteAsync(() => httpClient.GetAsync(uri));
+        }
+        public static void LoadFromJson(this CookieContainer cookieContainer, string? jsonPath)
+        {
+            if (!File.Exists(jsonPath))
+            {
+                throw new FileNotFoundException(jsonPath);
+            }
+            var cookieCollection = JsonSerializer.Deserialize<CookieCollection>(File.ReadAllText(jsonPath));
+            if (cookieCollection != null)
+            {
+                cookieContainer.Add(cookieCollection);
+            }
+        }
+        public static void SaveToJson(this CookieContainer cookieContainer, string jsonPath)
+        {
+            var jsontext = JsonSerializer.Serialize(cookieContainer.GetAllCookies());
+            File.WriteAllText(jsonPath, jsontext);
         }
     }
 }

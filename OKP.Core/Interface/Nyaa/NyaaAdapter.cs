@@ -15,7 +15,6 @@ namespace OKP.Core.Interface.Nyaa
     internal class NyaaAdapter : AdapterBase
     {
         private readonly HttpClient httpClient;
-        private readonly CookieContainer cookieContainer;
         private readonly Template template;
         private readonly TorrentContent torrent;
         private readonly Regex cookieReg = new(@"session=([a-zA-Z0-9|\.|_|-]+)");
@@ -27,10 +26,9 @@ namespace OKP.Core.Interface.Nyaa
         const string site = "nyaa";
         public NyaaAdapter(TorrentContent torrent, Template template)
         {
-            cookieContainer = new();
             var httpClientHandler = new HttpClientHandler()
             {
-                CookieContainer = cookieContainer,
+                CookieContainer = HttpHelper.GlobalCookieContainer,
                 AllowAutoRedirect = false
             };
             httpClient = new(httpClientHandler)
@@ -52,7 +50,6 @@ namespace OKP.Core.Interface.Nyaa
                 IOHelper.ReadLine();
                 return;
             }
-            cookieContainer.Add(new Cookie("session", match.Groups[1].Value, "/", "nyaa.si"));
 
             if (template.Proxy is not null)
             {
@@ -61,8 +58,6 @@ namespace OKP.Core.Interface.Nyaa
                     BypassOnLocal: false);
                 httpClientHandler.UseProxy = true;
             }
-
-            httpClient.DefaultRequestHeaders.Add("user-agent", template.UserAgent);
             if (!Valid())
             {
                 IOHelper.ReadLine();
@@ -88,7 +83,7 @@ namespace OKP.Core.Interface.Nyaa
             }
             foreach (var cookieHeader in pingReq.Headers.GetValues("Set-Cookie"))
             {
-                cookieContainer.SetCookies(baseUrl, cookieHeader);
+                HttpHelper.GlobalCookieContainer.SetCookies(baseUrl, cookieHeader);
             }
             Log.Debug("{Site} login success.", site);
             return new(200, "Success", true);
