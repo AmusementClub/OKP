@@ -102,7 +102,7 @@ namespace OKP.Core.Interface.Bangumi
             }
             AddRequest addRequest = new()
             {
-                category_tag_id = "549ef207fe682f7549f1ea90",
+                category_tag_id = torrent.IsFinished ? "54967e14ff43b99e284d0bf7": "549ef207fe682f7549f1ea90",
                 title = torrent.DisplayName ?? "",
                 introduction = template.Content ?? "",
                 tag_ids = new string[] { tagID },
