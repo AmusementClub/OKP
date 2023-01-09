@@ -139,9 +139,23 @@ namespace OKP.Core.Interface.Bangumi
             };
             var response = await httpClient.PostAsyncWithRetry(uploadUrl, form);
             var result = await response.Content.ReadFromJsonAsync<UploadResponse>();
-            if (result == null || !result.success || result.file_id == null)
+            try
             {
-                throw new HttpRequestException("Failed to upload torrent file");
+                if (result == null || !result.success || result.file_id == null)
+                {
+                    throw new HttpRequestException("Failed to upload torrent file");
+                }
+            }
+            catch (HttpRequestException)
+            {
+                Log.Debug("{Site} 发布频率限制，先等 1 分钟", site);
+                Thread.Sleep(60000);
+                response = await httpClient.PostAsyncWithRetry(uploadUrl, form);
+                result = await response.Content.ReadFromJsonAsync<UploadResponse>();
+                if (result == null || !result.success || result.file_id == null)
+                {
+                    throw new HttpRequestException("Failed to upload torrent file");
+                }
             }
             return result.file_id;
         }
