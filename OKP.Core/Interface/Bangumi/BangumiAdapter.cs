@@ -105,7 +105,7 @@ namespace OKP.Core.Interface.Bangumi
                 category_tag_id = torrent.IsFinished ? "54967e14ff43b99e284d0bf7": "549ef207fe682f7549f1ea90",
                 title = torrent.DisplayName ?? "",
                 introduction = template.Content ?? "",
-                tag_ids = new string[] { tagID },
+                tag_ids = new string[] { tagID, "549ef207fe682f7549f1ea90" },
                 team_id = teamID,
                 teamsync = false,
                 file_id = fileId,
