@@ -17,17 +17,48 @@ namespace OKP.Core.Utils
 {
     internal static class HttpHelper
     {
-        public static CookieContainer GlobalCookieContainer = new ();
+        public static CookieContainer GlobalCookieContainer = new();
         private static readonly AsyncRetryPolicy<HttpResponseMessage> policy = HttpPolicyExtensions
                 .HandleTransientHttpError()
                 .WaitAndRetryAsync(5, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)));
-        public static Task<HttpResponseMessage> PostAsyncWithRetry(this HttpClient httpClient, string? uri, HttpContent? content)
+        public static async Task<HttpResponseMessage> PostAsyncWithRetry(this HttpClient httpClient, string? uri, HttpContent? content)
         {
-            return policy.ExecuteAsync(() => httpClient.PostAsync(uri, content));
+            if (httpClient.BaseAddress is null)
+            {
+                throw new NotImplementedException("httpClient.BaseAddress is null");
+            }
+            var res = await policy.ExecuteAsync(() => httpClient.PostAsync(uri, content));
+            foreach (var cookieHeader in res.Headers.GetValues("Set-Cookie"))
+            {
+                GlobalCookieContainer.SetCookies(httpClient.BaseAddress, cookieHeader);
+            }
+            return res;
         }
-        public static Task<HttpResponseMessage> GetAsyncWithRetry(this HttpClient httpClient, string? uri)
+        public static async Task<HttpResponseMessage> GetAsyncWithRetry(this HttpClient httpClient, string? uri)
         {
-            return policy.ExecuteAsync(() => httpClient.GetAsync(uri));
+            if (httpClient.BaseAddress is null)
+            {
+                throw new NotImplementedException("httpClient.BaseAddress is null");
+            }
+            var res = await policy.ExecuteAsync(() => httpClient.GetAsync(uri));
+            foreach (var cookieHeader in res.Headers.GetValues("Set-Cookie"))
+            {
+                GlobalCookieContainer.SetCookies(httpClient.BaseAddress, cookieHeader);
+            }
+            return res;
+        }
+        public static async Task<HttpResponseMessage> PostAsJsonAsyncWithRetry<TValue>(this HttpClient httpClient, string? uri, TValue content, JsonSerializerOptions? options = null, CancellationToken cancellationToken = default)
+        {
+            if (httpClient.BaseAddress is null)
+            {
+                throw new NotImplementedException("httpClient.BaseAddress is null");
+            }
+            var res = await policy.ExecuteAsync(() => httpClient.PostAsJsonAsync(uri, content, options, cancellationToken));
+            foreach (var cookieHeader in res.Headers.GetValues("Set-Cookie"))
+            {
+                GlobalCookieContainer.SetCookies(httpClient.BaseAddress, cookieHeader);
+            }
+            return res;
         }
         public static void LoadFromJson(this CookieContainer cookieContainer, string? jsonPath)
         {
@@ -43,12 +74,8 @@ namespace OKP.Core.Utils
         }
         public static void SaveToJson(this CookieContainer cookieContainer, string jsonPath)
         {
-            var jsontext = JsonSerializer.Serialize(cookieContainer.GetAllCookies());
+            var jsontext = JsonSerializer.Serialize(cookieContainer.GetAllCookies(), new JsonSerializerOptions() { WriteIndented = true });
             File.WriteAllText(jsonPath, jsontext);
-        }
-        public static Task<HttpResponseMessage> PostAsJsonAsyncWithRetry<TValue>(this HttpClient httpClient, string? uri, TValue content, JsonSerializerOptions? options = null, CancellationToken cancellationToken = default)
-        {
-            return policy.ExecuteAsync(() => httpClient.PostAsJsonAsync(uri, content, options, cancellationToken));
         }
     }
 }

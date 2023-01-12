@@ -36,9 +36,6 @@ namespace OKP.Core.Interface.Dmhy
             };
             this.template = template;
             this.torrent = torrent;
-            httpClient.DefaultRequestHeaders.Add("user-agent", template.UserAgent);
-            httpClient.DefaultRequestHeaders.Add("Cookie", template.Cookie);
-            httpClient.BaseAddress = new(baseUrl);
 
             if (template.Proxy is not null)
             {

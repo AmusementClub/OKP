@@ -67,7 +67,7 @@ namespace OKP.Core.Interface.Nyaa
 
         public override async Task<HttpResult> PingAsync()
         {
-            var pingReq = await httpClient.GetAsync(pingUrl);
+            var pingReq = await httpClient.GetAsyncWithRetry(pingUrl);
             var raw = await pingReq.Content.ReadAsStringAsync();
             if (!pingReq.IsSuccessStatusCode)
             {
@@ -80,10 +80,6 @@ namespace OKP.Core.Interface.Nyaa
             {
                 Log.Error("{Site} login failed", site);
                 return new(403, "Login failed" + raw, false);
-            }
-            foreach (var cookieHeader in pingReq.Headers.GetValues("Set-Cookie"))
-            {
-                HttpHelper.GlobalCookieContainer.SetCookies(baseUrl, cookieHeader);
             }
             Log.Debug("{Site} login success.", site);
             return new(200, "Success", true);

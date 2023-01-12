@@ -30,8 +30,11 @@ namespace OKP.Core.Interface.Acgnx
                     baseUrl = "https://www.acgnx.se/";
                     break;
             }
-
-            var httpClientHandler = new HttpClientHandler() { };
+            var httpClientHandler = new HttpClientHandler()
+            {
+                CookieContainer = HttpHelper.GlobalCookieContainer,
+                AllowAutoRedirect = false
+            };
             httpClient = new(httpClientHandler)
             {
                 BaseAddress = new(baseUrl)
@@ -88,7 +91,7 @@ namespace OKP.Core.Interface.Acgnx
 
         public override async Task<HttpResult> PingAsync()
         {
-            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, apiUrl);
+            HttpRequestMessage request = new(HttpMethod.Post, apiUrl);
             request.Content = new MultipartFormDataContent()
             {
                 { new StringContent("upload"), "mod" },

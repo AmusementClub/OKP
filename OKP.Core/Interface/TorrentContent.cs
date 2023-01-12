@@ -15,6 +15,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Tomlyn;
+using System.Net;
 
 namespace OKP.Core.Interface
 {
@@ -56,6 +57,7 @@ namespace OKP.Core.Interface
         public string? SettingPath { get; set; }
         public bool HasSubtitle { get; set; }
         public bool IsFinished { get; set; }
+        public string? CookiePath { get; set; }
         public class Template
         {
             public string? Site { get; set; }
@@ -82,6 +84,14 @@ namespace OKP.Core.Interface
 
             var torrentC = Toml.ToModel<TorrentContent>(File.ReadAllText(settingFilePath));
             torrentC.SettingPath = Path.GetDirectoryName(settingFilePath);
+            if (!File.Exists(torrentC.CookiePath))
+            {
+                Log.Error("没有设置Cookie");
+                IOHelper.ReadLine();
+                throw new IOException();
+            }
+            HttpHelper.GlobalCookieContainer = new();
+            HttpHelper.GlobalCookieContainer.LoadFromJson(torrentC.CookiePath);
             if (torrentC.DisplayName is null)
             {
                 Log.Error("没有配置标题");
@@ -200,7 +210,7 @@ namespace OKP.Core.Interface
                 throw new ArgumentNullException(nameof(Data.TorrentObject));
             }
             StringBuilder fileList = new();
-            
+
             Node rootNode = Data.TorrentObject.FileMode == TorrentFileMode.Multi ? new Node(Data.TorrentObject.Files) : new Node(Data.TorrentObject.File);
             foreach (var line in Node.GetFileTree(rootNode))
             {

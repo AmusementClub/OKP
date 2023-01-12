@@ -138,6 +138,7 @@ namespace OKP.Core
                 }
             }
             Log.Information("发布完成");
+            HttpHelper.GlobalCookieContainer.SaveToJson(torrent.CookiePath ?? "cookie.json");
             IOHelper.ReadLine();
         }
     }
