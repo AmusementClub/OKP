@@ -90,7 +90,6 @@ namespace OKP.Core.Interface
                 IOHelper.ReadLine();
                 throw new IOException();
             }
-            HttpHelper.GlobalCookieContainer = new();
             HttpHelper.GlobalCookieContainer.LoadFromJson(torrentC.CookiePath);
             if (torrentC.DisplayName is null)
             {
