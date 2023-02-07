@@ -42,19 +42,6 @@ namespace OKP.Core.Interface.Acgnx
             this.template = template;
             this.torrent = torrent;
 
-            if (template.Cookie == null || template.Cookie.Length == 0)
-            {
-                Log.Error("Empty {Site} cookie (api_token)", site);
-                IOHelper.ReadLine();
-                return;
-            }
-            else if (template.Cookie.Length != 40)
-            {
-                Log.Error("Error {Site} cookie (api_token) length, it must equal to 40", site);
-                IOHelper.ReadLine();
-                return;
-            }
-
             if (torrent.DisplayName == null || torrent.DisplayName.Length <= 1 || torrent.DisplayName.Length >= 400)
             {
                 Log.Error("Error {Site} displayname length, it must between 1 and 400", site);

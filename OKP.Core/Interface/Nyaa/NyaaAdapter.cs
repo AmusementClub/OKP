@@ -37,19 +37,6 @@ namespace OKP.Core.Interface.Nyaa
             };
             this.template = template;
             this.torrent = torrent;
-            if (template.Cookie is null)
-            {
-                Log.Error("Empty {Site} cookie", site);
-                IOHelper.ReadLine();
-                return;
-            }
-            var match = cookieReg.Match(template.Cookie);
-            if (!match.Success)
-            {
-                Log.Error("Wrong {Site} cookie", site);
-                IOHelper.ReadLine();
-                return;
-            }
 
             if (template.Proxy is not null)
             {
