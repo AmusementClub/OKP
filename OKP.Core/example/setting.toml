@@ -3,6 +3,7 @@ display_name="[银色子弹字幕组&LoliHouse] 名侦探柯南 犯人犯泽 / D
 group_name="[银色子弹字幕组&LoliHouse]"
 poster="https://p.sda1.dev/7/d35d6f7e8f7673cd80fcf0399a4dfba4/20221014232304.jpg"
 about="https://hanzawasan-file.com/"
+# CookiePath="C:\\Full\\path\\to\\cookie.txt"
 # Use ''' to avoid escape
 filename_regex='''- (?<ep>03) \['''
 resolution_regex='''\]\[WebRip (?<res>\d{3}|\d{4})p\]\['''
@@ -12,9 +13,6 @@ is_finished=false
 [[intro_template]]
 site="dmhy"
 name="LoliHouse"
-# Use your own cookie
-cookie="pass=xxx; rsspass=xxx; tid=x; uname=xxx; uid=xxx"
-user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.0.0 Safari/537.36"
 # You can use relative html file path, absolute html file path or raw html content.
 content="dmhy.html"
 # content='''D:\Users\Source\Repos\OKP\OKP.Core\example\dmhy.html'''
@@ -44,8 +42,6 @@ content="dmhy.html"
 site="nyaa"
 name="LoliHouse"
 # Use your own cookie
-cookie="session=xxx"
-user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.0.0 Safari/537.36"
 content="nyaa.md"
 proxy="http://127.0.0.1:7890"  # Not necessary
 # content='''D:\Users\Source\Repos\OKP\OKP.Core\example\nyaa.md''''
@@ -89,8 +85,6 @@ proxy="http://127.0.0.1:7890"  # Not necessary
 [[intro_template]]
 site="bangumi"
 name="LoliHouse"
-cookie="koa:sess=xxx; koa:sess.sig=xxx"
-user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36"
 # content='''E:\dmhy.html'''
 content='''
 <p><img src="https://p.sda1.dev/7/d35d6f7e8f7673cd80fcf0399a4dfba4/20221014232304.jpg" alt="alt" style="width:590px;height:728.655px" /></p>
