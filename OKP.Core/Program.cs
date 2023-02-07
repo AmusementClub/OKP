@@ -10,6 +10,7 @@ using OKP.Core.Utils;
 using OKP.Core.Interface.Acgrip;
 using OKP.Core.Interface.Acgnx;
 using Constants = OKP.Core.Utils.Constants;
+using System.Net.Http;
 
 namespace OKP.Core
 {
@@ -74,13 +75,13 @@ namespace OKP.Core
                            }
                            else
                            {
-                               if (File.Exists("cookie.json"))
+                               if (File.Exists("cookie.txt"))
                                {
-                                   HttpHelper.GlobalCookieContainer.LoadFromJson("cookie.json");
+                                   HttpHelper.GlobalCookieContainer.LoadFromTxt("cookie.txt");
                                }
                                Log.Information("正在添加Cookie文件{File}", file);
                                AddCookies(file);
-                               HttpHelper.GlobalCookieContainer.SaveToJson("cookie.json");
+                               HttpHelper.GlobalCookieContainer.SaveToTxt("cookie.txt");
                                Log.Information("Cookie文件{File}添加完成", file);
                                IOHelper.ReadLine();
                            }
@@ -158,7 +159,7 @@ namespace OKP.Core
                 }
             }
             Log.Information("发布完成");
-            HttpHelper.GlobalCookieContainer.SaveToJson(torrent.CookiePath ?? "cookie.json");
+            HttpHelper.GlobalCookieContainer.SaveToTxt(torrent.CookiePath ?? "cookie.txt");
             IOHelper.ReadLine();
         }
         private static void AddCookies(string file)
@@ -182,7 +183,6 @@ namespace OKP.Core
                     $"path={cookie[2]}" +
                     $"{(cookie[3].ToLower() == "ture" ? "; secure" : "")}");
             }
-
         }
         /// <summary>
         /// Convert Unix time value to a DateTime object.

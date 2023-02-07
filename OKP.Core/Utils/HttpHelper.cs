@@ -1,14 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
+﻿using System.Net;
 using System.Net.Http.Json;
-using System.Reflection.Metadata;
-using System.Runtime.CompilerServices;
 using System.Text;
-using System.Text.Json;
-using System.Threading.Tasks;
-using OKP.Core.Interface;
 using Polly;
 using Polly.Extensions.Http;
 using Polly.Retry;
@@ -28,10 +20,14 @@ namespace OKP.Core.Utils
                 throw new NotImplementedException("httpClient.BaseAddress is null");
             }
             var res = await policy.ExecuteAsync(() => httpClient.PostAsync(uri, content));
-            foreach (var cookieHeader in res.Headers.GetValues("Set-Cookie"))
+            try
             {
-                GlobalCookieContainer.SetCookies(httpClient.BaseAddress, cookieHeader);
+                foreach (var cookieHeader in res.Headers.GetValues("Set-Cookie"))
+                {
+                    GlobalCookieContainer.SetCookies(httpClient.BaseAddress, cookieHeader);
+                }
             }
+            catch { }
             return res;
         }
         public static async Task<HttpResponseMessage> GetAsyncWithRetry(this HttpClient httpClient, string? uri)
@@ -41,41 +37,65 @@ namespace OKP.Core.Utils
                 throw new NotImplementedException("httpClient.BaseAddress is null");
             }
             var res = await policy.ExecuteAsync(() => httpClient.GetAsync(uri));
-            foreach (var cookieHeader in res.Headers.GetValues("Set-Cookie"))
+            try
             {
-                GlobalCookieContainer.SetCookies(httpClient.BaseAddress, cookieHeader);
+                foreach (var cookieHeader in res.Headers.GetValues("Set-Cookie"))
+                {
+                    GlobalCookieContainer.SetCookies(httpClient.BaseAddress, cookieHeader);
+                }
             }
+            catch { }
             return res;
         }
-        public static async Task<HttpResponseMessage> PostAsJsonAsyncWithRetry<TValue>(this HttpClient httpClient, string? uri, TValue content, JsonSerializerOptions? options = null, CancellationToken cancellationToken = default)
+        public static async Task<HttpResponseMessage> PostAsJsonAsyncWithRetry<TValue>(this HttpClient httpClient, string? uri, TValue content, CancellationToken cancellationToken = default)
         {
             if (httpClient.BaseAddress is null)
             {
                 throw new NotImplementedException("httpClient.BaseAddress is null");
             }
-            var res = await policy.ExecuteAsync(() => httpClient.PostAsJsonAsync(uri, content, options, cancellationToken));
-            foreach (var cookieHeader in res.Headers.GetValues("Set-Cookie"))
+            var res = await policy.ExecuteAsync(() => httpClient.PostAsJsonAsync(uri, content, cancellationToken));
+            try
             {
-                GlobalCookieContainer.SetCookies(httpClient.BaseAddress, cookieHeader);
+                foreach (var cookieHeader in res.Headers.GetValues("Set-Cookie"))
+                {
+                    GlobalCookieContainer.SetCookies(httpClient.BaseAddress, cookieHeader);
+                }
             }
+            catch { }
             return res;
         }
-        public static void LoadFromJson(this CookieContainer cookieContainer, string? jsonPath)
+        public static void LoadFromTxt(this CookieContainer cookieContainer, string? txtPath)
         {
-            if (!File.Exists(jsonPath))
+            if (!File.Exists(txtPath))
             {
-                throw new FileNotFoundException(jsonPath);
+                throw new FileNotFoundException(txtPath);
             }
-            var cookieCollection = JsonSerializer.Deserialize<CookieCollection>(File.ReadAllText(jsonPath));
-            if (cookieCollection != null)
+            var jsontext = File.ReadAllLines(txtPath);
+            foreach (var line in jsontext)
             {
-                cookieContainer.Add(cookieCollection);
+                var e = line.Split("\t");
+                cookieContainer.SetCookies(new(e[0]), e[1]);
             }
         }
-        public static void SaveToJson(this CookieContainer cookieContainer, string jsonPath)
+        public static void SaveToTxt(this CookieContainer cookieContainer, string txtPath)
         {
-            var jsontext = JsonSerializer.Serialize(cookieContainer.GetAllCookies(), new JsonSerializerOptions() { WriteIndented = true });
-            File.WriteAllText(jsonPath, jsontext);
+            var jsontext = CookieToString(cookieContainer.GetAllCookies());
+            File.WriteAllText(txtPath, jsontext);
+        }
+
+        private static string CookieToString(CookieCollection cookieCollection)
+        {
+            StringBuilder stringBuilder = new();
+            foreach (var cookie in cookieCollection.ToList())
+            {
+                stringBuilder.Append($"https://{cookie.Domain.TrimStart('.')}\t");
+                stringBuilder.AppendLine($"{cookie.Name}={cookie.Value}; " +
+                    $"domain={cookie.Domain}; " +
+                    $"path={cookie.Path}; " +
+                    $"expires={cookie.Expires.ToString("R")}" +
+                    $"{(cookie.Secure ? "; secure" : "")}");
+            }
+            return stringBuilder.ToString();
         }
     }
 }

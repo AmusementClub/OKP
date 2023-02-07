@@ -37,7 +37,7 @@ namespace OKP.Core.Interface.Nyaa
             };
             this.template = template;
             this.torrent = torrent;
-
+            httpClient.DefaultRequestHeaders.Add("user-agent", template.UserAgent);
             if (template.Proxy is not null)
             {
                 httpClientHandler.Proxy = new WebProxy(
