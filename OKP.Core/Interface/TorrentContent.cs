@@ -16,6 +16,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Tomlyn;
 using System.Net;
+using BencodeNET.IO;
 
 namespace OKP.Core.Interface
 {
@@ -58,6 +59,7 @@ namespace OKP.Core.Interface
         public bool HasSubtitle { get; set; }
         public bool IsFinished { get; set; }
         public string? CookiePath { get; set; }
+        public List<ContentTypes>? Tags { get; set; }
         public class Template
         {
             public string? Site { get; set; }
@@ -66,6 +68,30 @@ namespace OKP.Core.Interface
             public string? Cookie { get; set; }
             public string? UserAgent { get; set; }
             public string? Proxy { get; set; }
+        }
+        public enum ContentTypes
+        {
+            Anime,
+            Music,
+            Live,
+            Picture,
+            Software,
+            Apps,
+            Game,
+            Others,
+            MV,
+            English,
+            TV,
+            Movie,
+            Collection,
+            Raw,
+            Lossless,
+            Lossy,
+            Literature,
+            Idol,
+            Show,
+            Graphics,
+            Photos
         }
         public static TorrentContent Build(string filename, string settingFile, string appLocation)
         {
@@ -208,7 +234,7 @@ namespace OKP.Core.Interface
                 throw new ArgumentNullException(nameof(Data.TorrentObject));
             }
             StringBuilder fileList = new();
-
+            
             Node rootNode = Data.TorrentObject.FileMode == TorrentFileMode.Multi ? new Node(Data.TorrentObject.Files) : new Node(Data.TorrentObject.File);
             foreach (var line in Node.GetFileTree(rootNode))
             {

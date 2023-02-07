@@ -3,6 +3,7 @@ using OKP.Core.Utils;
 using Serilog;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -23,6 +24,7 @@ namespace OKP.Core.Interface.Nyaa
         private readonly Uri baseUrl = new("https://nyaa.si/");
         private readonly string pingUrl = "upload";
         private readonly string postUrl = "upload";
+        private string? category;
         const string site = "nyaa";
         public NyaaAdapter(TorrentContent torrent, Template template)
         {
@@ -45,6 +47,9 @@ namespace OKP.Core.Interface.Nyaa
                     BypassOnLocal: false);
                 httpClientHandler.UseProxy = true;
             }
+
+            httpClient.DefaultRequestHeaders.Add("user-agent", template.UserAgent);
+            category = CastCategory(torrent.Tags);
             if (!Valid())
             {
                 IOHelper.ReadLine();
@@ -84,7 +89,7 @@ namespace OKP.Core.Interface.Nyaa
             {
                 { torrent.Data.ByteArrayContent, "torrent_file", torrent.Data.FileInfo.Name},
                 { new StringContent(torrent.DisplayName??""), "display_name" },
-                { new StringContent(torrent.HasSubtitle ? "1_3": "1_4"), "category" },
+                { new StringContent(category??"3_2"), "category" },
                 { new StringContent(torrent.About??""), "information" },
                 { new StringContent(template.Content??""), "description" },
             };
@@ -144,6 +149,83 @@ namespace OKP.Core.Interface.Nyaa
                 }
             }
             return true;
+        }
+
+        static private string CastCategory(List<ContentTypes>? tags)
+        {
+            if (tags == null)
+            {
+                return "3_2";
+            }
+            if (tags.Contains(ContentTypes.Anime))
+            {
+                if (tags.Contains(ContentTypes.MV))
+                {
+                    if (tags.Contains(ContentTypes.English))
+                    {
+                        return "1_2";
+                    }
+                    return "1_1";
+                }
+                if (tags.Contains(ContentTypes.Raw))
+                {
+                    return "1_4";
+                }
+                return "1_3";
+            }
+            if (tags.Contains(ContentTypes.Music))
+            {
+                if (tags.Contains(ContentTypes.Lossless))
+                {
+                    return "2_1";
+                }
+                return "2_2";
+            }
+            if (tags.Contains(ContentTypes.Literature))
+            {
+                if (tags.Contains(ContentTypes.English))
+                {
+                    return "3_1";
+                }
+                if (tags.Contains(ContentTypes.Raw))
+                {
+                    return "3_3";
+                }
+                return "3_2";
+            }
+            if (tags.Contains(ContentTypes.Live))
+            {
+                if (tags.Contains(ContentTypes.Idol))
+                {
+                    return "4_2";
+                }
+                if (tags.Contains(ContentTypes.Raw))
+                {
+                    return "4_4";
+                }
+                if (tags.Contains(ContentTypes.English))
+                {
+                    return "4_1";
+                }
+                return "4_3";
+            }
+            if (tags.Contains(ContentTypes.Picture))
+            {
+                if (tags.Contains(ContentTypes.Graphics))
+                {
+                    return "5_1";
+                }
+                return "5_2";
+            }
+            if (tags.Contains(ContentTypes.Apps))
+            {
+                return "6_1";
+            }
+            if (tags.Contains(ContentTypes.Game))
+            {
+                return "6_2";
+            }
+            return "3_2";
         }
     }
 }
