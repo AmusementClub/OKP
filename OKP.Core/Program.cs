@@ -20,7 +20,7 @@ namespace OKP.Core
 
         private class Options
         {
-            [Value(0, Min = 1, Required = true, MetaName = "torrent", HelpText = "Torrents to be published.")]
+            [Value(0, Min = 1, Required = true, MetaName = "torrent", HelpText = "Torrents to be published.(Or Cookie file exported by Get Cookies.txt.)")]
             public IEnumerable<string>? TorrentFile { get; set; }
             [Option('s', "setting", Required = false, Default = Constants.DefaultSettingFileName, HelpText = "(Not required) Specific setting file.")]
             public string SettingFile { get; set; }
@@ -73,7 +73,7 @@ namespace OKP.Core
                                Log.Information("正在发布 {File}", file);
                                SinglePublish(file, o.SettingFile);
                            }
-                           else
+                           else if(file.EndsWith(".txt"))
                            {
                                if (File.Exists("cookie.txt"))
                                {
@@ -84,6 +84,10 @@ namespace OKP.Core
                                HttpHelper.GlobalCookieContainer.SaveToTxt("cookie.txt");
                                Log.Information("Cookie文件{File}添加完成", file);
                                IOHelper.ReadLine();
+                           }
+                           else
+                           {
+                               Log.Error("不受支持的文件格式{file}", file);
                            }
                        }
                    });
