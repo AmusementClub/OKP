@@ -62,8 +62,28 @@ namespace OKP.Core
                        }
                        foreach (var file in o.TorrentFile)
                        {
-                           Log.Information("正在发布 {File}", file);
-                           SinglePublish(file, o.SettingFile);
+                           if (!File.Exists(file))
+                           {
+                               Log.Error("文件{file}不存在", file);
+                               continue;
+                           }
+                           if (file.EndsWith(".torrent"))
+                           {
+                               Log.Information("正在发布 {File}", file);
+                               SinglePublish(file, o.SettingFile);
+                           }
+                           else
+                           {
+                               if (File.Exists("cookie.json"))
+                               {
+                                   HttpHelper.GlobalCookieContainer.LoadFromJson("cookie.json");
+                               }
+                               Log.Information("正在添加Cookie文件{File}", file);
+                               AddCookies(file);
+                               HttpHelper.GlobalCookieContainer.SaveToJson("cookie.json");
+                               Log.Information("Cookie文件{File}添加完成", file);
+                               IOHelper.ReadLine();
+                           }
                        }
                    });
         }
@@ -140,6 +160,40 @@ namespace OKP.Core
             Log.Information("发布完成");
             HttpHelper.GlobalCookieContainer.SaveToJson(torrent.CookiePath ?? "cookie.json");
             IOHelper.ReadLine();
+        }
+        private static void AddCookies(string file)
+        {
+            var content = File.ReadAllLines(file);
+            foreach (var line in content)
+            {
+                if (line.StartsWith('#') || line.Length == 0)
+                {
+                    continue;
+                }
+                var cookie = line.Split('\t');
+                Log.Debug("{domain}:{cookies}", $"https://{cookie[0].TrimStart('.')}",
+                    $"{cookie[5]}={cookie[6]}; " +
+                    $"expires={UnixTimeToDateTime(long.Parse(cookie[4])):R}; " +
+                    $"path={cookie[2]}" +
+                    $"{(cookie[3].ToLower() == "ture" ? "; secure" : "")}");
+                HttpHelper.GlobalCookieContainer.SetCookies(new($"https://{cookie[0].TrimStart('.')}"),
+                    $"{cookie[5]}={cookie[6]}; " +
+                    $"expires={UnixTimeToDateTime(long.Parse(cookie[4])):R}; " +
+                    $"path={cookie[2]}" +
+                    $"{(cookie[3].ToLower() == "ture" ? "; secure" : "")}");
+            }
+
+        }
+        /// <summary>
+        /// Convert Unix time value to a DateTime object.
+        /// </summary>
+        /// <param name="unixtime">The Unix time stamp you want to convert to DateTime.</param>
+        /// <returns>Returns a DateTime object that represents value of the Unix time.</returns>
+        private static DateTime UnixTimeToDateTime(long unixtime)
+        {
+            System.DateTime dtDateTime = new(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+            dtDateTime = dtDateTime.AddSeconds(unixtime).ToLocalTime();
+            return dtDateTime;
         }
     }
 }
