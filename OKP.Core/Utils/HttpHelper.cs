@@ -13,55 +13,34 @@ namespace OKP.Core.Utils
         private static readonly AsyncRetryPolicy<HttpResponseMessage> policy = HttpPolicyExtensions
                 .HandleTransientHttpError()
                 .WaitAndRetryAsync(5, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)));
-        public static async Task<HttpResponseMessage> PostAsyncWithRetry(this HttpClient httpClient, string? uri, HttpContent? content)
+        public static async Task<HttpResponseMessage> PostAsyncWithRetry(this HttpClient httpClient, string? uri, HttpContent? content, bool setCookie = true)
         {
             if (httpClient.BaseAddress is null)
             {
                 throw new NotImplementedException("httpClient.BaseAddress is null");
             }
             var res = await policy.ExecuteAsync(() => httpClient.PostAsync(uri, content));
-            try
-            {
-                foreach (var cookieHeader in res.Headers.GetValues("Set-Cookie"))
-                {
-                    GlobalCookieContainer.SetCookies(httpClient.BaseAddress, cookieHeader);
-                }
-            }
-            catch { }
+            HandleSetCookie(httpClient, setCookie, res);
             return res;
         }
-        public static async Task<HttpResponseMessage> GetAsyncWithRetry(this HttpClient httpClient, string? uri)
+        public static async Task<HttpResponseMessage> GetAsyncWithRetry(this HttpClient httpClient, string? uri, bool setCookie = true)
         {
             if (httpClient.BaseAddress is null)
             {
                 throw new NotImplementedException("httpClient.BaseAddress is null");
             }
             var res = await policy.ExecuteAsync(() => httpClient.GetAsync(uri));
-            try
-            {
-                foreach (var cookieHeader in res.Headers.GetValues("Set-Cookie"))
-                {
-                    GlobalCookieContainer.SetCookies(httpClient.BaseAddress, cookieHeader);
-                }
-            }
-            catch { }
+            HandleSetCookie(httpClient, setCookie, res);
             return res;
         }
-        public static async Task<HttpResponseMessage> PostAsJsonAsyncWithRetry<TValue>(this HttpClient httpClient, string? uri, TValue content, CancellationToken cancellationToken = default)
+        public static async Task<HttpResponseMessage> PostAsJsonAsyncWithRetry<TValue>(this HttpClient httpClient, string? uri, TValue content, bool setCookie = true, CancellationToken cancellationToken = default)
         {
             if (httpClient.BaseAddress is null)
             {
                 throw new NotImplementedException("httpClient.BaseAddress is null");
             }
             var res = await policy.ExecuteAsync(() => httpClient.PostAsJsonAsync(uri, content, cancellationToken));
-            try
-            {
-                foreach (var cookieHeader in res.Headers.GetValues("Set-Cookie"))
-                {
-                    GlobalCookieContainer.SetCookies(httpClient.BaseAddress, cookieHeader);
-                }
-            }
-            catch { }
+            HandleSetCookie(httpClient, setCookie, res);
             return res;
         }
         public static void LoadFromTxt(this CookieContainer cookieContainer, string? txtPath)
@@ -96,6 +75,24 @@ namespace OKP.Core.Utils
                     $"{(cookie.Secure ? "; secure" : "")}");
             }
             return stringBuilder.ToString();
+        }
+        private static void HandleSetCookie(HttpClient httpClient, bool setCookie, HttpResponseMessage res)
+        {
+            if (setCookie)
+            {
+                try
+                {
+                    if (httpClient.BaseAddress is null)
+                    {
+                        throw new NotImplementedException("httpClient.BaseAddress is null");
+                    }
+                    foreach (var cookieHeader in res.Headers.GetValues("Set-Cookie"))
+                    {
+                        GlobalCookieContainer.SetCookies(httpClient.BaseAddress, cookieHeader);
+                    }
+                }
+                catch { }
+            }
         }
     }
 }
