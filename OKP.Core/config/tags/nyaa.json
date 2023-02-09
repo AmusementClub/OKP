@@ -1,0 +1,107 @@
+{
+  "Key": null,
+  "Value": "1_3",
+  "SubTags": [
+    {
+      "Key": "Anime",
+      "Value": "1_3",
+      "SubTags": [
+        {
+          "Key": "MV",
+          "Value": "1_1",
+          "SubTags": []
+        },
+        {
+          "Key": "English",
+          "Value": "1_2",
+          "SubTags": []
+        },
+        {
+          "Key": "Raw",
+          "Value": "1_4",
+          "SubTags": []
+        }
+      ]
+    },
+    {
+      "Key": "Music",
+      "Value": "2_1",
+        "SubTags": [
+            {
+            "Key": "Lossless",
+            "Value": "2_1",
+            "SubTags": []
+            },
+            {
+            "Key": "Lossy",
+            "Value": "2_2",
+            "SubTags": []
+            }
+        ]
+    },{
+      "Key": "Comic",
+      "Value": "3_2",
+      "SubTags": [
+        {
+          "Key": "English",
+          "Value": "3_1",
+          "SubTags": []
+        },
+        {
+          "Key": "Raw",
+          "Value": "3_3",
+          "SubTags": []
+        }
+      ]
+    },{
+      "Key": "Show",
+      "Value": "4_3",
+      "SubTags": [
+        {
+          "Key": "English",
+          "Value": "4_1",
+          "SubTags": []
+        },
+        {
+          "Key": "Idol",
+          "Value": "4_2",
+          "SubTags": []
+        },
+        {
+          "Key": "Raw",
+          "Value": "4_4",
+          "SubTags": []
+        }
+      ]
+    },{
+      "Key": "Picture",
+      "Value": "5_1",
+      "SubTags": [
+        {
+          "Key": "Graphics",
+          "Value": "5_1",
+          "SubTags": []
+        },
+        {
+          "Key": "Photo",
+          "Value": "5_2",
+          "SubTags": []
+        }
+      ]
+    },{
+      "Key": "Software",
+      "Value": "6_1",
+      "SubTags": [
+        {
+          "Key": "App",
+          "Value": "6_1",
+          "SubTags": []
+        },{
+          "Key": "Game",
+          "Value": "6_2",
+          "SubTags": []
+        }
+      ]
+    }
+  ]
+}
