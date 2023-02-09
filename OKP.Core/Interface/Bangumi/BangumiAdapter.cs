@@ -23,8 +23,9 @@ namespace OKP.Core.Interface.Bangumi
         private const string pingUrl = "team/myteam";
         private const string postUrl = "torrent/add";
         private const string uploadUrl = "v2/torrent/upload";
+        private string category;
         private string teamID = "";
-        private string tagID = "";
+        private string tagID = "";  // string[]?
         const string site = "bangumi";
 
         public BangumiAdapter(TorrentContent torrent, Template template)
@@ -46,6 +47,7 @@ namespace OKP.Core.Interface.Bangumi
                     new Uri(template.Proxy),
                     BypassOnLocal: false);
             }
+            category = CategoryHelper.SelectCategory(torrent.Tags, site);
             if (!Valid())
             {
                 IOHelper.ReadLine();
@@ -103,10 +105,10 @@ namespace OKP.Core.Interface.Bangumi
             }
             AddRequest addRequest = new()
             {
-                category_tag_id = torrent.IsFinished ? "54967e14ff43b99e284d0bf7": "549ef207fe682f7549f1ea90",
+                category_tag_id = category,
                 title = torrent.DisplayName ?? "",
                 introduction = template.Content ?? "",
-                tag_ids = new string[] { tagID, "549ef207fe682f7549f1ea90" },
+                tag_ids = CastTags(torrent.Tags).ToArray(),
                 team_id = teamID,
                 teamsync = false,
                 file_id = fileId,
@@ -177,6 +179,11 @@ namespace OKP.Core.Interface.Bangumi
                 }
             }
             return true;
+        }
+        private static List<string> CastTags(List<ContentTypes>? tags)
+        {
+            var tagConfig = TagHelper.LoadTagConfig("bangumi.json");
+            return tagConfig.FindTagAll(tags);
         }
     }
 }

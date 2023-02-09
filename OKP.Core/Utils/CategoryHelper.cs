@@ -22,6 +22,7 @@ namespace OKP.Core.Utils
                     "acgrip" => CastCategory(tags, "acgrip.json") ?? "9",
                     "acgnx_asia" => CastCategory(tags, "acgnx_asia.json") ?? "19-1",
                     "acgnx_global" => CastCategory(tags, "acgnx_global.json") ?? "12-1",
+                    "bangumi" => CastCategory(tags, "bangumi.json") ?? "549ef250fe682f7549f1ea91",
                     _ => throw new NotImplementedException()
                 };
             }
