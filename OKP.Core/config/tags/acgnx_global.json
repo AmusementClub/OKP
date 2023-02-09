@@ -1,0 +1,127 @@
+{
+  "Key": null,
+  "Value": "4-1",
+  "SubTags": [
+    {
+      "Key": "Anime",
+      "Value": "4-1",
+      "SubTags": [
+        {
+          "Key": "MV",
+          "Value": "5-1",
+          "SubTags": []
+        },
+        {
+          "Key": "English",
+          "Value": "2-1",
+          "SubTags": []
+        },
+        {
+          "Key": "Raw",
+          "Value": "3-1",
+          "SubTags": []
+        }
+      ]
+    },
+    {
+      "Key": "Music",
+      "Value": "7-1",
+      "SubTags": [
+            {
+            "Key": "Lossless",
+            "Value": "7-1",
+            "SubTags": []
+            },
+            {
+            "Key": "Lossy",
+            "Value": "8-1",
+            "SubTags": []
+            }
+        ]
+    },{
+      "Key": "Comic",
+      "Value": "12-1",
+      "SubTags": [
+        {
+          "Key": "English",
+          "Value": "10-1",
+          "SubTags": []
+        },
+        {
+          "Key": "Raw",
+          "Value": "11-1",
+          "SubTags": []
+        }
+      ]
+    },{
+      "Key": "Novel",
+      "Value": "12-1",
+      "SubTags": [
+        {
+          "Key": "English",
+          "Value": "10-1",
+          "SubTags": []
+        },
+        {
+          "Key": "Raw",
+          "Value": "11-1",
+          "SubTags": []
+        }
+      ]
+    },{
+      "Key": "Action",
+      "Value": "16-1",
+      "SubTags": [
+        {
+          "Key": "English",
+          "Value": "14-1",
+          "SubTags": []
+        },
+        {
+          "Key": "Idol",
+          "Value": "17-1",
+          "SubTags": []
+        },
+        {
+          "Key": "Show",
+          "Value": "16-1",
+          "SubTags": []
+        },
+        {
+          "Key": "Raw",
+          "Value": "15-1",
+          "SubTags": []
+        }
+      ]
+    },{
+      "Key": "Picture",
+      "Value": "23-1",
+      "SubTags": [
+        {
+          "Key": "Graphics",
+          "Value": "23-1",
+          "SubTags": []
+        },
+        {
+          "Key": "Photo",
+          "Value": "22-1",
+          "SubTags": []
+        }
+      ]
+    },{
+      "Key": "Software",
+      "Value": "20-1",
+      "SubTags": [
+        {
+          "Key": "App",
+          "Value": "19-1",
+          "SubTags": []
+        },{
+          "Key": "Game",
+          "Value": "20-1",
+          "SubTags": []
+        }
+      ]
+    }
+  ]
+}

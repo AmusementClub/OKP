@@ -24,7 +24,7 @@ namespace OKP.Core.Interface.Nyaa
         private readonly Uri baseUrl = new("https://nyaa.si/");
         private readonly string pingUrl = "upload";
         private readonly string postUrl = "upload";
-        private string? category;
+        private string category;
         const string site = "nyaa";
         public NyaaAdapter(TorrentContent torrent, Template template)
         {
@@ -49,7 +49,7 @@ namespace OKP.Core.Interface.Nyaa
             }
 
             httpClient.DefaultRequestHeaders.Add("user-agent", template.UserAgent);
-            category = CastCategory(torrent.Tags);
+            category = CategoryHelper.SelectCategory(torrent.Tags, site);
             if (!Valid())
             {
                 IOHelper.ReadLine();
@@ -89,7 +89,7 @@ namespace OKP.Core.Interface.Nyaa
             {
                 { torrent.Data.ByteArrayContent, "torrent_file", torrent.Data.FileInfo.Name},
                 { new StringContent(torrent.DisplayName??""), "display_name" },
-                { new StringContent(category??"3_2"), "category" },
+                { new StringContent(category), "category" },
                 { new StringContent(torrent.About??""), "information" },
                 { new StringContent(template.Content??""), "description" },
             };
@@ -149,12 +149,6 @@ namespace OKP.Core.Interface.Nyaa
                 }
             }
             return true;
-        }
-
-        private static string? CastCategory(List<ContentTypes>? tags)
-        {
-            var tagConfig = TagHelper.LoadTagConfig("nyaa.json");
-            return tagConfig.FindTag(tags);
         }
     }
 }
