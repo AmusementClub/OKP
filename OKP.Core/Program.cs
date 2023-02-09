@@ -35,37 +35,37 @@ namespace OKP.Core
         public static void Main(string[] args)
         {
             Parser.Default.ParseArguments<Options>(args)
-                   .WithParsed(o =>
-                   {
-                       var levelSwitch = new LoggingLevelSwitch
-                       {
-                           MinimumLevel = o.LogLevel?.ToLower() switch
-                           {
-                               "verbose" => LogEventLevel.Verbose,
-                               "debug" => LogEventLevel.Debug,
-                               "info" => LogEventLevel.Information,
-                               _ => LogEventLevel.Debug
-                           }
-                       };
-                       Log.Logger = new LoggerConfiguration()
-                       .MinimumLevel.ControlledBy(levelSwitch)
-                       .WriteTo.Console()
-                       .WriteTo.File(o.LogFile,
-                           rollingInterval: RollingInterval.Month,
-                           rollOnFileSizeLimit: true)
-                       .CreateLogger();
-                       IOHelper.NoReaction = o.NoReaction;
-                       if (o.TorrentFile is null)
-                       {
-                           Log.Fatal("o.TorrentFile is null");
-                           return;
-                       }
-                       foreach (var file in o.TorrentFile)
-                       {
-                           Log.Information("正在发布 {File}", file);
-                           SinglePublish(file, o.SettingFile);
-                       }
-                   });
+                  .WithParsed(o =>
+                  {
+                      var levelSwitch = new LoggingLevelSwitch
+                      {
+                          MinimumLevel = o.LogLevel?.ToLower() switch
+                          {
+                              "verbose" => LogEventLevel.Verbose,
+                              "debug" => LogEventLevel.Debug,
+                              "info" => LogEventLevel.Information,
+                              _ => LogEventLevel.Debug
+                          }
+                      };
+                      Log.Logger = new LoggerConfiguration()
+                                   .MinimumLevel.ControlledBy(levelSwitch)
+                                   .WriteTo.Console()
+                                   .WriteTo.File(o.LogFile,
+                                       rollingInterval: RollingInterval.Month,
+                                       rollOnFileSizeLimit: true)
+                                   .CreateLogger();
+                      IOHelper.NoReaction = o.NoReaction;
+                      if (o.TorrentFile is null)
+                      {
+                          Log.Fatal("o.TorrentFile is null");
+                          return;
+                      }
+                      foreach (var file in o.TorrentFile)
+                      {
+                          Log.Information("正在发布 {File}", file);
+                          SinglePublish(file, o.SettingFile);
+                      }
+                  });
         }
         private static void SinglePublish(string file, string settingFile)
         {
