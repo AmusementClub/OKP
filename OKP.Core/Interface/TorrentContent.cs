@@ -96,7 +96,7 @@ namespace OKP.Core.Interface
             Idol,
             Tokusatsu,
             Show,
-            Graphic,
+            Graphics,
             Photo,
             App,
             Game
