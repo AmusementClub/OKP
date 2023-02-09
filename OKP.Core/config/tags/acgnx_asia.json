@@ -1,0 +1,127 @@
+{
+  "Key": null,
+  "Value": "1-1",
+  "SubTags": [
+    {
+      "Key": "Anime",
+      "Value": "1-1",
+      "SubTags": [
+        {
+          "Key": "Collection",
+          "Value": "2-1",
+          "SubTags": []
+        },
+        {
+          "Key": "Raw",
+          "Value": "11-1",
+          "SubTags": []
+        }
+      ]
+    },
+    {
+      "Key": "Music",
+      "Value": "6-1",
+      "SubTags": [
+      {
+          "Key": "ACG",
+          "Value": "7-1",
+          "SubTags": []
+        },
+        {
+          "Key": "Doujin",
+          "Value": "8-1",
+          "SubTags": []
+        },
+        {
+          "Key": "Pop",
+          "Value": "9-1",
+          "SubTags": []
+        }
+      ]
+    },{
+      "Key": "Comic",
+      "Value": "3-1",
+      "SubTags": [
+        {
+          "Key": "HongKong",
+          "Value": "4-1",
+          "SubTags": []
+        },
+        {
+          "Key": "Taiwan",
+          "Value": "4-1",
+          "SubTags": []
+        },
+        {
+          "Key": "Japanese",
+          "Value": "5-1",
+          "SubTags": []
+        }
+      ]
+    },{
+      "Key": "Novel",
+      "Value": "3-1",
+      "SubTags": [
+        {
+          "Key": "HongKong",
+          "Value": "4-1",
+          "SubTags": []
+        },
+        {
+          "Key": "Taiwan",
+          "Value": "4-1",
+          "SubTags": []
+        },
+        {
+          "Key": "Japanese",
+          "Value": "5-1",
+          "SubTags": []
+        }
+      ]
+    },{
+      "Key": "Action",
+      "Value": "10-1",
+      "SubTags": [
+        {
+          "Key": "Idol",
+          "Value": "19-1",
+          "SubTags": []
+        },
+        {
+          "Key": "Show",
+          "Value": "19-1",
+          "SubTags": []
+        },
+        {
+          "Key": "Tokusatsu",
+          "Value": "18-1",
+          "SubTags": []
+        },
+        {
+          "Key": "Raw",
+          "Value": "11-1",
+          "SubTags": []
+        }
+      ]
+    },{
+      "Key": "Picture",
+      "Value": "19-1",
+      "SubTags": []
+    },{
+      "Key": "Software",
+      "Value": "12-1",
+      "SubTags": [
+        {
+          "Key": "ACG",
+          "Value": "17-1",
+          "SubTags": []
+        },
+        {
+          "Key": "App",
+          "Value": "19-1",
+          "SubTags": []
+        }
+      ]
+    }
+  ]
+}
