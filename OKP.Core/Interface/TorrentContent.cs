@@ -91,6 +91,7 @@ namespace OKP.Core.Interface
             Raw,
             Lossless,
             Lossy,
+            ACG,
             Doujin,
             Pop,
             Idol,
