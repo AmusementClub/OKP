@@ -9,7 +9,7 @@ namespace OKP.Core.Utils
             return NoReaction ? "" : Console.ReadLine();
         }
 
-        public static string basePath(string file) => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, file);
+        public static string BasePath(string file) => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, file);
         public static void HintText(string hint)
         {
             var color = Console.ForegroundColor;
