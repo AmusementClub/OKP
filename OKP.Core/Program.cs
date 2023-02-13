@@ -79,7 +79,7 @@ namespace OKP.Core
                            {
                                if (o.Cookies is null)
                                {
-                                   Log.Information("请输入Cookie文件名，不需要包含扩展名，相对目录默认为{DefaultPath}", IOHelper.basePath("okp_cookies"));
+                                   Log.Information("请输入Cookie文件名，不需要包含扩展名，相对目录默认为{DefaultPath}", IOHelper.BasePath("okp_cookies"));
                                    IOHelper.HintText(Constants.DefauttCookieFile);
                                    var filename = IOHelper.ReadLine();
                                    if (File.Exists(filename))
@@ -89,16 +89,16 @@ namespace OKP.Core
                                    }
                                    else
                                    {
-                                       if (!Directory.Exists(IOHelper.basePath(Constants.DefaultCookiePath)))
+                                       if (!Directory.Exists(IOHelper.BasePath(Constants.DefaultCookiePath)))
                                        {
                                            Directory.CreateDirectory(Constants.DefaultCookiePath);
                                        }
-                                       o.Cookies = IOHelper.basePath($"{Constants.DefaultCookiePath}\\{(filename?.Length == 0 ? Constants.DefauttCookieFile : filename)}.txt");
+                                       o.Cookies = IOHelper.BasePath($"{Constants.DefaultCookiePath}\\{(filename?.Length == 0 ? Constants.DefauttCookieFile : filename)}.txt");
                                    }
                                }
-                               if (File.Exists(IOHelper.basePath($"{Constants.DefaultCookiePath}\\{Constants.DefauttCookieFile}.txt")))
+                               if (File.Exists(IOHelper.BasePath($"{Constants.DefaultCookiePath}\\{Constants.DefauttCookieFile}.txt")))
                                {
-                                   HttpHelper.GlobalCookieContainer.LoadFromTxt(IOHelper.basePath($"{Constants.DefaultCookiePath}\\{Constants.DefauttCookieFile}.txt"));
+                                   HttpHelper.GlobalCookieContainer.LoadFromTxt(IOHelper.BasePath($"{Constants.DefaultCookiePath}\\{Constants.DefauttCookieFile}.txt"));
                                }
                                Log.Information("正在添加Cookie文件{File}", file);
                                AddCookies(file);
@@ -146,7 +146,7 @@ namespace OKP.Core
                 }
                 else
                 {
-                    cookies = IOHelper.basePath($"{Constants.DefaultCookiePath}\\{Constants.DefauttCookieFile}.txt");
+                    cookies = IOHelper.BasePath($"{Constants.DefaultCookiePath}\\{Constants.DefauttCookieFile}.txt");
                     Log.Information("使用默认的Cookie文件{Cookies}", cookies);
                 }
             }
