@@ -85,7 +85,7 @@ namespace OKP.Core
                                    if (File.Exists(filename))
                                    {
                                        o.Cookies = filename;
-                                       Log.Error("你指定的Cookie文件{File}已经存在！继续添加可能会覆盖之前保存的Cookie！");
+                                       Log.Error("你指定的Cookie文件{File}已经存在！继续添加可能会覆盖之前保存的Cookie！", o.Cookies);
                                        IOHelper.ReadLine();
                                        HttpHelper.GlobalCookieContainer.LoadFromTxt(o.Cookies);
                                    }
