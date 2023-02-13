@@ -1,4 +1,5 @@
 # OKP
+
 One-Key-Publish，一键发布 Torrent 到常见 BT 站。
 
 ## 选项及参数
@@ -18,13 +19,20 @@ One-Key-Publish，一键发布 Torrent 到常见 BT 站。
 
   --version           Display version information.
 
-  torrent (pos. 0)    Required. Torrents to be published.
+  torrent (pos. 0)    Required. Torrents to be published.(Or Cookie file exported by Get Cookies.txt.)
 ```
 
 ### 必选项
 
-你必须输入一个 Torrent 种子文件  
-  - 注意 Torrent V2 不受支持
+你必须输入一个 Torrent 种子文件
+
+- 注意 Torrent V2 不受支持
+
+或者
+
+一个包含 cookie 信息的 txt 文件
+
+- 你需要使用 [Get Cookies.txt](https://chrome.google.com/webstore/detail/get-cookiestxt/bgaddhkoddajcdgocldbbfleckgcbcid) 这个 Chrome 扩展来导出 txt。
 
 ### 可选项
 
@@ -42,8 +50,10 @@ One-Key-Publish，一键发布 Torrent 到常见 BT 站。
 #### 发布标题相关
 
 1. `display_name`：BT 站发布标题，有 `<ep>` 与 `<res>` 两个可配置标签，可用正则表达式从 Torrent 文件名中提取出集数与分辨率并自动填充
-  - `<ep>`：使用 `filename_regex` 中指定的正则表达式提取集数
-  - `<res>`：使用 `resolution_regex` 中指定的正则表达式提取分辨率
+
+- `<ep>`：使用 `filename_regex` 中指定的正则表达式提取集数
+- `<res>`：使用 `resolution_regex` 中指定的正则表达式提取分辨率
+
 2. `filename_regex`：一个合法的正则表达式，并将集数放入名为 `<?ep>` 的命名分组中
 3. `resolution_regex`：一个合法的正则表达式，并将集数放入名为 `<?res>` 的命名分组中
 
@@ -66,49 +76,60 @@ One-Key-Publish，一键发布 Torrent 到常见 BT 站。
 
 1. `site`：发布站名，具体见 #支持站点
 2. `name`：发布用账户名称或发布用组织名称
-    - acgnx 站点使用 api 的 uid
-3. `cookie`
-4. `user_agent`：UA
-5. `proxy`：连接站点使用的代理
-5. `content`：发布正文，可以指定一个文件名或 raw string
-    - 指定文件名的后缀同见 #支持站点
+   - acgnx 站点使用 api 的 uid
+3. `proxy`：连接站点使用的代理
+4. `content`：发布正文，可以指定一个文件名或 raw string
+   - 指定文件名的后缀同见 #支持站点
 
-`cookie`、`user_agent`、`proxy` 详细介绍放在 #userprop
+`proxy` 详细介绍放在 #userprop
 
 ### publish template
 
 同见 #支持站点
 
+### 导入 Cookie 到 OKP
+
+1. 安装[Get Cookies.txt](https://chrome.google.com/webstore/detail/get-cookiestxt/bgaddhkoddajcdgocldbbfleckgcbcid)
+2. 正常登录对应的发布站。目前已经支持的站站点同见 #支持站点
+3. 点击扩展中的`Export`或`Export as`导出同站点下的全部 Cookie。由于 C#中 Cookie 容器最大仅支持 300 条 Cookie 同时存在，不推荐一次性导出浏览器中的全部 Cookie。
+4. 如果你导出了[動漫花園](https://share.dmhy.org/)的 Cookie，你需要在 txt 中删掉多余记录，仅保留`pass; rsspass; tid; uname; uid`共 5 行记录。如果你忘记在 txt 中删除多余记录，你可以在导出完成的`cookie.txt`文件中删除多余记录。
+5. OKP 支持一次添加多个 Cookie 文件，所有的 Cookie 都导出完成后，多选全部 txt 文件，并拖拽到`OKP.exe`上。
+6. OKP 会自动添加 Cookie，当一个文件添加完成时，你需要回车确认并继续。
+7. 添加完成后，具有 Cookie 记录的文件将会保存在`OKP.exe`同目录下，文件名为`cookie.txt`
+
+### 使用 OKP 中的 Cookie 信息
+
+- cookie 文件默认保存在`OKP.exe`同目录下，文件名为`cookie.txt`。
+- 你可以在`publish template`中指定任意的 Cookie 文件。
+- 正常情况下所有 Cookie 均会自动更新并保存。当 Cookie 失效并且无法自动刷新时，你可以直接添加对应 Cookie，OKP 会自动处理并管理这些 Cookie。
+
 ### userprop
 
 需要放在使用的应用程序同目录下，文件名为 `OKP_userprop.toml`，[示例](https://github.com/AmusementClub/OKP/blob/master/OKP.Core/example/OKP_userprop.toml)
 
-可以使用它来指定一些不方便写在 setting 中的敏感信息，现在支持 `cookie`、`user_agent`、`proxy`。二者同时指定时，userprop 中的数据会覆盖 setting 的数据。
+可以使用它来指定一些不方便写在 setting 中的敏感信息，现在支持 `proxy`。二者同时指定时，userprop 中的数据会覆盖 setting 的数据。
 
-1. `cookie`
-    - dmhy: `pass=xxx; rsspass=xxx; tid=x; uname=xxx; uid=xxx`
-    - nyaa: `session=xxx`
-    - acgrip: `remember_user_token=xxx`
-    - acgnx 站点使用 api 的 token
-    - bangumi: `koa:sess=xxx; koa:sess.sig=xxx`
-2. 想要替换 / 指定的配置需要与 setting 中的 `site` 和 `name` 相同
+
+想要替换 / 指定的配置需要与 setting 中的 `site` 和 `name` 相同
 
 ## 支持站点
 
-*以下排名无先后*
+_以下排名无先后_
 
-站点 | 配置名称 | 模板格式与示例
---- | --- | ---
-[Nyaa](https://nyaa.si/) | nyaa | [.md](https://github.com/AmusementClub/OKP/blob/master/OKP.Core/example/nyaa.md)
-[動漫花園](https://share.dmhy.org/) | dmhy | [.html](https://github.com/AmusementClub/OKP/blob/master/OKP.Core/example/dmhy.html)
-[ACG.RIP](https://share.dmhy.org/) | acgrip | [.bbcode](https://github.com/AmusementClub/OKP/blob/master/OKP.Core/example/acgrip.bbcode)
-[末日動漫資源庫](https://share.acgnx.se/) | acgnx_asia | [.html](https://github.com/AmusementClub/OKP/blob/master/OKP.Core/example/dmhy.html)
-[AcgnX Torrent Global](https://www.acgnx.se/) | acgnx_global | [.html](https://github.com/AmusementClub/OKP/blob/master/OKP.Core/example/dmhy.html)
-[萌番组](https://bangumi.moe/) | bangumi | [.html](https://github.com/AmusementClub/OKP/blob/master/OKP.Core/example/dmhy.html)
+| 站点                                          | 配置名称     | 模板格式与示例                                                                             |
+| --------------------------------------------- | ------------ | ------------------------------------------------------------------------------------------ |
+| [Nyaa](https://nyaa.si/)                      | nyaa         | [.md](https://github.com/AmusementClub/OKP/blob/master/OKP.Core/example/nyaa.md)           |
+| [動漫花園](https://share.dmhy.org/)           | dmhy         | [.html](https://github.com/AmusementClub/OKP/blob/master/OKP.Core/example/dmhy.html)       |
+| [ACG.RIP](https://share.dmhy.org/)            | acgrip       | [.bbcode](https://github.com/AmusementClub/OKP/blob/master/OKP.Core/example/acgrip.bbcode) |
+| [末日動漫資源庫](https://share.acgnx.se/)     | acgnx_asia   | [.html](https://github.com/AmusementClub/OKP/blob/master/OKP.Core/example/dmhy.html)       |
+| [AcgnX Torrent Global](https://www.acgnx.se/) | acgnx_global | [.html](https://github.com/AmusementClub/OKP/blob/master/OKP.Core/example/dmhy.html)       |
+| [萌番组](https://bangumi.moe/)                | bangumi      | [.html](https://github.com/AmusementClub/OKP/blob/master/OKP.Core/example/dmhy.html)       |
 
 最新支持站点请看 [这](https://github.com/AmusementClub/OKP/blob/master/OKP.Core/Utils/Constants.cs#L8)
 
 注：
+
 1. acgrip cookie 失效后会刷新，退出登录疑似会直接失效，ua 不同也会登录失败
 2. acgnx 站点登录可能会被 Cloudflare 风控，鉴于其站点会同步 nyaa、dmhy、acgrip 的种子，可以选择不使用其上传
-3. 萌番组暂不支持自定义TAG，目前仅支持 *Team ID* 和 *动画* 两个TAG
+3. 萌番组暂不支持自定义 TAG，目前仅支持 _Team ID_ 和 _动画_ 两个 TAG
+4. 動漫花園必须删除多余的 Cookie，否则无法登录。

@@ -15,7 +15,7 @@ namespace OKP.Core.Interface.Acgrip
         private readonly HttpClient httpClient;
         private readonly Template template;
         private readonly TorrentContent torrent;
-        private const string baseUrl = "https://acg.rip/";
+        private readonly Uri baseUrl = new("https://acg.rip/");
         private const string pingUrl = "cp/posts/upload";
         private const string postUtl = "cp/posts";
         private readonly Regex personalReg = new(@"class=""panel-title""\>(\w+)\</div\>");
@@ -26,15 +26,17 @@ namespace OKP.Core.Interface.Acgrip
         const string site = "acgrip";
         public AcgripAdapter(TorrentContent torrent, Template template)
         {
-            httpClient = new()
+            var httpClientHandler = new HttpClientHandler()
             {
-                BaseAddress = new(baseUrl)
+                CookieContainer = HttpHelper.GlobalCookieContainer,
+                AllowAutoRedirect = false
+            };
+            httpClient = new(httpClientHandler)
+            {
+                BaseAddress = baseUrl,
             };
             this.template = template;
             this.torrent = torrent;
-            httpClient.DefaultRequestHeaders.Add("user-agent", template.UserAgent);
-            httpClient.DefaultRequestHeaders.Add("Cookie", template.Cookie);
-            httpClient.BaseAddress = new(baseUrl);
             if (!Valid())
             {
                 IOHelper.ReadLine();
@@ -58,7 +60,7 @@ namespace OKP.Core.Interface.Acgrip
                 Log.Error("{Site} login failed", site);
                 return new(403, "Login failed" + raw, false);
             }
-            
+
             // Some accounts don’t belong to team
             var match = teamReg.Match(raw);
             if (match == Match.Empty)

@@ -19,7 +19,7 @@ namespace OKP.Core.Interface.Bangumi
         private readonly HttpClient httpClient;
         private readonly Template template;
         private readonly TorrentContent torrent;
-        private const string baseUrl = "https://bangumi.moe/api/";
+        private readonly Uri baseUrl = new("https://bangumi.moe/api/");
         private const string pingUrl = "team/myteam";
         private const string postUrl = "torrent/add";
         private const string uploadUrl = "v2/torrent/upload";
@@ -31,17 +31,18 @@ namespace OKP.Core.Interface.Bangumi
         {
             this.torrent = torrent;
             this.template = template;
-            var handler = new HttpClientHandler();
-            httpClient = new(handler)
+            var httpClientHandler = new HttpClientHandler()
             {
-                BaseAddress = new(baseUrl)
+                CookieContainer = HttpHelper.GlobalCookieContainer,
+                AllowAutoRedirect = false
             };
-            httpClient.DefaultRequestHeaders.Add("user-agent", template.UserAgent);
-            httpClient.DefaultRequestHeaders.Add("Cookie", template.Cookie);
-            httpClient.BaseAddress = new(baseUrl);
+            httpClient = new(httpClientHandler)
+            {
+                BaseAddress = baseUrl,
+            };
             if (template.Proxy is not null)
             {
-                handler.Proxy = new WebProxy(
+                httpClientHandler.Proxy = new WebProxy(
                     new Uri(template.Proxy),
                     BypassOnLocal: false);
             }

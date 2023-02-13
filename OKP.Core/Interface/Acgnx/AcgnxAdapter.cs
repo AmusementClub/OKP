@@ -30,27 +30,17 @@ namespace OKP.Core.Interface.Acgnx
                     baseUrl = "https://www.acgnx.se/";
                     break;
             }
-
-            var httpClientHandler = new HttpClientHandler() { };
+            var httpClientHandler = new HttpClientHandler()
+            {
+                CookieContainer = HttpHelper.GlobalCookieContainer,
+                AllowAutoRedirect = false
+            };
             httpClient = new(httpClientHandler)
             {
                 BaseAddress = new(baseUrl)
             };
             this.template = template;
             this.torrent = torrent;
-
-            if (template.Cookie == null || template.Cookie.Length == 0)
-            {
-                Log.Error("Empty {Site} cookie (api_token)", site);
-                IOHelper.ReadLine();
-                return;
-            }
-            else if (template.Cookie.Length != 40)
-            {
-                Log.Error("Error {Site} cookie (api_token) length, it must equal to 40", site);
-                IOHelper.ReadLine();
-                return;
-            }
 
             if (torrent.DisplayName == null || torrent.DisplayName.Length <= 1 || torrent.DisplayName.Length >= 400)
             {
@@ -88,7 +78,7 @@ namespace OKP.Core.Interface.Acgnx
 
         public override async Task<HttpResult> PingAsync()
         {
-            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, apiUrl);
+            HttpRequestMessage request = new(HttpMethod.Post, apiUrl);
             request.Content = new MultipartFormDataContent()
             {
                 { new StringContent("upload"), "mod" },

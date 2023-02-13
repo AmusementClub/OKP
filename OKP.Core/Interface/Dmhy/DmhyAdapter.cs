@@ -25,20 +25,21 @@ namespace OKP.Core.Interface.Dmhy
         const string site = "dmhy";
         public DmhyAdapter(TorrentContent torrent, Template template)
         {
-            var handler = new HttpClientHandler();
-            httpClient = new(handler)
+            var httpClientHandler = new HttpClientHandler()
+            {
+                CookieContainer = HttpHelper.GlobalCookieContainer,
+                AllowAutoRedirect = false
+            };
+            httpClient = new(httpClientHandler)
             {
                 BaseAddress = new(baseUrl)
             };
             this.template = template;
             this.torrent = torrent;
             httpClient.DefaultRequestHeaders.Add("user-agent", template.UserAgent);
-            httpClient.DefaultRequestHeaders.Add("Cookie", template.Cookie);
-            httpClient.BaseAddress = new(baseUrl);
-
             if (template.Proxy is not null)
             {
-                handler.Proxy = new WebProxy(
+                httpClientHandler.Proxy = new WebProxy(
                     new Uri(template.Proxy),
                     BypassOnLocal: false);
             }
