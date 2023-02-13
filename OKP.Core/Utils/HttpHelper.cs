@@ -1,4 +1,4 @@
-﻿using System.Net;
+using System.Net;
 using System.Net.Http.Json;
 using System.Text;
 using Polly;
@@ -93,6 +93,10 @@ namespace OKP.Core.Utils
                 }
                 catch { }
             }
+        }
+        public static Task<HttpResponseMessage> PostAsJsonAsyncWithRetry<TValue>(this HttpClient httpClient, string? uri, TValue content, JsonSerializerOptions? options = null, CancellationToken cancellationToken = default)
+        {
+            return policy.ExecuteAsync(() => httpClient.PostAsJsonAsync(uri, content, options, cancellationToken));
         }
     }
 }

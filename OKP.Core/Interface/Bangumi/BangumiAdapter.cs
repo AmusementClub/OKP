@@ -103,10 +103,10 @@ namespace OKP.Core.Interface.Bangumi
             }
             AddRequest addRequest = new()
             {
-                category_tag_id = "549ef207fe682f7549f1ea90",
+                category_tag_id = torrent.IsFinished ? "54967e14ff43b99e284d0bf7": "549ef207fe682f7549f1ea90",
                 title = torrent.DisplayName ?? "",
                 introduction = template.Content ?? "",
-                tag_ids = new string[] { tagID },
+                tag_ids = new string[] { tagID, "549ef207fe682f7549f1ea90" },
                 team_id = teamID,
                 teamsync = false,
                 file_id = fileId,
@@ -142,7 +142,14 @@ namespace OKP.Core.Interface.Bangumi
             var result = await response.Content.ReadFromJsonAsync<UploadResponse>();
             if (result == null || !result.success || result.file_id == null)
             {
-                throw new HttpRequestException("Failed to upload torrent file");
+                Log.Debug("可能是 {Site} 发布频率限制，先等 1 分钟", site);
+                Thread.Sleep(60000);
+                response = await httpClient.PostAsyncWithRetry(uploadUrl, form);
+                result = await response.Content.ReadFromJsonAsync<UploadResponse>();
+                if (result == null || !result.success || result.file_id == null)
+                {
+                    throw new HttpRequestException("Failed to upload torrent file");
+                }
             }
             return result.file_id;
         }
