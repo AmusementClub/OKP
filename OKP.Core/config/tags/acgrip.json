@@ -1,0 +1,53 @@
+{
+  "Key": null,
+  "Value": "1",
+  "SubTags": [
+    {
+      "Key": "Anime",
+      "Value": "1",
+      "SubTags": [
+        {
+          "Key": "Collection",
+          "Value": "5",
+          "SubTags": []
+        }
+      ]
+    },
+    {
+      "Key": "Music",
+      "Value": "4",
+      "SubTags": []
+    },{
+      "Key": "Comic",
+      "Value": "9",
+      "SubTags": []
+    },{
+      "Key": "Novel",
+      "Value": "9",
+      "SubTags": []
+    },{
+      "Key": "Action",
+      "Value": "2",
+      "SubTags": [
+        {
+          "Key": "Idol",
+          "Value": "9",
+          "SubTags": []
+        },
+        {
+          "Key": "Show",
+          "Value": "3",
+          "SubTags": []
+        }
+      ]
+    },{
+      "Key": "Picture",
+      "Value": "9",
+      "SubTags": []
+    },{
+      "Key": "Software",
+      "Value": "9",
+      "SubTags": []
+    }
+  ]
+}

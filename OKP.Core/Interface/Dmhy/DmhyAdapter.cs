@@ -19,6 +19,7 @@ namespace OKP.Core.Interface.Dmhy
         private const string baseUrl = "https://share.dmhy.org/";
         private const string pingUrl = "topics/add";
         private const string postUtl = "topics/add";
+        private string category;
         private readonly Regex teamReg = new(@"\<select name=""team_id"" id=""team_id""\>[\s\S]*\</select\>", RegexOptions.Multiline);
         private readonly Regex optionReg = new(@"\<option value=""(?<value>\d+)"" label=""(?<name>[^""]+)""");
         private string teamID = "";
@@ -37,6 +38,10 @@ namespace OKP.Core.Interface.Dmhy
             this.template = template;
             this.torrent = torrent;
             httpClient.DefaultRequestHeaders.Add("user-agent", template.UserAgent);
+            httpClient.DefaultRequestHeaders.Add("Cookie", template.Cookie);
+            httpClient.BaseAddress = new(baseUrl);
+            category = CategoryHelper.SelectCategory(torrent.Tags, site);
+
             if (template.Proxy is not null)
             {
                 httpClientHandler.Proxy = new WebProxy(
@@ -107,7 +112,7 @@ namespace OKP.Core.Interface.Dmhy
             }
             MultipartFormDataContent form = new()
             {
-                { new StringContent(torrent.IsFinished ? "31": "2"), "sort_id" },
+                { new StringContent(category), "sort_id" },
                 { new StringContent(teamID), "team_id" },
                 { new StringContent(torrent.DisplayName??""), "bt_data_title" },
                 { new StringContent(torrent.Poster??""), "poster_url" },

@@ -17,4 +17,10 @@
     <PackageReference Include="Tomlyn" Version="0.16.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="config\tags\nyaa.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

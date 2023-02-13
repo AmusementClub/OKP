@@ -18,6 +18,7 @@ namespace OKP.Core.Interface.Acgrip
         private readonly Uri baseUrl = new("https://acg.rip/");
         private const string pingUrl = "cp/posts/upload";
         private const string postUtl = "cp/posts";
+        private string category;
         private readonly Regex personalReg = new(@"class=""panel-title""\>(\w+)\</div\>");
         private readonly Regex teamReg = new(@"class=""panel-title-right""\>(\w+)\</div\>");
         private readonly Regex tokenReg = new(@"\<meta\sname=""csrf-token""\scontent=""(.*)""\s/\>");
@@ -37,6 +38,10 @@ namespace OKP.Core.Interface.Acgrip
             };
             this.template = template;
             this.torrent = torrent;
+            httpClient.DefaultRequestHeaders.Add("user-agent", template.UserAgent);
+            httpClient.DefaultRequestHeaders.Add("Cookie", template.Cookie);
+            httpClient.BaseAddress = new(baseUrl);
+            category = CategoryHelper.SelectCategory(torrent.Tags, site);
             if (!Valid())
             {
                 IOHelper.ReadLine();
@@ -95,7 +100,7 @@ namespace OKP.Core.Interface.Acgrip
             MultipartFormDataContent form = new()
             {
                 { new StringContent(authenticityToken), "authenticity_token" },
-                { new StringContent("1"), "post[category_id]" },
+                { new StringContent(category), "post[category_id]" },
                 // { new StringContent("2022"), "year" },
                 // { new StringContent("0"), "post[series_id]" },
                 { new StringContent("1"), "post[post_as_team]"},

@@ -6,7 +6,7 @@ namespace OKP.Core.Utils
 {
     internal class CategoryHelper
     {
-        public static string SelectCategory(TorrentContent torrent, string site)
+        public static string SelectCategory(List<TorrentContent.ContentTypes>? tags, string site)
         {
             var category = "";
             if (!SupportSiteName.Contains(site))
@@ -17,46 +17,22 @@ namespace OKP.Core.Utils
             {
                 category = site switch
                 {
-                    "acgnx_asia" => SelectAcgnxAsia(torrent),
-                    "acgnx_global" => SelectAcgnxGlobal(torrent),
+                    "nyaa" => CastCategory(tags, "nyaa.json") ?? "3_2",
+                    "dmhy" => CastCategory(tags, "dmhy.json") ?? "1",
+                    "acgrip" => CastCategory(tags, "acgrip.json") ?? "9",
+                    "acgnx_asia" => CastCategory(tags, "acgnx_asia.json") ?? "19-1",
+                    "acgnx_global" => CastCategory(tags, "acgnx_global.json") ?? "12-1",
+                    "bangumi" => CastCategory(tags, "bangumi.json") ?? "549ef250fe682f7549f1ea91",
                     _ => throw new NotImplementedException()
                 };
             }
             return category;
         }
-        // Now only Anime
-        internal static string SelectAcgnxAsia(TorrentContent torrent)
+
+        private static string? CastCategory(List<TorrentContent.ContentTypes>? tags, string mapFile)
         {
-            ushort sortId;
-            if (torrent.HasSubtitle)
-            {
-                if (torrent.IsFinished)
-                {
-                    sortId = (ushort)categoryAcgnxAsia.AnimeCollection;
-                }
-                else
-                {
-                    sortId = (ushort)categoryAcgnxAsia.Anime;
-                }
-            }
-            else
-            {
-                sortId = (ushort)categoryAcgnxAsia.Raw;
-            }
-            return sortId.ToString();
-        }
-        internal static string SelectAcgnxGlobal(TorrentContent torrent)
-        {
-            ushort sortId;
-            if (torrent.HasSubtitle)
-            {
-                sortId = (ushort)categoryAcgnxGlobal.Anime;
-            }
-            else
-            {
-                sortId = (ushort)categoryAcgnxGlobal.AnimeRaw;
-            }
-            return sortId.ToString();
+            var tagConfig = TagHelper.LoadTagConfig(mapFile);
+            return tagConfig.FindTag(tags);
         }
     }
 }

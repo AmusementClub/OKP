@@ -3,6 +3,7 @@ using OKP.Core.Utils;
 using Serilog;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -23,6 +24,7 @@ namespace OKP.Core.Interface.Nyaa
         private readonly Uri baseUrl = new("https://nyaa.si/");
         private readonly string pingUrl = "upload";
         private readonly string postUrl = "upload";
+        private string category;
         const string site = "nyaa";
         public NyaaAdapter(TorrentContent torrent, Template template)
         {
@@ -45,6 +47,9 @@ namespace OKP.Core.Interface.Nyaa
                     BypassOnLocal: false);
                 httpClientHandler.UseProxy = true;
             }
+
+            httpClient.DefaultRequestHeaders.Add("user-agent", template.UserAgent);
+            category = CategoryHelper.SelectCategory(torrent.Tags, site);
             if (!Valid())
             {
                 IOHelper.ReadLine();
@@ -84,7 +89,7 @@ namespace OKP.Core.Interface.Nyaa
             {
                 { torrent.Data.ByteArrayContent, "torrent_file", torrent.Data.FileInfo.Name},
                 { new StringContent(torrent.DisplayName??""), "display_name" },
-                { new StringContent(torrent.HasSubtitle ? "1_3": "1_4"), "category" },
+                { new StringContent(category), "category" },
                 { new StringContent(torrent.About??""), "information" },
                 { new StringContent(template.Content??""), "description" },
             };
