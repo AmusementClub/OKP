@@ -138,3 +138,21 @@ _以下排名无先后_
 2. acgnx 站点登录可能会被 Cloudflare 风控，鉴于其站点会同步 nyaa、dmhy、acgrip 的种子，可以选择不使用其上传
 3. 萌番组暂不支持自定义 TAG，目前仅支持 _Team ID_ 和 _动画_ 两个 TAG
 4. 動漫花園必须删除多余的 Cookie，否则无法登录。
+
+## 常见问题
+
+### 导入了 Cookie 后无法访问某个发布站
+
+删除 cookie 文件重新添加。
+
+### 已经重新添加了，还是无法访问某个发布站（例如 acg.rip）
+
+删除 cookie 文件，使用浏览器登录后，访问发布页面（[例如](https://acg.rip/cp/posts/upload)）,在发布页面重新导出 cookie 后再导入。
+
+### 某个发布站发布失败
+
+重新进行发布。由于绝大多数发布站都具有检测重复资源的机制，okp 将会尝试重新在所有已配置的发布站进行发布。
+
+### 其他问题
+
+去提个 [issue](https://github.com/AmusementClub/OKP/issues)，不出意外你的 issue 会出现在这里。
