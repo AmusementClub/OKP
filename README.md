@@ -4,7 +4,7 @@ One-Key-Publish，一键发布 Torrent 到常见 BT 站。
 
 ## Quick Start
 
-1. 导出并添加 Cookie [#导入-cookie-到-okp]()，默认的 cookie 文件将保存在程序目录的`config\cookies`目录下。
+1. 导出并添加 Cookie [参考这里](#导入-cookie-到-okp)，默认的 cookie 文件将保存在程序目录的`config\cookies`目录下。
 2. 编写一个配置文件 [示例](https://github.com/AmusementClub/OKP/blob/master/OKP.Core/example/setting.toml)，将配置文件置于种子文件同目录下。
 3. 拖动你的种子文件到 okp.exe 上以发布你的资源，okp 将自动寻找 cookie 文件与配置文件。
 
@@ -91,7 +91,7 @@ One-Key-Publish，一键发布 Torrent 到常见 BT 站。
 
 ### publish template
 
-同见 #支持站点
+同见 [支持站点](#支持站点)
 
 ### 导入 Cookie 到 OKP
 
