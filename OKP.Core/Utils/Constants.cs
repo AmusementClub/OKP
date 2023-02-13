@@ -6,6 +6,8 @@ public static class Constants
     public const string DefaultLogFileName = "log.txt";
     public const string UserPropertiesFileName = "OKP_userprop.toml";
     public static readonly string[] SupportSiteName = { "nyaa", "dmhy", "acgrip", "acgnx_asia", "acgnx_global", "bangumi" };
+    public const string DefaultCookiePath = "okp_cookies";
+    public const string DefauttCookieFile = "cookies";
 
     public enum categoryAcgnxAsia : ushort
     {

@@ -84,12 +84,12 @@ namespace OKP.Core.Interface
 
             var torrentC = Toml.ToModel<TorrentContent>(File.ReadAllText(settingFilePath));
             torrentC.SettingPath = Path.GetDirectoryName(settingFilePath);
-            if (!File.Exists(torrentC.CookiePath))
-            {
-                Log.Error("没有设置Cookie,使用默认Cookie文件{file}",Path.GetFullPath("cookie.txt"));
-                torrentC.CookiePath = "cookie.txt";
-            }
-            HttpHelper.GlobalCookieContainer.LoadFromTxt(torrentC.CookiePath);
+            //if (!File.Exists(torrentC.CookiePath))
+            //{
+            //    Log.Error("没有设置Cookie,使用默认Cookie文件{file}",Path.GetFullPath("cookie.txt"));
+            //    torrentC.CookiePath = "cookie.txt";
+            //}
+            //HttpHelper.GlobalCookieContainer.LoadFromTxt(torrentC.CookiePath);
             if (torrentC.DisplayName is null)
             {
                 Log.Error("没有配置标题");
