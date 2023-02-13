@@ -47,7 +47,7 @@ namespace OKP.Core.Interface.Bangumi
                     new Uri(template.Proxy),
                     BypassOnLocal: false);
             }
-            category = CategoryHelper.SelectCategory(torrent.Tags, site);
+            category = CategoryHelper.SelectCategory(torrent, site);
             if (!Valid())
             {
                 IOHelper.ReadLine();

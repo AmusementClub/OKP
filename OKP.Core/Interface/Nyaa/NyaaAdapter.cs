@@ -39,7 +39,6 @@ namespace OKP.Core.Interface.Nyaa
             };
             this.template = template;
             this.torrent = torrent;
-            httpClient.DefaultRequestHeaders.Add("user-agent", template.UserAgent);
             if (template.Proxy is not null)
             {
                 httpClientHandler.Proxy = new WebProxy(
@@ -47,9 +46,7 @@ namespace OKP.Core.Interface.Nyaa
                     BypassOnLocal: false);
                 httpClientHandler.UseProxy = true;
             }
-
-            httpClient.DefaultRequestHeaders.Add("user-agent", template.UserAgent);
-            category = CategoryHelper.SelectCategory(torrent.Tags, site);
+            category = CategoryHelper.SelectCategory(torrent, site);
             if (!Valid())
             {
                 IOHelper.ReadLine();

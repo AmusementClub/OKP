@@ -38,10 +38,7 @@ namespace OKP.Core.Interface.Acgrip
             };
             this.template = template;
             this.torrent = torrent;
-            httpClient.DefaultRequestHeaders.Add("user-agent", template.UserAgent);
-            httpClient.DefaultRequestHeaders.Add("Cookie", template.Cookie);
-            httpClient.BaseAddress = new(baseUrl);
-            category = CategoryHelper.SelectCategory(torrent.Tags, site);
+            category = CategoryHelper.SelectCategory(torrent, site);
             if (!Valid())
             {
                 IOHelper.ReadLine();
