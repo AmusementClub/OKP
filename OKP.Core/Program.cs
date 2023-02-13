@@ -267,6 +267,10 @@ namespace OKP.Core
         /// <returns>Returns a DateTime object that represents value of the Unix time.</returns>
         private static DateTime UnixTimeToDateTime(long unixtime)
         {
+            if (unixtime == 0)
+            {
+                return new(2099, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+            }
             System.DateTime dtDateTime = new(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
             dtDateTime = dtDateTime.AddSeconds(unixtime).ToLocalTime();
             return dtDateTime;
