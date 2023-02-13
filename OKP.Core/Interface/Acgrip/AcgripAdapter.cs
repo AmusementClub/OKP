@@ -38,7 +38,7 @@ namespace OKP.Core.Interface.Acgrip
             };
             this.template = template;
             this.torrent = torrent;
-            category = CategoryHelper.SelectCategory(torrent, site);
+            category = CategoryHelper.SelectCategory(torrent.Tags, site);
             if (!Valid())
             {
                 IOHelper.ReadLine();

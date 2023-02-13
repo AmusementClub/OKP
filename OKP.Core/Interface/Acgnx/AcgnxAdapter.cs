@@ -135,7 +135,7 @@ namespace OKP.Core.Interface.Acgnx
             MultipartFormDataContent form = new()
             {
                 { new StringContent("upload"), "mod" },
-                { new StringContent(CategoryHelper.SelectCategory(torrent, site)), "sort_id" },
+                { new StringContent(CategoryHelper.SelectCategory(torrent.Tags, site)), "sort_id" },
                 { torrent.Data.ByteArrayContent, "bt_file", torrent.Data.FileInfo.Name},
                 { new StringContent(torrent.DisplayName??""), "title" },
                 { new StringContent(template.Content??"Intro None"), "intro" },

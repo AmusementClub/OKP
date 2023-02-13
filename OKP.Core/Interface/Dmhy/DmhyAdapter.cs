@@ -38,7 +38,7 @@ namespace OKP.Core.Interface.Dmhy
             this.template = template;
             this.torrent = torrent;
             httpClient.BaseAddress = new(baseUrl);
-            category = CategoryHelper.SelectCategory(torrent, site);
+            category = CategoryHelper.SelectCategory(torrent.Tags, site);
 
             if (template.Proxy is not null)
             {

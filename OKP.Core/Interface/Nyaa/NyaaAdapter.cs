@@ -46,7 +46,7 @@ namespace OKP.Core.Interface.Nyaa
                     BypassOnLocal: false);
                 httpClientHandler.UseProxy = true;
             }
-            category = CategoryHelper.SelectCategory(torrent, site);
+            category = CategoryHelper.SelectCategory(torrent.Tags, site);
             if (!Valid())
             {
                 IOHelper.ReadLine();
