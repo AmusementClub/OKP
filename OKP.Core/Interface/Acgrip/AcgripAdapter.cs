@@ -36,6 +36,7 @@ namespace OKP.Core.Interface.Acgrip
             {
                 BaseAddress = baseUrl,
             };
+            httpClient.DefaultRequestHeaders.Add("user-agent", HttpHelper.GlobalUserAgent);
             this.template = template;
             this.torrent = torrent;
             category = CategoryHelper.SelectCategory(torrent.Tags, site);

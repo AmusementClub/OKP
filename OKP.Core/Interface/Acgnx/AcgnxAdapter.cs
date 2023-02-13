@@ -39,6 +39,7 @@ namespace OKP.Core.Interface.Acgnx
             {
                 BaseAddress = new(baseUrl)
             };
+            httpClient.DefaultRequestHeaders.Add("user-agent", HttpHelper.GlobalUserAgent);
             this.template = template;
             this.torrent = torrent;
 

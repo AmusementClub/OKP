@@ -85,6 +85,8 @@ namespace OKP.Core
                                    if (File.Exists(filename))
                                    {
                                        o.Cookies = filename;
+                                       Log.Error("你指定的Cookie文件{File}已经存在！继续添加可能会覆盖之前保存的Cookie！");
+                                       IOHelper.ReadLine();
                                        HttpHelper.GlobalCookieContainer.LoadFromTxt(o.Cookies);
                                    }
                                    else
@@ -94,7 +96,21 @@ namespace OKP.Core
                                            Directory.CreateDirectory(Constants.DefaultCookiePath);
                                        }
                                        o.Cookies = IOHelper.BasePath($"{Constants.DefaultCookiePath}\\{(filename?.Length == 0 ? Constants.DefauttCookieFile : filename)}.txt");
+                                       if (File.Exists(o.Cookies))
+                                       {
+                                           Log.Error("你指定的Cookie文件{File}已经存在！继续添加可能会覆盖之前保存的Cookie！");
+                                           IOHelper.ReadLine();
+                                           HttpHelper.GlobalCookieContainer.LoadFromTxt(o.Cookies);
+                                       }
                                    }
+                                   Log.Information("请输入你使用的浏览器UserAgent：");
+                                   var ua = IOHelper.ReadLine();
+                                   while (ua is null || !HttpHelper.UaRegex.IsMatch(ua))
+                                   {
+                                       Log.Information("你必须输入一个合法的UserAgent以确保你的cookie可以正常使用：");
+                                       ua = IOHelper.ReadLine();
+                                   }
+                                   HttpHelper.GlobalUserAgent = ua;
                                }
                                if (File.Exists(IOHelper.BasePath($"{Constants.DefaultCookiePath}\\{Constants.DefauttCookieFile}.txt")))
                                {
@@ -113,7 +129,7 @@ namespace OKP.Core
                            if (o.Cookies is not null)
                            {
                                Log.Information("共输入了{Count}个Cookie文件", addCookieCount);
-                               HttpHelper.GlobalCookieContainer.SaveToTxt(o.Cookies);
+                               HttpHelper.GlobalCookieContainer.SaveToTxt(o.Cookies, HttpHelper.GlobalUserAgent);
                                Log.Information("保存成功，Cookie文件保存在{Path}", o.Cookies);
                            }
                        }
@@ -219,7 +235,7 @@ namespace OKP.Core
                 }
             }
             Log.Information("发布完成");
-            HttpHelper.GlobalCookieContainer.SaveToTxt(cookies);
+            HttpHelper.GlobalCookieContainer.SaveToTxt(cookies, HttpHelper.GlobalUserAgent);
             IOHelper.ReadLine();
         }
         private static void AddCookies(string file)

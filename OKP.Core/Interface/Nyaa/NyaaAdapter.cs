@@ -37,6 +37,7 @@ namespace OKP.Core.Interface.Nyaa
             {
                 BaseAddress = baseUrl,
             };
+            httpClient.DefaultRequestHeaders.Add("user-agent",HttpHelper.GlobalUserAgent);
             this.template = template;
             this.torrent = torrent;
             if (template.Proxy is not null)

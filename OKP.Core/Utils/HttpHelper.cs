@@ -1,15 +1,19 @@
 using System.Net;
 using System.Net.Http.Json;
 using System.Text;
+using System.Text.RegularExpressions;
 using Polly;
 using Polly.Extensions.Http;
 using Polly.Retry;
+using Serilog;
 
 namespace OKP.Core.Utils
 {
     internal static class HttpHelper
     {
         public static CookieContainer GlobalCookieContainer = new();
+        public static string GlobalUserAgent = "";
+        public static Regex UaRegex = new(@"\((?<info>.*?)\)(\s|$)|(?<name>.*?)\/(?<version>.*?)(\s|$)");
         private static readonly AsyncRetryPolicy<HttpResponseMessage> policy = HttpPolicyExtensions
                 .HandleTransientHttpError()
                 .WaitAndRetryAsync(5, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)));
@@ -50,31 +54,38 @@ namespace OKP.Core.Utils
                 throw new FileNotFoundException(txtPath);
             }
             var jsontext = File.ReadAllLines(txtPath);
-            foreach (var line in jsontext)
+            GlobalUserAgent = jsontext[0].Split('\t')[1];
+            if (!UaRegex.IsMatch(GlobalUserAgent))
+            {
+                Log.Fatal("不合法的UA{UA}", GlobalUserAgent);
+                throw new Exception("invalid GlobalUserAgent");
+            }
+            foreach (var line in jsontext.Skip(1))
             {
                 var e = line.Split("\t");
                 cookieContainer.SetCookies(new(e[0]), e[1]);
             }
         }
-        public static void SaveToTxt(this CookieContainer cookieContainer, string txtPath)
+        public static void SaveToTxt(this CookieContainer cookieContainer, string txtPath, string userAgent)
         {
-            var jsontext = CookieToString(cookieContainer.GetAllCookies());
-            File.WriteAllText(txtPath, jsontext);
+            var text = CookieToString(cookieContainer.GetAllCookies(), userAgent);
+            File.WriteAllText(txtPath, text);
         }
 
-        private static string CookieToString(CookieCollection cookieCollection)
+        private static string CookieToString(CookieCollection cookieCollection, string userAgent)
         {
-            StringBuilder stringBuilder = new();
+            StringBuilder sb = new();
+            sb.AppendLine($"user-agent:\t{userAgent}");
             foreach (var cookie in cookieCollection.ToList())
             {
-                stringBuilder.Append($"https://{cookie.Domain.TrimStart('.')}\t");
-                stringBuilder.AppendLine($"{cookie.Name}={cookie.Value}; " +
+                sb.Append($"https://{cookie.Domain.TrimStart('.')}\t");
+                sb.AppendLine($"{cookie.Name}={cookie.Value}; " +
                     $"domain={cookie.Domain}; " +
                     $"path={cookie.Path}; " +
                     $"expires={cookie.Expires.ToString("R")}" +
                     $"{(cookie.Secure ? "; secure" : "")}");
             }
-            return stringBuilder.ToString();
+            return sb.ToString();
         }
         private static void HandleSetCookie(HttpClient httpClient, bool setCookie, HttpResponseMessage res)
         {

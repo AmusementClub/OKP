@@ -41,6 +41,7 @@ namespace OKP.Core.Interface.Bangumi
             {
                 BaseAddress = baseUrl,
             };
+            httpClient.DefaultRequestHeaders.Add("user-agent", HttpHelper.GlobalUserAgent);
             if (template.Proxy is not null)
             {
                 httpClientHandler.Proxy = new WebProxy(
