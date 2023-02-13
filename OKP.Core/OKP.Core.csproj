@@ -18,6 +18,21 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="config\tags\acgnx_asia.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="config\tags\acgnx_global.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="config\tags\acgrip.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="config\tags\bangumi.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="config\tags\dmhy.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="config\tags\nyaa.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
