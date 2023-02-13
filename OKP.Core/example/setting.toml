@@ -7,8 +7,7 @@ about="https://hanzawasan-file.com/"
 # Use ''' to avoid escape
 filename_regex='''- (?<ep>03) \['''
 resolution_regex='''\]\[WebRip (?<res>\d{3}|\d{4})p\]\['''
-has_subtitle=true
-is_finished=false
+tags=["Anime","TV","Chinese","HongKong"]
 
 [[intro_template]]
 site="dmhy"

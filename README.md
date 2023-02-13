@@ -2,11 +2,19 @@
 
 One-Key-Publish，一键发布 Torrent 到常见 BT 站。
 
+## Quick Start
+
+1. 导出并添加 Cookie [#导入-cookie-到-okp]()，默认的 cookie 文件将保存在程序目录的`config\cookies`目录下。
+2. 编写一个配置文件 [示例](https://github.com/AmusementClub/OKP/blob/master/OKP.Core/example/setting.toml)，将配置文件置于种子文件同目录下。
+3. 拖动你的种子文件到 okp.exe 上以发布你的资源，okp 将自动寻找 cookie 文件与配置文件。
+
 ## 选项及参数
 
-`OKP.Core yourTorrent.torrent {-y yourSetting.toml}`
+`OKP.Core yourTorrent.torrent {-y yourSetting.toml} {-cookie yourCookieFile.txt}`
 
 ```
+  --cookies           (Default: cookies.txt) (Not required) Specific Cookie file.
+
   -s, --setting       (Default: setting.toml) (Not required) Specific setting file.
 
   -l, --log_level     (Default: Debug) Log level.
@@ -36,7 +44,8 @@ One-Key-Publish，一键发布 Torrent 到常见 BT 站。
 
 ### 可选项
 
-- `-s, --setting`，输入一个配置文件，若不指定则为 Torrent 同目录下的 setting.toml
+- `--cookies`，输入一个 cookie，若不指定则为 `config\cookies` 目录下的 `cookies.txt`
+- `-s, --setting`，输入一个配置文件，若不指定则为 Torrent 同目录下的 `setting.toml`
 - `-l, --log_level`，指定输出的 log level，默认是 `Debug`，可以指定 `Verbose, Debug, Info`（不区分大小写）
 - `--log_file`，指定输出的 log 文件，默认命名为 `log{当前时间的4位年份}{当前时间的2位月份}.txt`，默认输出位置为执行目录
 - `-y`，跳过所有需要回车的地方
@@ -65,10 +74,7 @@ One-Key-Publish，一键发布 Torrent 到常见 BT 站。
 
 #### 发布分类相关
 
-目前仅支持动画的常规部分，具体分类规则待完善
-
-1. `has_subtitle`：是否有字幕
-2. `is_finished`：是否合集
+1. `tags`: 一个用于描述资源分类的 List。全部可用的类型请参照 [OKP.Core.Interface.TorrentContent.ContentTypes](https://github.com/AmusementClub/OKP/blob/master/OKP.Core/Interface/TorrentContent.cs#L72)。你可以添加任意数量的 tag，这些 tag 会根据各发布站的规则自动映射到对应分类。
 
 #### 发布站点与正文
 
@@ -108,7 +114,6 @@ One-Key-Publish，一键发布 Torrent 到常见 BT 站。
 需要放在使用的应用程序同目录下，文件名为 `OKP_userprop.toml`，[示例](https://github.com/AmusementClub/OKP/blob/master/OKP.Core/example/OKP_userprop.toml)
 
 可以使用它来指定一些不方便写在 setting 中的敏感信息，现在支持 `proxy`。二者同时指定时，userprop 中的数据会覆盖 setting 的数据。
-
 
 想要替换 / 指定的配置需要与 setting 中的 `site` 和 `name` 相同
 
