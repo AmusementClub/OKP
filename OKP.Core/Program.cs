@@ -74,6 +74,7 @@ namespace OKP.Core
                            {
                                Log.Information("正在发布 {File}", file);
                                SinglePublish(file, o.SettingFile, o.Cookies);
+                               continue;
                            }
                            else if (file.EndsWith(".txt"))
                            {
