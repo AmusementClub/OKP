@@ -8,6 +8,7 @@ public static class Constants
     public static readonly string[] SupportSiteName = { "nyaa", "dmhy", "acgrip", "acgnx_asia", "acgnx_global", "bangumi" };
     public const string DefaultCookiePath = "config\\cookies";
     public const string DefauttCookieFile = "cookies";
+    public const string DefaultUserPropsPath = "config";
 
     public enum categoryAcgnxAsia : ushort
     {

@@ -165,7 +165,7 @@ namespace OKP.Core.Interface
             Log.Information("标题：{0}", torrentC.DisplayName);
 
             // user properties, it will overlap some existing private config from setting config, such as proxy, cookie and user_agent
-            var userPropPath = Path.Combine(appLocation, Constants.UserPropertiesFileName);
+            var userPropPath = IOHelper.BasePath(Constants.DefaultUserPropsPath, Constants.UserPropertiesFileName);
             if (File.Exists(userPropPath))
             {
                 var userProp = Toml.ToModel<UserProperties>(File.ReadAllText(userPropPath));
@@ -243,7 +243,7 @@ namespace OKP.Core.Interface
                 throw new ArgumentNullException(nameof(Data.TorrentObject));
             }
             StringBuilder fileList = new();
-            
+
             Node rootNode = Data.TorrentObject.FileMode == TorrentFileMode.Multi ? new Node(Data.TorrentObject.Files) : new Node(Data.TorrentObject.File);
             foreach (var line in Node.GetFileTree(rootNode))
             {
