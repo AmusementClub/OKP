@@ -93,7 +93,7 @@ namespace OKP.Core
                                    {
                                        if (!Directory.Exists(IOHelper.BasePath(Constants.DefaultCookiePath)))
                                        {
-                                           Directory.CreateDirectory(Constants.DefaultCookiePath);
+                                           Directory.CreateDirectory(IOHelper.BasePath(Constants.DefaultCookiePath));
                                        }
                                        o.Cookies = IOHelper.BasePath($"{Constants.DefaultCookiePath}\\{(filename?.Length == 0 ? Constants.DefauttCookieFile : filename)}.txt");
                                        if (File.Exists(o.Cookies))
