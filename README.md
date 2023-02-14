@@ -109,7 +109,7 @@ One-Key-Publish，一键发布 Torrent 到常见 BT 站。
 - 你可以在`publish template`中指定任意的 Cookie 文件。
 - 正常情况下所有 Cookie 均会自动更新并保存。当 Cookie 失效并且无法自动刷新时，你可以直接添加对应 Cookie，OKP 会自动处理并管理这些 Cookie。
 
-### userprop
+### userprop （实验性功能，将会在未来版本被移除）
 
 需要放在使用的应用程序同目录下，文件名为 `OKP_userprop.toml`，[示例](https://github.com/AmusementClub/OKP/blob/master/OKP.Core/example/OKP_userprop.toml)
 
