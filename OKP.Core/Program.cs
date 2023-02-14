@@ -135,6 +135,7 @@ namespace OKP.Core
                            }
                        }
                    });
+            IOHelper.ReadLine();
         }
         private static void SinglePublish(string file, string settingFile, string? cookies)
         {
