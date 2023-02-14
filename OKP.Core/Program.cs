@@ -164,13 +164,22 @@ namespace OKP.Core
                 {
                     cookies = IOHelper.BasePath($"{Constants.DefaultCookiePath}\\{Constants.DefauttCookieFile}.txt");
                     Log.Information("使用默认的Cookie文件{Cookies}", cookies);
+                    if (!File.Exists(cookies))
+                    {
+                        Log.Error("默认的Cookie文件{Cookies}不存在！", cookies);
+                        IOHelper.ReadLine();
+                        return;
+                    }
                 }
             }
-            if (!File.Exists(cookies))
+            else
             {
-                Log.Error("在Cookie文件{Cookies}不存在!", settingFile, cookies);
-                IOHelper.ReadLine();
-                return;
+                if (!File.Exists(cookies))
+                {
+                    Log.Error("你指定了Cookie文件{Cookies}，但是这个文件不存在。",cookies);
+                    IOHelper.ReadLine();
+                    return;
+                }
             }
             HttpHelper.GlobalCookieContainer.LoadFromTxt(cookies);
             if (torrent.IsV2())
