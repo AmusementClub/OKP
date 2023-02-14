@@ -10,6 +10,7 @@ namespace OKP.Core.Utils
         }
 
         public static string BasePath(string file) => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, file);
+        public static string BasePath(string file1, string file2) => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, file1, file2);
         public static void HintText(string hint)
         {
             var color = Console.ForegroundColor;
