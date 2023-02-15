@@ -96,7 +96,7 @@ One-Key-Publish，一键发布 Torrent 到常见 BT 站。
 ### 导入 Cookie 到 OKP
 
 1. 安装[Get Cookies.txt](https://chrome.google.com/webstore/detail/get-cookiestxt/bgaddhkoddajcdgocldbbfleckgcbcid)
-2. 正常登录对应的发布站。目前已经支持的站点同见 #支持站点
+2. 正常登录对应的发布站。目前已经支持的站点同见 [支持站点](#支持站点)
 3. 点击扩展中的`Export`或`Export as`导出同站点下的全部 Cookie。由于 C# 中 Cookie 容器最大仅支持 300 条 Cookie 同时存在，不推荐一次性导出浏览器中的全部 Cookie。
 4. ~~如果你导出了[動漫花園](https://share.dmhy.org/)的 Cookie，你需要在 txt 中删掉多余记录，仅保留 `pass; rsspass; tid; uname; uid` 共 5 行记录。如果你忘记在 txt 中删除多余记录，你可以在导出完成的 `cookie.txt` 文件中删除多余记录。~~
 5. OKP 支持一次添加多个 Cookie 文件，所有的 Cookie 都导出完成后，多选全部 txt 文件，并拖拽到 `OKP.exe` 上。
