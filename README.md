@@ -12,7 +12,7 @@ One-Key-Publish，一键发布 Torrent 到常见 BT 站。
 
 ## 选项及参数
 
-`OKP.Core yourTorrent.torrent {-y yourSetting.toml} {-cookie yourCookieFile.txt}`
+`OKP.Core yourTorrent.torrent {-s yourSetting.toml} {--cookies yourCookieFile.txt}`
 
 ```
   --cookies           (Default: cookies.txt) (Not required) Specific Cookie file.
