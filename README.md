@@ -4,13 +4,15 @@ One-Key-Publish，一键发布 Torrent 到常见 BT 站。
 
 ## Quick Start
 
-1. 导出并添加 Cookie [参考这里](#导入-cookie-到-okp)，默认的 cookie 文件将保存在程序目录的`config\cookies`目录下。
+依赖：[.NET 6 Runtime](https://dotnet.microsoft.com/en-us/download/dotnet/6.0)
+
+1. 导出并添加 Cookie [参考这里](#导入-Cookie-到-OKP)，默认的 cookie 文件将保存在程序目录的 `config\cookies` 目录下。
 2. 编写一个配置文件 [示例](https://github.com/AmusementClub/OKP/blob/master/OKP.Core/example/setting.toml)，将配置文件置于种子文件同目录下。
-3. 拖动你的种子文件到 okp.exe 上以发布你的资源，okp 将自动寻找 cookie 文件与配置文件。
+3. 拖动你的种子文件到 OKP.exe 上以发布你的资源，OKP 将自动寻找 cookie 文件与配置文件。
 
 ## 选项及参数
 
-`OKP.Core yourTorrent.torrent {-y yourSetting.toml} {-cookie yourCookieFile.txt}`
+`OKP.Core yourTorrent.torrent {-s yourSetting.toml} {--cookies yourCookieFile.txt}`
 
 ```
   --cookies           (Default: cookies.txt) (Not required) Specific Cookie file.
@@ -74,7 +76,7 @@ One-Key-Publish，一键发布 Torrent 到常见 BT 站。
 
 #### 发布分类相关
 
-1. `tags`: 一个用于描述资源分类的 List。全部可用的类型请参照 [OKP.Core.Interface.TorrentContent.ContentTypes](https://github.com/AmusementClub/OKP/blob/master/OKP.Core/Interface/TorrentContent.cs#L72)。你可以添加任意数量的 tag，这些 tag 会根据各发布站的规则自动映射到对应分类。
+1. `tags`: 一个用于描述资源分类的 List。全部可用的类型请参照 [OKP.Core.Interface.TorrentContent.ContentTypes](https://github.com/AmusementClub/OKP/blob/master/OKP.Core/Interface/TorrentContent.cs#L72)。你可以添加任意数量的 tag，这些 tag 会根据各发布站的规则自动映射到对应分类，详见 [tags 映射](https://github.com/AmusementClub/OKP/wiki/TagsConvert)。
 
 #### 发布站点与正文
 
@@ -87,8 +89,6 @@ One-Key-Publish，一键发布 Torrent 到常见 BT 站。
 4. `content`：发布正文，可以指定一个文件名或 raw string
    - 指定文件名的后缀同见 #支持站点
 
-`proxy` 详细介绍放在 [userprop](#userprop)
-
 ### publish template
 
 同见 [支持站点](#支持站点)
@@ -96,24 +96,24 @@ One-Key-Publish，一键发布 Torrent 到常见 BT 站。
 ### 导入 Cookie 到 OKP
 
 1. 安装[Get Cookies.txt](https://chrome.google.com/webstore/detail/get-cookiestxt/bgaddhkoddajcdgocldbbfleckgcbcid)
-2. 正常登录对应的发布站。目前已经支持的站站点同见 #支持站点
-3. 点击扩展中的`Export`或`Export as`导出同站点下的全部 Cookie。由于 C#中 Cookie 容器最大仅支持 300 条 Cookie 同时存在，不推荐一次性导出浏览器中的全部 Cookie。
-4. 如果你导出了[動漫花園](https://share.dmhy.org/)的 Cookie，你需要在 txt 中删掉多余记录，仅保留`pass; rsspass; tid; uname; uid`共 5 行记录。如果你忘记在 txt 中删除多余记录，你可以在导出完成的`cookie.txt`文件中删除多余记录。
-5. OKP 支持一次添加多个 Cookie 文件，所有的 Cookie 都导出完成后，多选全部 txt 文件，并拖拽到`OKP.exe`上。
-6. 你需要输入一个文件名来保存的准备导入的 Cookie，默认文件名为`cookie`。
-7. 你需要输入你的浏览器 User-Agent 来确保你的 Cookie 可以正常工作。如果你不知道如何获取你的 User-Agent，你可以访问[这里](http://my-user-agent.com/)。
+2. 正常登录对应的发布站。目前已经支持的站点同见 [支持站点](#支持站点)
+3. 点击扩展中的`Export`或`Export as`导出同站点下的全部 Cookie。由于 C# 中 Cookie 容器最大仅支持 300 条 Cookie 同时存在，不推荐一次性导出浏览器中的全部 Cookie。
+4. ~~如果你导出了[動漫花園](https://share.dmhy.org/)的 Cookie，你需要在 txt 中删掉多余记录，仅保留 `pass; rsspass; tid; uname; uid` 共 5 行记录。如果你忘记在 txt 中删除多余记录，你可以在导出完成的 `cookie.txt` 文件中删除多余记录。~~
+5. OKP 支持一次添加多个 Cookie 文件，所有的 Cookie 都导出完成后，多选全部 txt 文件，并拖拽到 `OKP.exe` 上。
+6. 你需要输入一个文件名来保存的准备导入的 Cookie，默认文件名为 `cookie`。
+7. 你需要输入你的浏览器 User-Agent 来确保你的 Cookie 可以正常工作。如果你不知道如何获取你的 User-Agent，你可以访问 [这里](http://my-user-agent.com/)。
 8. OKP 会自动添加 Cookie，当一个文件添加完成时，你需要回车确认并继续。
-9. 添加完成后，具有 Cookie 记录的文件将会保存在程序目录中的`config\cookies`目录下，默认文件名为`cookie.txt`或你指定的文件名。
+9. 添加完成后，具有 Cookie 记录的文件将会保存在程序目录中的 `config\cookies` 目录下，默认文件名为 `cookie.txt` 或你指定的文件名。
 
 ### 使用 OKP 中的 Cookie 信息
 
-- cookie 文件默认保存在`OKP.exe`同目录下，文件名为`cookie.txt`。
-- 你可以在`publish template`中指定任意的 Cookie 文件。
+- cookie 文件默认保存在 `OKP.exe` 同目录下，文件名为 `cookie.txt`。
+- 你可以在 `publish template` 中指定任意的 Cookie 文件。
 - 正常情况下所有 Cookie 均会自动更新并保存。当 Cookie 失效并且无法自动刷新时，你可以直接添加对应 Cookie，OKP 会自动处理并管理这些 Cookie。
 
 ### userprop （实验性功能，将会在未来版本被移除）
 
-需要放在使用的应用程序同目录下，文件名为 `OKP_userprop.toml`，[示例](https://github.com/AmusementClub/OKP/blob/master/OKP.Core/example/OKP_userprop.toml)
+需要放在使用的应用程序同级的 `config` 目录下，文件名为 `userprop.toml`，[示例](https://github.com/AmusementClub/OKP/blob/master/OKP.Core/example/userprop.toml)
 
 可以使用它来指定一些不方便写在 setting 中的敏感信息，现在支持 `proxy`。二者同时指定时，userprop 中的数据会覆盖 setting 的数据。
 
@@ -127,7 +127,7 @@ _以下排名无先后_
 | --------------------------------------------- | ------------ | ------------------------------------------------------------------------------------------ |
 | [Nyaa](https://nyaa.si/)                      | nyaa         | [.md](https://github.com/AmusementClub/OKP/blob/master/OKP.Core/example/nyaa.md)           |
 | [動漫花園](https://share.dmhy.org/)           | dmhy         | [.html](https://github.com/AmusementClub/OKP/blob/master/OKP.Core/example/dmhy.html)       |
-| [ACG.RIP](https://share.dmhy.org/)            | acgrip       | [.bbcode](https://github.com/AmusementClub/OKP/blob/master/OKP.Core/example/acgrip.bbcode) |
+| [ACG.RIP](https://acg.rip/)                   | acgrip       | [.bbcode](https://github.com/AmusementClub/OKP/blob/master/OKP.Core/example/acgrip.bbcode) |
 | [末日動漫資源庫](https://share.acgnx.se/)     | acgnx_asia   | [.html](https://github.com/AmusementClub/OKP/blob/master/OKP.Core/example/dmhy.html)       |
 | [AcgnX Torrent Global](https://www.acgnx.se/) | acgnx_global | [.html](https://github.com/AmusementClub/OKP/blob/master/OKP.Core/example/dmhy.html)       |
 | [萌番组](https://bangumi.moe/)                | bangumi      | [.html](https://github.com/AmusementClub/OKP/blob/master/OKP.Core/example/dmhy.html)       |
@@ -136,19 +136,19 @@ _以下排名无先后_
 
 注：
 
-1. acgrip cookie 失效后会刷新，退出登录疑似会直接失效，ua 不同也会登录失败
-2. acgnx 站点登录可能会被 Cloudflare 风控，鉴于其站点会同步 nyaa、dmhy、acgrip 的种子，可以选择不使用其上传
-3. 萌番组暂不支持自定义 TAG，目前仅支持 _Team ID_ 和 _动画_ 两个 TAG
-4. 動漫花園必须删除多余的 Cookie，否则无法登录。
+1. acgrip cookie 失效后会刷新，退出登录疑似会直接失效，ua 不同也会登录失败。
+2. acgnx 站点登录可能会被 Cloudflare 风控，鉴于其站点会同步 nyaa、dmhy、acgrip 的种子，可以选择不使用其上传。
+3. 萌番组暂不支持自定义 TAG，目前仅支持 _Team ID_ 和 setting 中 tags 映射的分类两个 TAG。
+4. ~~動漫花園必须删除多余的 Cookie，否则无法登录。~~
 
 ## 最佳实践
 
-- 如果你只有一个发布身份/账号，将所有账号的 Cookie 保存在同一个 Cookie 文件中。
-- 如果你有多个发布身份/账号，将同一个身份的 Cookie 保存在同一个 Cookie 文件中，并以账户名命名你的 Cookie 文件。
+- 如果你只有一个发布身份 / 账号，将所有账号的 Cookie 保存在同一个 Cookie 文件中。
+- 如果你有多个发布身份 / 账号，将同一个身份的 Cookie 保存在同一个 Cookie 文件中，并以账户名命名你的 Cookie 文件。
 - 尽可能全面的设置你的 Tags，以便在各发布站准确映射到对应分类。
 - 如果发布站的模板格式相同，例如 dmhy 和 acgnx，使用同一个模板文件。
 - 将配置文件与种子放置在同一个目录，或者自行编写一个批处理文件处理输入参数，以方便你拖动种子文件进行发布。
-- 将 Cookie 视为你的账户密码并妥善保护，任何获取到 Cookie 文件的人都可以轻易登录你的账户。
+- **将 Cookie 视为你的账户密码并妥善保护，任何获取到 Cookie 文件的人都可以轻易登录你的账户。**
 - 在配置文件中尽可能的使用相对目录，来避免潜在的信息泄露。
 - 由于 OKP 将直接使用你的账户进行敏感操作，如果你不信任 OKP，请自行审计源码，并从 Github Action 下载最新的 Build。
 
@@ -164,7 +164,7 @@ _以下排名无先后_
 
 ### 某个发布站发布失败
 
-重新进行发布。由于绝大多数发布站都具有检测重复资源的机制，okp 将会尝试重新在所有已配置的发布站进行发布。
+重新进行发布。由于绝大多数发布站都具有检测重复资源的机制，OKP 将会尝试重新在所有已配置的发布站进行发布。
 
 ### 其他问题
 

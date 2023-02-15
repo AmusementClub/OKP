@@ -67,21 +67,23 @@ namespace OKP.Core
                        {
                            if (!File.Exists(file))
                            {
-                               Log.Error("文件{file}不存在", file);
+                               Log.Error("文件{File}不存在", file);
                                continue;
                            }
-                           if (file.EndsWith(".torrent"))
+                           var extension = (Path.GetExtension(file) ?? "").ToLower();
+
+                           if (extension == ".torrent")
                            {
                                Log.Information("正在发布 {File}", file);
                                SinglePublish(file, o.SettingFile, o.Cookies);
                                continue;
                            }
-                           else if (file.EndsWith(".txt"))
+                           if (extension == ".txt")
                            {
                                if (o.Cookies is null)
                                {
                                    Log.Information("请输入Cookie文件名，不需要包含扩展名，相对目录默认为{DefaultPath}", IOHelper.BasePath(Constants.DefaultCookiePath));
-                                   IOHelper.HintText(Constants.DefauttCookieFile);
+                                   IOHelper.HintText(Constants.DefaultCookieFile);
                                    var filename = IOHelper.ReadLine();
                                    if (File.Exists(filename))
                                    {
@@ -96,7 +98,7 @@ namespace OKP.Core
                                        {
                                            Directory.CreateDirectory(IOHelper.BasePath(Constants.DefaultCookiePath));
                                        }
-                                       o.Cookies = IOHelper.BasePath(Constants.DefaultCookiePath, (filename?.Length == 0 ? Constants.DefauttCookieFile : filename) + ".txt");
+                                       o.Cookies = IOHelper.BasePath(Constants.DefaultCookiePath, (filename?.Length == 0 ? Constants.DefaultCookieFile : filename) + ".txt");
                                        if (File.Exists(o.Cookies))
                                        {
                                            Log.Error("你指定的Cookie文件{File}已经存在！继续添加可能会覆盖之前保存的Cookie！", o.Cookies);
@@ -113,9 +115,9 @@ namespace OKP.Core
                                    }
                                    HttpHelper.GlobalUserAgent = ua;
                                }
-                               if (File.Exists(IOHelper.BasePath(Constants.DefaultCookiePath, Constants.DefauttCookieFile + "txt")))
+                               if (File.Exists(IOHelper.BasePath(Constants.DefaultCookiePath, Constants.DefaultCookieFile + ".txt")))
                                {
-                                   HttpHelper.GlobalCookieContainer.LoadFromTxt(IOHelper.BasePath(Constants.DefaultCookiePath, Constants.DefauttCookieFile + ".txt"));
+                                   HttpHelper.GlobalCookieContainer.LoadFromTxt(IOHelper.BasePath(Constants.DefaultCookiePath, Constants.DefaultCookieFile + ".txt"));
                                }
                                Log.Information("正在添加Cookie文件{File}", file);
                                AddCookies(file);
@@ -125,7 +127,7 @@ namespace OKP.Core
                            }
                            else
                            {
-                               Log.Error("不受支持的文件格式{file}", file);
+                               Log.Error("不受支持的文件格式{File}", file);
                            }
                            if (o.Cookies is not null)
                            {
@@ -164,7 +166,7 @@ namespace OKP.Core
                 }
                 else
                 {
-                    cookies = IOHelper.BasePath(Constants.DefaultCookiePath, Constants.DefauttCookieFile + ".txt");
+                    cookies = IOHelper.BasePath(Constants.DefaultCookiePath, Constants.DefaultCookieFile + ".txt");
                     Log.Information("使用默认的Cookie文件{Cookies}", cookies);
                     if (!File.Exists(cookies))
                     {
