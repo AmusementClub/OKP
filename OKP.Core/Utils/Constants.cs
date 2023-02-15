@@ -6,8 +6,8 @@ public static class Constants
     public const string DefaultLogFileName = "log.txt";
     public const string UserPropertiesFileName = "userprop.toml";
     public static readonly string[] SupportSiteName = { "nyaa", "dmhy", "acgrip", "acgnx_asia", "acgnx_global", "bangumi" };
-    public const string DefaultCookiePath = "config\\cookies";
-    public const string DefauttCookieFile = "cookies";
+    public static readonly string DefaultCookiePath = Path.Join("config", "cookies");
+    public const string DefaultCookieFile = "cookies";
     public const string DefaultUserPropsPath = "config";
 
     public enum categoryAcgnxAsia : ushort
