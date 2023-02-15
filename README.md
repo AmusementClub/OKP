@@ -6,7 +6,7 @@ One-Key-Publish，一键发布 Torrent 到常见 BT 站。
 
 依赖：[.NET 6 Runtime](https://dotnet.microsoft.com/en-us/download/dotnet/6.0)
 
-1. 导出并添加 Cookie [参考这里](#导入-Cookie-到-OKP)，默认的 cookie 文件将保存在程序目录的`config\cookies`目录下。
+1. 导出并添加 Cookie [参考这里](#导入-Cookie-到-OKP)，默认的 cookie 文件将保存在程序目录的 `config\cookies` 目录下。
 2. 编写一个配置文件 [示例](https://github.com/AmusementClub/OKP/blob/master/OKP.Core/example/setting.toml)，将配置文件置于种子文件同目录下。
 3. 拖动你的种子文件到 OKP.exe 上以发布你的资源，OKP 将自动寻找 cookie 文件与配置文件。
 
@@ -96,19 +96,19 @@ One-Key-Publish，一键发布 Torrent 到常见 BT 站。
 ### 导入 Cookie 到 OKP
 
 1. 安装[Get Cookies.txt](https://chrome.google.com/webstore/detail/get-cookiestxt/bgaddhkoddajcdgocldbbfleckgcbcid)
-2. 正常登录对应的发布站。目前已经支持的站站点同见 #支持站点
-3. 点击扩展中的`Export`或`Export as`导出同站点下的全部 Cookie。由于 C#中 Cookie 容器最大仅支持 300 条 Cookie 同时存在，不推荐一次性导出浏览器中的全部 Cookie。
-4. 如果你导出了[動漫花園](https://share.dmhy.org/)的 Cookie，你需要在 txt 中删掉多余记录，仅保留`pass; rsspass; tid; uname; uid`共 5 行记录。如果你忘记在 txt 中删除多余记录，你可以在导出完成的`cookie.txt`文件中删除多余记录。
-5. OKP 支持一次添加多个 Cookie 文件，所有的 Cookie 都导出完成后，多选全部 txt 文件，并拖拽到`OKP.exe`上。
-6. 你需要输入一个文件名来保存的准备导入的 Cookie，默认文件名为`cookie`。
-7. 你需要输入你的浏览器 User-Agent 来确保你的 Cookie 可以正常工作。如果你不知道如何获取你的 User-Agent，你可以访问[这里](http://my-user-agent.com/)。
+2. 正常登录对应的发布站。目前已经支持的站点同见 #支持站点
+3. 点击扩展中的`Export`或`Export as`导出同站点下的全部 Cookie。由于 C# 中 Cookie 容器最大仅支持 300 条 Cookie 同时存在，不推荐一次性导出浏览器中的全部 Cookie。
+4. ~~如果你导出了[動漫花園](https://share.dmhy.org/)的 Cookie，你需要在 txt 中删掉多余记录，仅保留 `pass; rsspass; tid; uname; uid` 共 5 行记录。如果你忘记在 txt 中删除多余记录，你可以在导出完成的 `cookie.txt` 文件中删除多余记录。~~
+5. OKP 支持一次添加多个 Cookie 文件，所有的 Cookie 都导出完成后，多选全部 txt 文件，并拖拽到 `OKP.exe` 上。
+6. 你需要输入一个文件名来保存的准备导入的 Cookie，默认文件名为 `cookie`。
+7. 你需要输入你的浏览器 User-Agent 来确保你的 Cookie 可以正常工作。如果你不知道如何获取你的 User-Agent，你可以访问 [这里](http://my-user-agent.com/)。
 8. OKP 会自动添加 Cookie，当一个文件添加完成时，你需要回车确认并继续。
-9. 添加完成后，具有 Cookie 记录的文件将会保存在程序目录中的`config\cookies`目录下，默认文件名为`cookie.txt`或你指定的文件名。
+9. 添加完成后，具有 Cookie 记录的文件将会保存在程序目录中的 `config\cookies` 目录下，默认文件名为 `cookie.txt` 或你指定的文件名。
 
 ### 使用 OKP 中的 Cookie 信息
 
-- cookie 文件默认保存在`OKP.exe`同目录下，文件名为`cookie.txt`。
-- 你可以在`publish template`中指定任意的 Cookie 文件。
+- cookie 文件默认保存在 `OKP.exe` 同目录下，文件名为 `cookie.txt`。
+- 你可以在 `publish template` 中指定任意的 Cookie 文件。
 - 正常情况下所有 Cookie 均会自动更新并保存。当 Cookie 失效并且无法自动刷新时，你可以直接添加对应 Cookie，OKP 会自动处理并管理这些 Cookie。
 
 ### userprop （实验性功能，将会在未来版本被移除）
