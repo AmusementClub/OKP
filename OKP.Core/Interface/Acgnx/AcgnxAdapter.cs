@@ -162,10 +162,10 @@ namespace OKP.Core.Interface.Acgnx
                 switch (apiContent.Code)
                 {
                     case 200:
-                        Log.Information("{Site} post {Status}.{NewLine}{Url}", site, apiContent.Status, Environment.NewLine, $"{baseUrl}/show-{apiContent.Infohash}.html");
+                        Log.Information("{Site} post {Status}.{NewLine}{Url}", site, apiContent.Status, Environment.NewLine, $"{baseUrl}show-{apiContent.Infohash}.html");
                         return new(200, "Success", true);
                     case 302:
-                        Log.Information("{Site} post {Status}, {ApiValue}.{NewLine}{Url}", site, apiContent.Status, apiContent.Value, Environment.NewLine, $"{baseUrl}/show-{apiContent.Infohash}.html");
+                        Log.Information("{Site} post {Status}, {ApiValue}.{NewLine}{Url}", site, apiContent.Status, apiContent.Value, Environment.NewLine, $"{baseUrl}show-{apiContent.Infohash}.html");
                         return new(200, "Success", true);
                     default:
                         Log.Error("{Site} post {Status}, {ApiValue}.", site, apiContent.Status, apiContent.Value);
