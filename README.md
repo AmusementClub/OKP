@@ -115,7 +115,7 @@ One-Key-Publish，一键发布 Torrent 到常见 BT 站。
 
 需要放在使用的应用程序同级的 `config` 目录下，文件名为 `userprop.toml`，[示例](https://github.com/AmusementClub/OKP/blob/master/OKP.Core/example/userprop.toml)
 
-可以使用它来指定一些不方便写在 setting 中的敏感信息，现在支持 `proxy`。二者同时指定时，userprop 中的数据会覆盖 setting 的数据。
+可以使用它来指定一些不方便写在 setting 中的敏感信息，现在支持 `proxy` 和 `cookie`（可以用来指定 acgnx 的 api token）。二者同时指定时，userprop 中的数据会覆盖 setting 的数据。
 
 想要替换 / 指定的配置需要与 setting 中的 `site` 和 `name` 相同
 
