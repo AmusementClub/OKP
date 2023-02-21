@@ -19,8 +19,8 @@ namespace OKP.Core.Interface.Acgrip
         private const string pingUrl = "cp/posts/upload";
         private const string postUtl = "cp/posts";
         private string category;
-        private readonly Regex personalReg = new(@"class=""panel-title""\>(\w+)\</div\>");
-        private readonly Regex teamReg = new(@"class=""panel-title-right""\>(\w+)\</div\>");
+        private readonly Regex personalReg = new(@"class=""panel-title""\>(.*?)\</div\>");
+        private readonly Regex teamReg = new(@"class=""panel-title-right""\>(.*?)\</div\>");
         private readonly Regex tokenReg = new(@"\<meta\sname=""csrf-token""\scontent=""(.*)""\s/\>");
         private readonly List<string> trackers = new() { "http://t.acg.rip:6699/announce" };
         private string authenticityToken = "";
