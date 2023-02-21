@@ -42,7 +42,14 @@ namespace OKP.Core.Interface.Acgnx
             httpClient.DefaultRequestHeaders.Add("user-agent", HttpHelper.GlobalUserAgent);
             this.template = template;
             this.torrent = torrent;
-
+            var cookieToken = HttpHelper.GlobalCookieContainer.GetCookies(httpClient.BaseAddress).ToList().Find(p => p.Name.ToLower() == "token");
+            if(cookieToken is null)
+            {
+                Log.Error("Cannot find token of {Site}", site);
+                IOHelper.ReadLine();
+                return;
+            }
+            template.Cookie = cookieToken.Value;
             if (torrent.DisplayName == null || torrent.DisplayName.Length <= 1 || torrent.DisplayName.Length >= 400)
             {
                 Log.Error("Error {Site} displayname length, it must between 1 and 400", site);
