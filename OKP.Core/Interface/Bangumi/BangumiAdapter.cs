@@ -109,7 +109,7 @@ namespace OKP.Core.Interface.Bangumi
                 category_tag_id = category,
                 title = torrent.DisplayName ?? "",
                 introduction = template.Content ?? "",
-                tag_ids = CastTags(torrent.Tags).ToArray(),
+                tag_ids = CastTags(torrent.Tags?? new List<ContentTypes>()).ToArray(),
                 team_id = teamID,
                 teamsync = false,
                 file_id = fileId,
@@ -181,7 +181,7 @@ namespace OKP.Core.Interface.Bangumi
             }
             return true;
         }
-        private static List<string> CastTags(List<ContentTypes>? tags)
+        private static List<string?> CastTags(List<ContentTypes>? tags)
         {
             var tagConfig = TagHelper.LoadTagConfig("bangumi.json");
             return tagConfig.FindTagAll(tags);

@@ -23,7 +23,7 @@ namespace OKP.Core.Interface.Bangumi
             public string category_tag_id { get; set; }
             public string title { get; set; }
             public string introduction { get; set; }
-            public string[] tag_ids { get; set; }
+            public string?[] tag_ids { get; set; }
             public string team_id { get; set; }
             public bool teamsync { get; set; }
             public string file_id { get; set; }

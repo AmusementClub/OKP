@@ -3,7 +3,8 @@ namespace OKP.Core.Utils
 {
     internal static class IOHelper
     {
-        public static bool NoReaction = false;
+        public static bool NoReaction { get; set; } = false;
+
         public static string? ReadLine()
         {
             return NoReaction ? "" : Console.ReadLine();

@@ -48,7 +48,7 @@ public class Tag
         return null;
     }
 
-    public List<string> FindTagAll(List<TorrentContent.ContentTypes>? types, bool isRoot = true)
+    public List<string?> FindTagAll(List<TorrentContent.ContentTypes>? types, bool isRoot = true)
     {
         var tags = new List<string?>();
         // if no types specified, return the value of the current tag
@@ -57,7 +57,7 @@ public class Tag
             tags.Add(Value);
         }
         // If no key is specified for the current tag, search for sub-tags
-        if (Key == null || types.Contains((TorrentContent.ContentTypes)Key))
+        if (Key == null || (types != null && types.Contains((TorrentContent.ContentTypes)Key)))
         {
             if (SubTags.Count > 0)
             {
@@ -93,7 +93,7 @@ public static class TagHelper
         try
         {
             var ret = JsonSerializer.Deserialize<Tag>(content);
-            return ret;
+            return ret ?? new Tag();
         }
         catch (JsonException ex)
         {
