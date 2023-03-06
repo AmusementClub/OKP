@@ -27,6 +27,7 @@ namespace OKP.Core.Interface.Bangumi
         private string teamID = "";
         private string tagID = "";  // string[]?
         const string site = "bangumi";
+        private bool ignore = false;
 
         public BangumiAdapter(TorrentContent torrent, Template template)
         {
@@ -60,7 +61,19 @@ namespace OKP.Core.Interface.Bangumi
         {
             var pingReq = await httpClient.GetAsync(pingUrl);
             var raw = await pingReq.Content.ReadAsStringAsync();
-            var teamList = await pingReq.Content.ReadFromJsonAsync<TeamInfo[]>();
+            TeamInfo[]? teamList = null;
+            try
+            {
+                teamList = await pingReq.Content.ReadFromJsonAsync<TeamInfo[]>();
+            }
+            catch (Exception ex)
+            {
+                Log.Error("{Site} is dead indeed.{NewLine}{Trace}", site, Environment.NewLine, ex);
+                await Console.Out.WriteLineAsync("萌番组真的挂了，要继续么？");
+                IOHelper.ReadLine();
+                ignore = true;
+                return new(200, "Bangumi is dead indeed.", true);
+            }
             if (!pingReq.IsSuccessStatusCode || teamList == null)
             {
                 Log.Error("Cannot connect to {Site}.{NewLine}" +
@@ -97,6 +110,11 @@ namespace OKP.Core.Interface.Bangumi
 
         public override async Task<HttpResult> PostAsync()
         {
+            if (ignore)
+            {
+                Log.Warning("{Site} has been skipped", site);
+                return new(200, "Bangumi has been skipped.", true);
+            }
             var fileId = await UploadTorrent(torrent);
             Log.Information("正在发布{Site}", site);
             if (torrent.Data is null)
@@ -109,7 +127,7 @@ namespace OKP.Core.Interface.Bangumi
                 category_tag_id = category,
                 title = torrent.DisplayName ?? "",
                 introduction = template.Content ?? "",
-                tag_ids = CastTags(torrent.Tags?? new List<ContentTypes>()).ToArray(),
+                tag_ids = CastTags(torrent.Tags ?? new List<ContentTypes>()).ToArray(),
                 team_id = teamID,
                 teamsync = false,
                 file_id = fileId,
