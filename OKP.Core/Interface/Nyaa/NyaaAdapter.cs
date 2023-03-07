@@ -86,7 +86,7 @@ namespace OKP.Core.Interface.Nyaa
             MultipartFormDataContent form = new()
             {
                 { torrent.Data.ByteArrayContent, "torrent_file", torrent.Data.FileInfo.Name},
-                { new StringContent(torrent.DisplayName??""), "display_name" },
+                { new StringContent(template.DisplayName??torrent.DisplayName??""), "display_name" },
                 { new StringContent(category), "category" },
                 { new StringContent(torrent.About??""), "information" },
                 { new StringContent(template.Content??""), "description" },

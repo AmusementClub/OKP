@@ -112,7 +112,7 @@ namespace OKP.Core.Interface.Dmhy
             {
                 { new StringContent(category), "sort_id" },
                 { new StringContent(teamID), "team_id" },
-                { new StringContent(torrent.DisplayName??""), "bt_data_title" },
+                { new StringContent(template.DisplayName??torrent.DisplayName??""), "bt_data_title" },
                 { new StringContent(torrent.Poster??""), "poster_url" },
                 { new StringContent(template.Content??""), "bt_data_intro" },
                 { new StringContent(""), "tracker" },

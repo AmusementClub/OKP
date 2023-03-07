@@ -68,6 +68,7 @@ namespace OKP.Core.Interface
             public string? Cookie { get; set; }
             public string? UserAgent { get; set; }
             public string? Proxy { get; set; }
+            public string? DisplayName { get; set; } 
         }
         public enum ContentTypes
         {

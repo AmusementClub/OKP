@@ -107,7 +107,7 @@ namespace OKP.Core.Interface.Bangumi
             AddRequest addRequest = new()
             {
                 category_tag_id = category,
-                title = torrent.DisplayName ?? "",
+                title = template.DisplayName ?? torrent.DisplayName ?? "",
                 introduction = template.Content ?? "",
                 tag_ids = CastTags(torrent.Tags?? new List<ContentTypes>()).ToArray(),
                 team_id = teamID,

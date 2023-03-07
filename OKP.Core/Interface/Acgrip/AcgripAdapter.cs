@@ -103,7 +103,7 @@ namespace OKP.Core.Interface.Acgrip
                 // { new StringContent("0"), "post[series_id]" },
                 { new StringContent("1"), "post[post_as_team]"},
                 { torrent.Data.ByteArrayContent, "post[torrent]", torrent.Data.FileInfo.Name},
-                { new StringContent(torrent.DisplayName??""), "post[title]" },
+                { new StringContent(template.DisplayName ?? torrent.DisplayName ?? ""), "post[title]" },
                 { new StringContent(template.Content??""), "post[content]" },
                 { new StringContent("发布"), "commit" }
             };

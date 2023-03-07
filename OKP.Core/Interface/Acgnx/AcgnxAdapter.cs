@@ -43,7 +43,7 @@ namespace OKP.Core.Interface.Acgnx
             this.template = template;
             this.torrent = torrent;
             var cookieToken = HttpHelper.GlobalCookieContainer.GetCookies(httpClient.BaseAddress).ToList().Find(p => p.Name.ToLower() == "token");
-            if(cookieToken is null)
+            if (cookieToken is null)
             {
                 Log.Error("Cannot find token of {Site}", site);
                 IOHelper.ReadLine();
@@ -145,7 +145,7 @@ namespace OKP.Core.Interface.Acgnx
                 { new StringContent("upload"), "mod" },
                 { new StringContent(CategoryHelper.SelectCategory(torrent.Tags, site)), "sort_id" },
                 { torrent.Data.ByteArrayContent, "bt_file", torrent.Data.FileInfo.Name},
-                { new StringContent(torrent.DisplayName??""), "title" },
+                { new StringContent(template.DisplayName ?? torrent.DisplayName ?? ""), "title" },
                 { new StringContent(template.Content??"Intro None"), "intro" },
                 // { new StringContent(""), "emule_resource" },
                 // { new StringContent(""), "synckey" },
