@@ -42,7 +42,7 @@ One-Key-Publish，一键发布 Torrent 到常见 BT 站。
 
 一个包含 cookie 信息的 txt 文件
 
-- 你需要使用 [Get cookies.txt LOCALLY](https://chrome.google.com/webstore/detail/get-cookiestxt-locally/cclelndahbckbenkjhflpdbgdldlbecc/related) 这个 Chrome 扩展来导出 txt。
+- 你需要使用 [Get cookies.txt LOCALLY](https://chrome.google.com/webstore/detail/get-cookiestxt-locally/cclelndahbckbenkjhflpdbgdldlbecc) 这个 Chrome 扩展来导出 txt。
 
 ### 可选项
 
