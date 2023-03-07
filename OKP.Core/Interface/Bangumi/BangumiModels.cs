@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace OKP.Core.Interface.Bangumi
+﻿namespace OKP.Core.Interface.Bangumi
 {
 #pragma warning disable CS8618
 #pragma warning disable IDE1006

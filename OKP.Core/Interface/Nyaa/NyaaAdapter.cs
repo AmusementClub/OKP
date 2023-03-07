@@ -1,14 +1,7 @@
-﻿using BencodeNET.Torrents;
-using OKP.Core.Utils;
+﻿using OKP.Core.Utils;
 using Serilog;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Net;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using static OKP.Core.Interface.TorrentContent;
 
 namespace OKP.Core.Interface.Nyaa
@@ -37,7 +30,7 @@ namespace OKP.Core.Interface.Nyaa
             {
                 BaseAddress = baseUrl,
             };
-            httpClient.DefaultRequestHeaders.Add("user-agent",HttpHelper.GlobalUserAgent);
+            httpClient.DefaultRequestHeaders.Add("user-agent", HttpHelper.GlobalUserAgent);
             this.template = template;
             this.torrent = torrent;
             if (template.Proxy is not null)

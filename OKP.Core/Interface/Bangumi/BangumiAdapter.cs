@@ -1,14 +1,7 @@
 ﻿using OKP.Core.Utils;
 using Serilog;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Http.Json;
-using System.Text;
-using System.Text.Json;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using static OKP.Core.Interface.Bangumi.BangumiModels;
 using static OKP.Core.Interface.TorrentContent;
 
@@ -109,7 +102,7 @@ namespace OKP.Core.Interface.Bangumi
                 category_tag_id = category,
                 title = template.DisplayName ?? torrent.DisplayName ?? "",
                 introduction = template.Content ?? "",
-                tag_ids = CastTags(torrent.Tags?? new List<ContentTypes>()).ToArray(),
+                tag_ids = CastTags(torrent.Tags ?? new List<ContentTypes>()).ToArray(),
                 team_id = teamID,
                 teamsync = false,
                 file_id = fileId,

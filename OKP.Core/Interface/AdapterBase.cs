@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static OKP.Core.Interface.TorrentContent;
-
-namespace OKP.Core.Interface
+﻿namespace OKP.Core.Interface
 {
     internal abstract class AdapterBase
     {

@@ -1,7 +1,7 @@
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using OKP.Core.Interface;
 using Serilog;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace OKP.Core.Utils;
 
@@ -27,7 +27,7 @@ public class Tag
             return Value;
         }
         // If no key is specified for the current tag, search for sub-tags
-        if (Key == null || types.Contains((TorrentContent.ContentTypes) Key))
+        if (Key == null || types.Contains((TorrentContent.ContentTypes)Key))
         {
             if (SubTags.Count > 0)
             {

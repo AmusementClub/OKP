@@ -3,20 +3,10 @@ using BencodeNET.Parsing;
 using BencodeNET.Torrents;
 using OKP.Core.Utils;
 using Serilog;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http.Headers;
-using System.Net.Mime;
-using System.Runtime.CompilerServices;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Runtime.Serialization;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using Tomlyn;
-using System.Net;
-using BencodeNET.IO;
 
 namespace OKP.Core.Interface
 {
@@ -68,7 +58,7 @@ namespace OKP.Core.Interface
             public string? Cookie { get; set; }
             public string? UserAgent { get; set; }
             public string? Proxy { get; set; }
-            public string? DisplayName { get; set; } 
+            public string? DisplayName { get; set; }
         }
         public enum ContentTypes
         {

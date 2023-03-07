@@ -1,10 +1,10 @@
 ﻿using OKP.Core.Utils;
 using Serilog;
 using System.Net;
-using static OKP.Core.Interface.TorrentContent;
 using System.Net.Http.Json;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using static OKP.Core.Interface.TorrentContent;
 
 namespace OKP.Core.Interface.Acgnx
 {

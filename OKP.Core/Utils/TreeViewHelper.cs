@@ -141,7 +141,7 @@ namespace OKP.Core.Utils
             foreach (var dir in currentNode.GetDirectories())
             {
                 yield return $"{string.Concat(Enumerable.Repeat("|  ", indent))}+{dir.NodeName}";
-                foreach (var childNode in  GetFileTree(dir, indent + 1))
+                foreach (var childNode in GetFileTree(dir, indent + 1))
                 {
                     yield return childNode;
                 }

@@ -1,14 +1,14 @@
 ﻿using CommandLine;
 using OKP.Core.Interface;
+using OKP.Core.Interface.Acgnx;
+using OKP.Core.Interface.Acgrip;
 using OKP.Core.Interface.Bangumi;
 using OKP.Core.Interface.Dmhy;
 using OKP.Core.Interface.Nyaa;
+using OKP.Core.Utils;
 using Serilog;
 using Serilog.Core;
 using Serilog.Events;
-using OKP.Core.Utils;
-using OKP.Core.Interface.Acgrip;
-using OKP.Core.Interface.Acgnx;
 using Constants = OKP.Core.Utils.Constants;
 
 namespace OKP.Core

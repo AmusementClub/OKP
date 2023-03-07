@@ -1,11 +1,11 @@
-using System.Net;
-using System.Net.Http.Json;
-using System.Text;
-using System.Text.RegularExpressions;
 using Polly;
 using Polly.Extensions.Http;
 using Polly.Retry;
 using Serilog;
+using System.Net;
+using System.Net.Http.Json;
+using System.Text;
+using System.Text.RegularExpressions;
 
 namespace OKP.Core.Utils
 {
