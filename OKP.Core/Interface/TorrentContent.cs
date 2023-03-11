@@ -96,6 +96,12 @@ namespace OKP.Core.Interface
         public static TorrentContent Build(string filename, string settingFile, string appLocation)
         {
             var settingFilePath = settingFile;
+
+            if (Path.GetDirectoryName(filename) == "")
+            {
+                filename = Path.Combine(Environment.CurrentDirectory, filename);
+            }
+            
             if (Path.GetDirectoryName(settingFile) == "")
             {
                 settingFilePath = Path.Combine(Path.GetDirectoryName(filename) ?? "", settingFile);
