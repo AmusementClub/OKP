@@ -2,6 +2,8 @@
 
 One-Key-Publish，一键发布 Torrent 到常见 BT 站。
 
+如果需要图形界面，可以尝试使用 [OKPGUI](https://github.com/AmusementClub/OKPGUI)。
+
 ## Quick Start
 
 依赖：[.NET 6 Runtime](https://dotnet.microsoft.com/en-us/download/dotnet/6.0)
