@@ -1,5 +1,6 @@
 ﻿using OKP.Core.Utils;
 using Serilog;
+using System.Net;
 using System.Text.RegularExpressions;
 using static OKP.Core.Interface.TorrentContent;
 
@@ -35,6 +36,14 @@ namespace OKP.Core.Interface.Acgrip
             this.template = template;
             this.torrent = torrent;
             category = CategoryHelper.SelectCategory(torrent.Tags, site);
+
+            if (template.Proxy is not null)
+            {
+                httpClientHandler.Proxy = new WebProxy(
+                    new Uri(template.Proxy),
+                    BypassOnLocal: false);
+            }
+
             if (!Valid())
             {
                 IOHelper.ReadLine();
