@@ -161,6 +161,11 @@ namespace OKP.Core.Interface
             }
             Log.Information("标题：{0}", torrentC.DisplayName);
 
+            if (torrentC.Tags is not null)
+            {
+                Log.Information("标签：{0}", string.Join(", ", torrentC.Tags));
+            }
+
             // user properties, it will overlap some existing private config from setting config, such as proxy, cookie and user_agent
             var userPropPath = IOHelper.BasePath(Constants.DefaultUserPropsPath, Constants.UserPropertiesFileName);
             if (File.Exists(userPropPath))
