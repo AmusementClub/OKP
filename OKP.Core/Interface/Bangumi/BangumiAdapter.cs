@@ -131,8 +131,7 @@ namespace OKP.Core.Interface.Bangumi
             }
             var form = new MultipartFormDataContent
             {
-                { torrent.Data.ByteArrayContent, "file", torrent.Data.FileInfo.Name },
-                {new StringContent(teamID),"team_i" }
+                { torrent.Data.ByteArrayContent, "file", torrent.Data.FileInfo.Name }
             };
             var response = await httpClient.PostAsyncWithRetry(uploadUrl, form);
             var result = await response.Content.ReadFromJsonAsync<UploadResponse>();
