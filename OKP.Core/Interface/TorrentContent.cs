@@ -101,7 +101,7 @@ namespace OKP.Core.Interface
             {
                 filename = Path.Combine(Environment.CurrentDirectory, filename);
             }
-            
+
             if (Path.GetDirectoryName(settingFile) == "")
             {
                 settingFilePath = Path.Combine(Path.GetDirectoryName(filename) ?? "", settingFile);
@@ -246,7 +246,7 @@ namespace OKP.Core.Interface
             }
             StringBuilder fileList = new();
 
-            Node rootNode = Data.TorrentObject.FileMode == TorrentFileMode.Multi ? new Node(Data.TorrentObject.Files) : new Node(Data.TorrentObject.File);
+            var rootNode = Data.TorrentObject.FileMode == TorrentFileMode.Multi ? new Node(Data.TorrentObject.Files) : new Node(Data.TorrentObject.File);
             foreach (var line in Node.GetFileTree(rootNode))
             {
                 fileList.AppendLine(line);

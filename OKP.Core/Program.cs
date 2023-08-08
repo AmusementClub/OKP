@@ -62,7 +62,7 @@ namespace OKP.Core
                            Log.Fatal("o.TorrentFile is null");
                            return;
                        }
-                       int addCookieCount = 0;
+                       var addCookieCount = 0;
                        foreach (var file in o.TorrentFile)
                        {
                            if (!File.Exists(file))
@@ -289,7 +289,7 @@ namespace OKP.Core
             {
                 return new(2099, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
             }
-            System.DateTime dtDateTime = new(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+            DateTime dtDateTime = new(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
             dtDateTime = dtDateTime.AddSeconds(unixtime).ToLocalTime();
             return dtDateTime;
         }

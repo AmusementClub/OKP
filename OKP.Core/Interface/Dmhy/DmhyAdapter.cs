@@ -18,7 +18,7 @@ namespace OKP.Core.Interface.Dmhy
         private readonly Regex teamReg = new(@"\<select name=""team_id"" id=""team_id""\>[\s\S]*\</select\>", RegexOptions.Multiline);
         private readonly Regex optionReg = new(@"\<option value=""(?<value>\d+)"" label=""(?<name>[^""]+)""");
         private string teamID = "";
-        const string site = "dmhy";
+        private const string site = "dmhy";
         public DmhyAdapter(TorrentContent torrent, Template template)
         {
             var httpClientHandler = new HttpClientHandler()
@@ -125,12 +125,12 @@ namespace OKP.Core.Interface.Dmhy
             {
                 if (raw.Contains("<li class=\"text_bold text_blue\">種子已存在，請不要重複上傳﹗</li>"))
                 {
-                    Log.Information("{Site} has already exist.", site);
+                    Log.Information("{Site} has already exist", site);
                     return new(200, "Success", true);
                 }
                 if (raw.Contains("<ul><li class=\"text_bold text_blue\">上傳成功</li>"))
                 {
-                    Log.Information("{Site} post success.", site);
+                    Log.Information("{Site} post success", site);
                     return new(200, "Success", true);
                 }
                 Log.Error("{Site} upload failed. Unknown reson. {NewLine} {Raw}", site, Environment.NewLine, raw);

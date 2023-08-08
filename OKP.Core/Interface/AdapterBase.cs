@@ -2,8 +2,8 @@
 {
     internal abstract class AdapterBase
     {
-        abstract public Task<HttpResult> PingAsync();
-        abstract public Task<HttpResult> PostAsync();
+        public abstract Task<HttpResult> PingAsync();
+        public abstract Task<HttpResult> PostAsync();
     }
     public class HttpResult
     {
