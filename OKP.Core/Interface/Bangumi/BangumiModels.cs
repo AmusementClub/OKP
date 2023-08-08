@@ -1,4 +1,5 @@
-﻿namespace OKP.Core.Interface.Bangumi
+﻿// ReSharper disable InconsistentNaming, IdentifierTypo
+namespace OKP.Core.Interface.Bangumi
 {
 #pragma warning disable CS8618
 #pragma warning disable IDE1006

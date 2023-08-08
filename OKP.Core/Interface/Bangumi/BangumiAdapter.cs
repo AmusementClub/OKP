@@ -19,7 +19,7 @@ namespace OKP.Core.Interface.Bangumi
         private string category;
         private string teamID = "";
         private string tagID = "";  // string[]?
-        const string site = "bangumi";
+        private const string site = "bangumi";
 
         public BangumiAdapter(TorrentContent torrent, Template template)
         {
@@ -107,10 +107,10 @@ namespace OKP.Core.Interface.Bangumi
                 teamsync = false,
                 file_id = fileId,
             };
-            var reponse = await httpClient.PostAsJsonAsyncWithRetry(postUrl, addRequest);
-            var raw = await reponse.Content.ReadAsStringAsync();
-            var result = await reponse.Content.ReadFromJsonAsync<AddResponse>();
-            if (!reponse.IsSuccessStatusCode || result == null)
+            var response = await httpClient.PostAsJsonAsyncWithRetry(postUrl, addRequest);
+            var raw = await response.Content.ReadAsStringAsync();
+            var result = await response.Content.ReadFromJsonAsync<AddResponse>();
+            if (!response.IsSuccessStatusCode || result == null)
             {
                 Log.Error("{Site} upload failed. Unknown reson. {NewLine} {Raw}", site, Environment.NewLine, raw);
                 return new(500, "Upload failed" + raw, false);
@@ -120,7 +120,7 @@ namespace OKP.Core.Interface.Bangumi
                 Log.Error("{Site} upload failed. Unknown reson. {NewLine} {Raw}", site, Environment.NewLine, raw);
                 return new(500, "Upload failed" + raw, false);
             }
-            Log.Information("{Site} post success.", site);
+            Log.Information("{Site} post success", site);
             return new(200, "Success", true);
         }
         private async Task<string> UploadTorrent(TorrentContent torrent)

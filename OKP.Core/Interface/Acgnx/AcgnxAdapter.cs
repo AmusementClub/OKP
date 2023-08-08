@@ -50,19 +50,19 @@ namespace OKP.Core.Interface.Acgnx
                 return;
             }
             template.Cookie = cookieToken.Value;
-            if (torrent.DisplayName == null || torrent.DisplayName.Length <= 1 || torrent.DisplayName.Length >= 400)
+            if (torrent.DisplayName is not {Length: > 1 and < 400})
             {
                 Log.Error("Error {Site} displayname length, it must between 1 and 400", site);
                 IOHelper.ReadLine();
                 return;
             }
-            if (template.Content != null && template.Content.Length >= 35000)
+            if (template.Content is {Length: >= 35000})
             {
                 Log.Error("Too long {Site} content length, it must be less than 35000", site);
                 IOHelper.ReadLine();
                 return;
             }
-            if (torrent.About != null && torrent.About.Length >= 200)
+            if (torrent.About is {Length: >= 200})
             {
                 Log.Error("Too long {Site} about length, it must be less than 200", site);
                 IOHelper.ReadLine();
@@ -118,7 +118,7 @@ namespace OKP.Core.Interface.Acgnx
                     }
                     else
                     {
-                        Log.Debug("{Site} login success.", site);
+                        Log.Debug("{Site} login success", site);
                         return new(200, "Success", true);
                     }
                 }
@@ -175,7 +175,7 @@ namespace OKP.Core.Interface.Acgnx
                         Log.Information("{Site} post {Status}, {ApiValue}.{NewLine}{Url}", site, apiContent.Status, apiContent.Value, Environment.NewLine, $"{baseUrl}show-{apiContent.Infohash}.html");
                         return new(200, "Success", true);
                     default:
-                        Log.Error("{Site} post {Status}, {ApiValue}.", site, apiContent.Status, apiContent.Value);
+                        Log.Error("{Site} post {Status}, {ApiValue}", site, apiContent.Status, apiContent.Value);
                         return new(apiContent.Code, $"Failed, {apiContent.Value}.", false);
                 }
             }

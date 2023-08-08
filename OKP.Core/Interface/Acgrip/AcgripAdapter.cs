@@ -20,7 +20,7 @@ namespace OKP.Core.Interface.Acgrip
         private readonly Regex tokenReg = new(@"\<meta\sname=""csrf-token""\scontent=""(.*)""\s/\>");
         private readonly List<string> trackers = new() { "http://t.acg.rip:6699/announce" };
         private string authenticityToken = "";
-        const string site = "acgrip";
+        private const string site = "acgrip";
         public AcgripAdapter(TorrentContent torrent, Template template)
         {
             var httpClientHandler = new HttpClientHandler()
@@ -118,17 +118,17 @@ namespace OKP.Core.Interface.Acgrip
             {
                 if (raw.Contains("<div class=\"alert alert-warning\">已存在相同的种子</div>"))
                 {
-                    Log.Information("{Site} has already exist.", site);
+                    Log.Information("{Site} has already exist", site);
                     return new(200, "Success", true);
                 }
                 if (raw.Contains("<div class=\"alert alert-success\">种子发布成功</div>"))
                 {
-                    Log.Information("{Site} post success.", site);
+                    Log.Information("{Site} post success", site);
                     return new(200, "Success", true);
                 }
                 if (raw.Contains("<div class=\"alert alert-warning\">种子内的资源太小</div>"))
                 {
-                    Log.Error("{Site} upload failed.", site);
+                    Log.Error("{Site} upload failed", site);
                     return new(500, "Upload failed, files too small.", false);
                 }
                 Log.Error("{Site} upload failed. Unknown reson. {NewLine} {Raw}", Environment.NewLine, site, raw);

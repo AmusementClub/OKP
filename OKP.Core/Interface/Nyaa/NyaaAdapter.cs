@@ -18,7 +18,7 @@ namespace OKP.Core.Interface.Nyaa
         private readonly string pingUrl = "upload";
         private readonly string postUrl = "upload";
         private string category;
-        const string site = "nyaa";
+        private const string site = "nyaa";
         public NyaaAdapter(TorrentContent torrent, Template template)
         {
             var httpClientHandler = new HttpClientHandler()
@@ -64,7 +64,7 @@ namespace OKP.Core.Interface.Nyaa
                 Log.Error("{Site} login failed", site);
                 return new(403, "Login failed" + raw, false);
             }
-            Log.Debug("{Site} login success.", site);
+            Log.Debug("{Site} login success", site);
             return new(200, "Success", true);
         }
 
@@ -99,7 +99,7 @@ namespace OKP.Core.Interface.Nyaa
             }
             if (raw.Contains("This torrent already exists"))
             {
-                Log.Information("{Site} has already exist.", site);
+                Log.Information("{Site} has already exist", site);
                 return new(200, "Success", true);
             }
             Log.Error("{Site} upload failed.{NewLine}" +

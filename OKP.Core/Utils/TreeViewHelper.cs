@@ -132,8 +132,14 @@ namespace OKP.Core.Utils
 
         private static IEnumerable<string> GetFileListInner(Node currentNode)
         {
-            foreach (var file in currentNode.GetDirectories().SelectMany(GetFileListInner)) yield return file;
-            foreach (var node in currentNode.GetFiles()) yield return node.FullPath;
+            foreach (var file in currentNode.GetDirectories().SelectMany(GetFileListInner))
+            {
+                yield return file;
+            }
+            foreach (var node in currentNode.GetFiles())
+            {
+                yield return node.FullPath;
+            }
         }
 
         public static IEnumerable<string> GetFileTree(Node currentNode, int indent = 0)

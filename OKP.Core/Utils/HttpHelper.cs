@@ -57,7 +57,7 @@ namespace OKP.Core.Utils
             GlobalUserAgent = jsontext[0].Split('\t')[1];
             if (!UaRegex.IsMatch(GlobalUserAgent))
             {
-                Log.Fatal("不合法的UA{UA}", GlobalUserAgent);
+                Log.Fatal("涓嶅悎娉曠殑UA{UA}", GlobalUserAgent);
                 throw new Exception("invalid GlobalUserAgent");
             }
             foreach (var line in jsontext.Skip(1))
