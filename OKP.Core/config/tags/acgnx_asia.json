@@ -1,119 +1,119 @@
 {
   "Key": null,
-  "Value": "1-1",
+  "Value": "1",
   "SubTags": [
     {
       "Key": "Anime",
-      "Value": "1-1",
+      "Value": "1",
       "SubTags": [
         {
           "Key": "Collection",
-          "Value": "2-1",
+          "Value": "2",
           "SubTags": []
         }
       ]
     },
     {
       "Key": "Music",
-      "Value": "6-1",
+      "Value": "6",
       "SubTags": [
       {
           "Key": "ACG",
-          "Value": "7-1",
+          "Value": "7",
           "SubTags": []
         },
         {
           "Key": "Doujin",
-          "Value": "8-1",
+          "Value": "8",
           "SubTags": []
         },
         {
           "Key": "Pop",
-          "Value": "9-1",
+          "Value": "9",
           "SubTags": []
         }
       ]
     },{
       "Key": "Comic",
-      "Value": "3-1",
+      "Value": "3",
       "SubTags": [
         {
           "Key": "HongKong",
-          "Value": "4-1",
+          "Value": "4",
           "SubTags": []
         },
         {
           "Key": "Taiwan",
-          "Value": "4-1",
+          "Value": "4",
           "SubTags": []
         },
         {
           "Key": "Japanese",
-          "Value": "5-1",
+          "Value": "5",
           "SubTags": []
         }
       ]
     },{
       "Key": "Novel",
-      "Value": "3-1",
+      "Value": "3",
       "SubTags": [
         {
           "Key": "HongKong",
-          "Value": "4-1",
+          "Value": "4",
           "SubTags": []
         },
         {
           "Key": "Taiwan",
-          "Value": "4-1",
+          "Value": "4",
           "SubTags": []
         },
         {
           "Key": "Japanese",
-          "Value": "5-1",
+          "Value": "5",
           "SubTags": []
         }
       ]
     },{
       "Key": "Action",
-      "Value": "10-1",
+      "Value": "10",
       "SubTags": [
         {
           "Key": "Idol",
-          "Value": "19-1",
+          "Value": "19",
           "SubTags": []
         },
         {
           "Key": "Show",
-          "Value": "19-1",
+          "Value": "19",
           "SubTags": []
         },
         {
           "Key": "Tokusatsu",
-          "Value": "18-1",
+          "Value": "18",
           "SubTags": []
         },
         {
           "Key": "Raw",
-          "Value": "11-1",
+          "Value": "11",
           "SubTags": []
         }
       ]
     },{
       "Key": "Picture",
-      "Value": "19-1",
+      "Value": "19",
       "SubTags": []
     },{
       "Key": "Software",
-      "Value": "12-1",
+      "Value": "12",
       "SubTags": [
         {
           "Key": "ACG",
-          "Value": "17-1",
+          "Value": "17",
           "SubTags": []
         },
         {
           "Key": "App",
-          "Value": "19-1",
+          "Value": "19",
           "SubTags": []
         }
       ]

@@ -1,124 +1,124 @@
 {
   "Key": null,
-  "Value": "4-1",
+  "Value": "4",
   "SubTags": [
     {
       "Key": "Anime",
-      "Value": "4-1",
+      "Value": "4",
       "SubTags": [
         {
           "Key": "MV",
-          "Value": "5-1",
+          "Value": "5",
           "SubTags": []
         },
         {
           "Key": "English",
-          "Value": "2-1",
+          "Value": "2",
           "SubTags": []
         },
         {
           "Key": "Raw",
-          "Value": "3-1",
+          "Value": "3",
           "SubTags": []
         }
       ]
     },
     {
       "Key": "Music",
-      "Value": "7-1",
+      "Value": "7",
       "SubTags": [
             {
             "Key": "Lossless",
-            "Value": "7-1",
+            "Value": "7",
             "SubTags": []
             },
             {
             "Key": "Lossy",
-            "Value": "8-1",
+            "Value": "8",
             "SubTags": []
             }
         ]
     },{
       "Key": "Comic",
-      "Value": "12-1",
+      "Value": "12",
       "SubTags": [
         {
           "Key": "English",
-          "Value": "10-1",
+          "Value": "10",
           "SubTags": []
         },
         {
           "Key": "Raw",
-          "Value": "11-1",
+          "Value": "11",
           "SubTags": []
         }
       ]
     },{
       "Key": "Novel",
-      "Value": "12-1",
+      "Value": "12",
       "SubTags": [
         {
           "Key": "English",
-          "Value": "10-1",
+          "Value": "10",
           "SubTags": []
         },
         {
           "Key": "Raw",
-          "Value": "11-1",
+          "Value": "11",
           "SubTags": []
         }
       ]
     },{
       "Key": "Action",
-      "Value": "16-1",
+      "Value": "16",
       "SubTags": [
         {
           "Key": "English",
-          "Value": "14-1",
+          "Value": "14",
           "SubTags": []
         },
         {
           "Key": "Idol",
-          "Value": "17-1",
+          "Value": "17",
           "SubTags": []
         },
         {
           "Key": "Show",
-          "Value": "16-1",
+          "Value": "16",
           "SubTags": []
         },
         {
           "Key": "Raw",
-          "Value": "15-1",
+          "Value": "15",
           "SubTags": []
         }
       ]
     },{
       "Key": "Picture",
-      "Value": "23-1",
+      "Value": "23",
       "SubTags": [
         {
           "Key": "Graphics",
-          "Value": "23-1",
+          "Value": "23",
           "SubTags": []
         },
         {
           "Key": "Photo",
-          "Value": "22-1",
+          "Value": "22",
           "SubTags": []
         }
       ]
     },{
       "Key": "Software",
-      "Value": "20-1",
+      "Value": "20",
       "SubTags": [
         {
           "Key": "App",
-          "Value": "19-1",
+          "Value": "19",
           "SubTags": []
         },{
           "Key": "Game",
-          "Value": "20-1",
+          "Value": "20",
           "SubTags": []
         }
       ]
