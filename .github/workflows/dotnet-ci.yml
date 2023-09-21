@@ -9,7 +9,7 @@ jobs:
     strategy:
       matrix:
         configuration: [ Release ]
-        runtime-identifier: [ 'win-x64', 'win-arm64', 'linux-x64' ]
+        runtime-identifier: [ 'win-x64', 'win-arm64', 'linux-x64', 'linux-arm64', 'osx-x64', 'osx-arm64' ]
 
     runs-on: ubuntu-latest
 
@@ -31,37 +31,51 @@ jobs:
         name: OKP.Core-${{ matrix.runtime-identifier }}-${{ matrix.configuration }}
         path: |
           OKP.Core/bin/${{ matrix.configuration }}/net6.0/${{ matrix.runtime-identifier }}/publish/*
+          !OKP.Core/bin/${{ matrix.configuration }}/net6.0/${{ matrix.runtime-identifier }}/publish/*.pdb
+          !OKP.Core/bin/${{ matrix.configuration }}/net6.0/${{ matrix.runtime-identifier }}/publish/*.dbg
+          !OKP.Core/bin/${{ matrix.configuration }}/net6.0/${{ matrix.runtime-identifier }}/publish/*.dwarf
 
-  build-for-macos:
+  glue:
     name: 'Build (Release, osx-universal)'
-
-    runs-on: macos-latest
+    needs: build
+    runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
-      with:
-        fetch-depth: 0
-
-    - name: Setup .NET 6.x
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: 6.x
-
-    - name: Publish the application
-      env:
-        DOTNET_CLI_TELEMETRY_OPTOUT: true
-      run: |
-        dotnet publish OKP.Core --configuration Release --runtime osx-x64 --self-contained false
-        dotnet publish OKP.Core --configuration Release --runtime osx-arm64 --self-contained false
-    - name: Glue the binary
-      run: |
-        mkdir -p OKP.Core/bin/Release/net6.0/osx-universal/publish
-        lipo -create OKP.Core/bin/Release/net6.0/osx-x64/publish/OKP.Core OKP.Core/bin/Release/net6.0/osx-arm64/publish/OKP.Core -output OKP.Core/bin/Release/net6.0/osx-universal/publish/OKP.Core
-        cp -R OKP.Core/bin/Release/net6.0/osx-x64/publish/config OKP.Core/bin/Release/net6.0/osx-universal/publish/
-    - name: Upload build artifacts
-      uses: actions/upload-artifact@v3
-      with:
-        name: OKP.Core-osx-universal-Release
-        path: |
-          OKP.Core/bin/Release/net6.0/osx-universal/publish/*
-          !OKP.Core/bin/Release/net6.0/osx-universal/publish/*.pdb
+      - name: Setup working directory
+        run: |
+          mkdir -p OKP.Core/bin/Release/net6.0/osx-x64/publish
+          mkdir -p OKP.Core/bin/Release/net6.0/osx-arm64/publish
+  
+      - name: Setup lipo
+        run: |
+          curl -L -o /tmp/lipo https://github.com/konoui/lipo/releases/latest/download/lipo_Linux_amd64
+          chmod +x /tmp/lipo
+          sudo mv /tmp/lipo /usr/local/bin/lipo
+  
+      - name: Download x64 build
+        uses: actions/download-artifact@v3
+        with:
+          name: OKP.Core-osx-x64-Release
+          path: OKP.Core/bin/Release/net6.0/osx-x64/publish
+  
+      - name: Download arm64 build
+        uses: actions/download-artifact@v3
+        with:
+          name: OKP.Core-osx-arm64-Release
+          path: OKP.Core/bin/Release/net6.0/osx-arm64/publish
+  
+      - name: Glue the binary
+        run: |
+          mkdir -p OKP.Core/bin/Release/net6.0/osx-universal/publish
+          lipo -create OKP.Core/bin/Release/net6.0/osx-x64/publish/OKP.Core OKP.Core/bin/Release/net6.0/osx-arm64/publish/OKP.Core -output OKP.Core/bin/Release/net6.0/osx-universal/publish/OKP.Core
+          mv OKP.Core/bin/Release/net6.0/osx-x64/publish/config OKP.Core/bin/Release/net6.0/osx-universal/publish/config
+  
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: OKP.Core-osx-universal-Release
+          path: |
+            OKP.Core/bin/Release/net6.0/osx-universal/publish/*
+            !OKP.Core/bin/Release/net6.0/osx-universal/publish/*.pdb
+            !OKP.Core/bin/Release/net6.0/osx-universal/publish/*.dbg
+            !OKP.Core/bin/Release/net6.0/osx-universal/publish/*.dwarf

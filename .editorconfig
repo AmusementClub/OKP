@@ -5,6 +5,7 @@ indent_style = space
 indent_size = 4
 
 [*.{fs,fsx,yml}]
+indent_size = 2
 end_of_line = lf
 
 [*.{md,markdown,json,js,csproj,fsproj,targets,targets,props}]
