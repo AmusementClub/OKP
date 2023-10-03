@@ -78,6 +78,7 @@ namespace OKP.Core.Interface
             Japanese,
             TV,
             Movie,
+            Batch,    // same as Collection
             Collection,
             Raw,
             Lossless,

@@ -7,6 +7,11 @@
       "Value": "1",
       "SubTags": [
         {
+          "Key": "Batch",
+          "Value": "2",
+          "SubTags": []
+        },
+        {
           "Key": "Collection",
           "Value": "2",
           "SubTags": []
@@ -17,7 +22,7 @@
       "Key": "Music",
       "Value": "6",
       "SubTags": [
-      {
+        {
           "Key": "ACG",
           "Value": "7",
           "SubTags": []

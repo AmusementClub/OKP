@@ -7,6 +7,11 @@
       "Value": "1",
       "SubTags": [
         {
+          "Key": "Batch",
+          "Value": "5",
+          "SubTags": []
+        },
+        {
           "Key": "Collection",
           "Value": "5",
           "SubTags": []
