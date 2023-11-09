@@ -31,6 +31,8 @@ namespace OKP.Core
             public string LogFile { get; set; }
             [Option('y', HelpText = "Skip reaction.")]
             public bool NoReaction { get; set; }
+            [Option("allow_skip",HelpText="Ignore login fail and continue publishing.")]
+            public bool AllowSkip { get;set; }
         }
 #pragma warning restore CS8618
 
@@ -75,7 +77,7 @@ namespace OKP.Core
                            if (extension == ".torrent")
                            {
                                Log.Information("正在发布 {File}", file);
-                               SinglePublish(file, o.SettingFile, o.Cookies);
+                               SinglePublish(file, o.SettingFile, o.Cookies,o.AllowSkip);
                                continue;
                            }
                            if (extension == ".txt")
@@ -139,7 +141,7 @@ namespace OKP.Core
                    });
             IOHelper.ReadLine();
         }
-        private static void SinglePublish(string file, string settingFile, string? cookies)
+        private static void SinglePublish(string file, string settingFile, string? cookies,bool allowSkip)
         {
             if (!File.Exists(file))
             {
@@ -236,7 +238,10 @@ namespace OKP.Core
                 {
                     Log.Debug("Code: {Code}\tMessage: {Message}", res.Code, res.Message);
                     IOHelper.ReadLine();
-                    return;
+                    if (!allowSkip)
+                    {
+                        return;
+                    }
                 }
             }
             Log.Information("登录成功，继续发布？");
