@@ -86,12 +86,14 @@ namespace OKP.Core.Interface.Acgnx
 
         public override async Task<HttpResult> PingAsync()
         {
-            HttpRequestMessage request = new(HttpMethod.Post, apiUrl);
-            request.Content = new MultipartFormDataContent()
+            HttpRequestMessage request = new(HttpMethod.Post, apiUrl)
+            {
+                Content = new MultipartFormDataContent()
             {
                 { new StringContent("upload"), "mod" },
                 { new StringContent(template.Name??""), "uid" },
                 { new StringContent(template.Cookie??""), "api_token" }
+            }
             };
             Log.Verbose("{Site} formdata content: {@MultipartFormDataContent}", site, request.Content);
             var result = await httpClient.SendAsync(request);
