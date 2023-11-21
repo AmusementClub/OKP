@@ -246,15 +246,33 @@ namespace OKP.Core
             }
             Log.Information("登录成功，继续发布？");
             IOHelper.ReadLine();
-            foreach (var result in adapterList.Select(item => item.PostAsync().Result))
+            if(allowSkip)
             {
-                if (result.IsSuccess)
+                Parallel.ForEach(adapterList, p =>
                 {
-                    Log.Information("发布成功");
-                }
-                else
+                    var res = p.PostAsync().Result;
+                    if (res.IsSuccess)
+                    {
+                        Log.Information("发布成功");
+                    }
+                    else
+                    {
+                        Log.Error("发布失败");
+                    }
+                });
+            }
+            else
+            {
+                foreach (var result in adapterList.Select(item => item.PostAsync().Result))
                 {
-                    Log.Error("发布失败");
+                    if (result.IsSuccess)
+                    {
+                        Log.Information("发布成功");
+                    }
+                    else
+                    {
+                        Log.Error("发布失败");
+                    }
                 }
             }
             Log.Information("发布完成");
