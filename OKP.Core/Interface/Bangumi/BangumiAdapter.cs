@@ -53,7 +53,7 @@ namespace OKP.Core.Interface.Bangumi
         {
             var pingReq = await httpClient.GetAsync(pingUrl);
             var raw = await pingReq.Content.ReadAsStringAsync();
-            var teamList = await pingReq.Content.ReadFromJsonAsync<TeamInfo[]>();
+            var teamList = await pingReq.Content.ReadFromJsonAsync(BangumiModelsSourceGenerationContext.Default.TeamInfoArray);
             if (!pingReq.IsSuccessStatusCode || teamList == null)
             {
                 Log.Error("Cannot connect to {Site}.{NewLine}" +
@@ -107,9 +107,9 @@ namespace OKP.Core.Interface.Bangumi
                 teamsync = false,
                 file_id = fileId,
             };
-            var response = await httpClient.PostAsJsonAsyncWithRetry(postUrl, addRequest);
+            var response = await httpClient.PostAsJsonAsyncWithRetry(postUrl, addRequest, BangumiModelsSourceGenerationContext.Default.AddRequest);
             var raw = await response.Content.ReadAsStringAsync();
-            var result = await response.Content.ReadFromJsonAsync<AddResponse>();
+            var result = await response.Content.ReadFromJsonAsync(BangumiModelsSourceGenerationContext.Default.AddResponse);
             if (!response.IsSuccessStatusCode || result == null)
             {
                 Log.Error("{Site} upload failed. Unknown reson. {NewLine} {Raw}", site, Environment.NewLine, raw);
@@ -134,13 +134,13 @@ namespace OKP.Core.Interface.Bangumi
                 { torrent.Data.ByteArrayContent, "file", torrent.Data.FileInfo.Name }
             };
             var response = await httpClient.PostAsyncWithRetry(uploadUrl, form);
-            var result = await response.Content.ReadFromJsonAsync<UploadResponse>();
+            var result = await response.Content.ReadFromJsonAsync(BangumiModelsSourceGenerationContext.Default.UploadResponse);
             if (result == null || !result.success || result.file_id == null)
             {
                 Log.Debug("可能是 {Site} 发布频率限制，先等 1 分钟", site);
                 Thread.Sleep(60000);
                 response = await httpClient.PostAsyncWithRetry(uploadUrl, form);
-                result = await response.Content.ReadFromJsonAsync<UploadResponse>();
+                result = await response.Content.ReadFromJsonAsync(BangumiModelsSourceGenerationContext.Default.UploadResponse);
                 if (result == null || !result.success || result.file_id == null)
                 {
                     throw new HttpRequestException("Failed to upload torrent file");
