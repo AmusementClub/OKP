@@ -7,7 +7,7 @@ namespace OKP.Core.Utils;
 
 public class Tag
 {
-    [JsonConverter(typeof(JsonStringEnumConverter))]
+    [JsonConverter(typeof(JsonStringEnumConverter<TorrentContent.ContentTypes>))]
     public TorrentContent.ContentTypes? Key { get; set; }
 
     public string? Value { get; set; }
@@ -80,6 +80,9 @@ public class Tag
     }
 }
 
+[JsonSerializable(typeof(Tag))]
+internal partial class TagSourceGenerationContext : JsonSerializerContext;
+
 public static class TagHelper
 {
     public static Tag LoadTagConfig(string configName)
@@ -92,7 +95,7 @@ public static class TagHelper
         var content = File.ReadAllText(configPath);
         try
         {
-            var ret = JsonSerializer.Deserialize<Tag>(content);
+            var ret = JsonSerializer.Deserialize(content, TagSourceGenerationContext.Default.Tag);
             return ret ?? new Tag();
         }
         catch (JsonException ex)

@@ -2,7 +2,6 @@
 using Serilog;
 using System.Net;
 using System.Net.Http.Json;
-using System.Text.Json;
 using System.Text.Json.Serialization;
 using static OKP.Core.Interface.TorrentContent;
 
@@ -101,11 +100,7 @@ namespace OKP.Core.Interface.Acgnx
 
             if (result.IsSuccessStatusCode && !raw.Contains("<html"))
             {
-                var apiContent = await result.Content.ReadFromJsonAsync<AcgnxApiStatus>(new JsonSerializerOptions
-                {
-                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                    NumberHandling = JsonNumberHandling.AllowReadingFromString
-                });
+                var apiContent = await result.Content.ReadFromJsonAsync(AcgnxModelsSourceGenerationContext.Default.AcgnxApiStatus);
                 if (apiContent == null)
                 {
                     Log.Error("{Site} api server down", site);
@@ -160,11 +155,7 @@ namespace OKP.Core.Interface.Acgnx
             Log.Verbose("{Site} formdata content: {@MultipartFormDataContent}", site, form);
             var result = await httpClient.PostAsyncWithRetry(apiUrl, form);
             var raw = await result.Content.ReadAsStringAsync();
-            var apiContent = await result.Content.ReadFromJsonAsync<AcgnxApiStatus>(new JsonSerializerOptions
-            {
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                NumberHandling = JsonNumberHandling.AllowReadingFromString
-            });
+            var apiContent = await result.Content.ReadFromJsonAsync(AcgnxModelsSourceGenerationContext.Default.AcgnxApiStatus);
 
             if (result.StatusCode == HttpStatusCode.OK && apiContent != null && !raw.Contains("<html"))
             {
@@ -223,4 +214,11 @@ namespace OKP.Core.Interface.Acgnx
         public string? Infohash { get; set; }
         public string? Title { get; set; }
     }
+
+    [JsonSerializable(typeof(AcgnxApiStatus))]
+    [JsonSourceGenerationOptions(
+        PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase,
+        NumberHandling = JsonNumberHandling.AllowReadingFromString)
+    ]
+    internal partial class AcgnxModelsSourceGenerationContext : JsonSerializerContext;
 }

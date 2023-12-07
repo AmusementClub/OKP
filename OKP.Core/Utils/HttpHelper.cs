@@ -5,6 +5,7 @@ using Serilog;
 using System.Net;
 using System.Net.Http.Json;
 using System.Text;
+using System.Text.Json.Serialization.Metadata;
 using System.Text.RegularExpressions;
 
 namespace OKP.Core.Utils
@@ -37,13 +38,13 @@ namespace OKP.Core.Utils
             HandleSetCookie(httpClient, setCookie, res);
             return res;
         }
-        public static async Task<HttpResponseMessage> PostAsJsonAsyncWithRetry<TValue>(this HttpClient httpClient, string? uri, TValue content, bool setCookie = true, CancellationToken cancellationToken = default)
+        public static async Task<HttpResponseMessage> PostAsJsonAsyncWithRetry<TValue>(this HttpClient httpClient, string? uri, TValue content, JsonTypeInfo<TValue> jsonTypeInfo, bool setCookie = true, CancellationToken cancellationToken = default)
         {
             if (httpClient.BaseAddress is null)
             {
                 throw new NotImplementedException("httpClient.BaseAddress is null");
             }
-            var res = await policy.ExecuteAsync(() => httpClient.PostAsJsonAsync(uri, content, cancellationToken));
+            var res = await policy.ExecuteAsync(() => httpClient.PostAsJsonAsync(uri, content, jsonTypeInfo, cancellationToken));
             HandleSetCookie(httpClient, setCookie, res);
             return res;
         }
