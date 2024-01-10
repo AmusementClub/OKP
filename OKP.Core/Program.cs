@@ -59,6 +59,7 @@ namespace OKP.Core
                            rollOnFileSizeLimit: true)
                        .CreateLogger();
                        IOHelper.NoReaction = o.NoReaction;
+                       Console.OutputEncoding = System.Text.Encoding.UTF8;
                        if (o.TorrentFile is null)
                        {
                            Log.Fatal("o.TorrentFile is null");
