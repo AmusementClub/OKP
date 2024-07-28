@@ -18,6 +18,7 @@ namespace OKP.Core.Interface.Nyaa
         private readonly string pingUrl = "upload";
         private readonly string postUrl = "upload";
         private string category;
+        private NyaaTorrentFlags torrentFlags;
         private const string site = "nyaa";
         public NyaaAdapter(TorrentContent torrent, Template template)
         {
@@ -41,6 +42,7 @@ namespace OKP.Core.Interface.Nyaa
                 httpClientHandler.UseProxy = true;
             }
             category = CategoryHelper.SelectCategory(torrent.Tags, site);
+            torrentFlags = SetFlags(torrent.TorrentFlags, torrent.Tags);
             if (!Valid())
             {
                 IOHelper.ReadLine();
@@ -84,6 +86,28 @@ namespace OKP.Core.Interface.Nyaa
                 { new StringContent(torrent.About??""), "information" },
                 { new StringContent(template.Content??""), "description" },
             };
+
+            if (torrentFlags != NyaaTorrentFlags.None)
+            {
+                var yes = new StringContent("y");
+                if (torrentFlags.HasFlag(NyaaTorrentFlags.Anonymous))
+                {
+                    form.Add(yes, "is_anonymous" );
+                }
+                if (torrentFlags.HasFlag(NyaaTorrentFlags.Complete))
+                {
+                    form.Add(yes, "is_complete");
+                }
+                if (torrentFlags.HasFlag(NyaaTorrentFlags.Hidden))
+                {
+                    form.Add(yes, "is_hidden");
+                }
+                if (torrentFlags.HasFlag(NyaaTorrentFlags.Remake))
+                {
+                    form.Add(yes, "is_remake");
+                }
+            }
+
             Log.Verbose("{Site} formdata content: {@MultipartFormDataContent}", site, form);
             var result = await httpClient.PostAsyncWithRetry(postUrl, form);
             var raw = await result.Content.ReadAsStringAsync();
@@ -140,6 +164,33 @@ namespace OKP.Core.Interface.Nyaa
                 }
             }
             return true;
+        }
+
+        private NyaaTorrentFlags SetFlags(List<NyaaTorrentFlags>? flags, List<ContentTypes>? tags)
+        {
+            var flag = NyaaTorrentFlags.None;
+            if (flags is not null)
+            {
+                foreach (var v in flags)
+                {
+                    if (v == NyaaTorrentFlags.None)
+                    {
+                        flag = NyaaTorrentFlags.None;
+                        break;
+                    }
+                    flag |= v;
+                }
+            }
+
+            if (tags is not null)
+            {
+                if (tags.Contains(ContentTypes.Batch) || tags.Contains(ContentTypes.Collection))
+                {
+                    flag |= NyaaTorrentFlags.Complete;
+                }
+            }
+
+            return flag;
         }
     }
 }

@@ -50,6 +50,7 @@ namespace OKP.Core.Interface
         public bool IsFinished { get; set; }
         public string? CookiePath { get; set; }
         public List<ContentTypes>? Tags { get; set; }
+        public List<NyaaTorrentFlags>? TorrentFlags { get; set; }
         public class Template
         {
             public string? Site { get; set; }
@@ -253,6 +254,16 @@ namespace OKP.Core.Interface
                 fileList.AppendLine(line);
             }
             Log.Information("文件列表：{NewLine}{FileList}", Environment.NewLine, fileList);
+        }
+
+        [Flags]
+        public enum NyaaTorrentFlags
+        {
+            None = 0b_0,
+            Anonymous = 0b_1,
+            Hidden = 0b_10,
+            Remake = 0b_100,
+            Complete = 0b_1000,
         }
     }
 
