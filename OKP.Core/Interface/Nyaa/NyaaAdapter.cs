@@ -141,7 +141,7 @@ namespace OKP.Core.Interface.Nyaa
             }
             foreach (var tracker in trackers)
             {
-                if (!torrent.Data.TorrentObject.Trackers.ToList().Exists(p => p.First().TrimEnd('/').ToLower() == tracker.TrimEnd('/').ToLower()))
+                if (!torrent.Data.TorrentObject.Trackers.ToList().SelectMany(p => p).ToList().Exists(p => p.TrimEnd('/').ToLower() == tracker.TrimEnd('/').ToLower()))
                 {
                     Log.Error("缺少Tracker：{0}", tracker);
                     return false;
