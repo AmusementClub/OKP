@@ -42,7 +42,7 @@ namespace OKP.Core.Interface.Acgnx
             httpClient.DefaultRequestHeaders.Add("user-agent", HttpHelper.GlobalUserAgent);
             this.template = template;
             this.torrent = torrent;
-            var cookieToken = HttpHelper.GlobalCookieContainer.GetCookies(httpClient.BaseAddress).ToList().Find(p => p.Name.ToLower() == "token");
+            var cookieToken = HttpHelper.GlobalCookieContainer.GetCookies(httpClient.BaseAddress).ToList().Find(p => p.Name.AsSpan().Equals("token", StringComparison.OrdinalIgnoreCase));
             if (cookieToken is null)
             {
                 Log.Error("Cannot find token of {Site}", site);

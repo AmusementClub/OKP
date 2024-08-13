@@ -73,7 +73,7 @@ namespace OKP.Core.Interface.Bangumi
             }
             else
             {
-                foreach (var team in teamList.Where(team => team.name.ToLower() == template.Name.ToLower()))
+                foreach (var team in teamList.Where(team => team.name.Equals(template.Name, StringComparison.OrdinalIgnoreCase)))
                 {
                     teamID = team._id;
                     tagID = team.tag_id;

@@ -73,15 +73,15 @@ namespace OKP.Core
                                Log.Error("文件{File}不存在", file);
                                continue;
                            }
-                           var extension = (Path.GetExtension(file) ?? "").ToLower();
+                           var extension = (Path.GetExtension(file) ?? "").AsSpan();
 
-                           if (extension == ".torrent")
+                           if (extension.Equals(".torrent", StringComparison.OrdinalIgnoreCase))
                            {
                                Log.Information("正在发布 {File}", file);
                                SinglePublish(file, o.SettingFile, o.Cookies,o.AllowSkip);
                                continue;
                            }
-                           if (extension == ".txt")
+                           if (extension.Equals(".torrent", StringComparison.OrdinalIgnoreCase))
                            {
                                if (o.Cookies is null)
                                {
