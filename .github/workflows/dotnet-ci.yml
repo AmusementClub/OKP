@@ -23,7 +23,7 @@ jobs:
         dotnet-version: 8.x
 
     - name: Publish the application
-      run: dotnet publish OKP.Core --configuration ${{ matrix.configuration }} --runtime ${{ matrix.runtime-identifier }} --self-contained false
+      run: dotnet publish OKP.Core --configuration ${{ matrix.configuration }} --runtime ${{ matrix.runtime-identifier }} /p:PublishAot=false
 
     - name: Upload build artifacts
       uses: actions/upload-artifact@v3
