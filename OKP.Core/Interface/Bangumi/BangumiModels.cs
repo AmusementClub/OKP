@@ -1,4 +1,7 @@
 ﻿// ReSharper disable InconsistentNaming, IdentifierTypo
+
+using System.Text.Json.Serialization;
+
 namespace OKP.Core.Interface.Bangumi
 {
 #pragma warning disable CS8618
@@ -75,6 +78,18 @@ namespace OKP.Core.Interface.Bangumi
             public DateTime regDate { get; set; }
             public bool approved { get; set; }
         }
-
     }
+
+    [JsonSerializable(typeof(BangumiModels.UploadResponse))]
+    [JsonSerializable(typeof(BangumiModels.AddRequest))]
+    [JsonSerializable(typeof(BangumiModels.AddResponse))]
+    [JsonSerializable(typeof(BangumiModels.Torrent))]
+    [JsonSerializable(typeof(BangumiModels.TeamList))]
+    [JsonSerializable(typeof(BangumiModels.TeamInfo))]
+    [JsonSerializable(typeof(BangumiModels.TeamInfo[]))]
+    [JsonSourceGenerationOptions(
+        PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase,
+        NumberHandling = JsonNumberHandling.AllowReadingFromString)
+    ]
+    internal partial class BangumiModelsSourceGenerationContext : JsonSerializerContext;
 }

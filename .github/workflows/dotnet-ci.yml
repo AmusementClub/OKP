@@ -20,20 +20,20 @@ jobs:
     - name: Setup .NET Core SDK
       uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: 6.x
+        dotnet-version: 8.x
 
     - name: Publish the application
-      run: dotnet publish OKP.Core --configuration ${{ matrix.configuration }} --runtime ${{ matrix.runtime-identifier }} --self-contained false
+      run: dotnet publish OKP.Core --configuration ${{ matrix.configuration }} --runtime ${{ matrix.runtime-identifier }} /p:PublishAot=false
 
     - name: Upload build artifacts
       uses: actions/upload-artifact@v3
       with:
         name: OKP.Core-${{ matrix.runtime-identifier }}-${{ matrix.configuration }}
         path: |
-          OKP.Core/bin/${{ matrix.configuration }}/net6.0/${{ matrix.runtime-identifier }}/publish/*
-          !OKP.Core/bin/${{ matrix.configuration }}/net6.0/${{ matrix.runtime-identifier }}/publish/*.pdb
-          !OKP.Core/bin/${{ matrix.configuration }}/net6.0/${{ matrix.runtime-identifier }}/publish/*.dbg
-          !OKP.Core/bin/${{ matrix.configuration }}/net6.0/${{ matrix.runtime-identifier }}/publish/*.dwarf
+          OKP.Core/bin/${{ matrix.configuration }}/net8.0/${{ matrix.runtime-identifier }}/publish/*
+          !OKP.Core/bin/${{ matrix.configuration }}/net8.0/${{ matrix.runtime-identifier }}/publish/*.pdb
+          !OKP.Core/bin/${{ matrix.configuration }}/net8.0/${{ matrix.runtime-identifier }}/publish/*.dbg
+          !OKP.Core/bin/${{ matrix.configuration }}/net8.0/${{ matrix.runtime-identifier }}/publish/*.dwarf
 
   glue:
     name: 'Build (Release, osx-universal)'
@@ -43,8 +43,8 @@ jobs:
     steps:
       - name: Setup working directory
         run: |
-          mkdir -p OKP.Core/bin/Release/net6.0/osx-x64/publish
-          mkdir -p OKP.Core/bin/Release/net6.0/osx-arm64/publish
+          mkdir -p OKP.Core/bin/Release/net8.0/osx-x64/publish
+          mkdir -p OKP.Core/bin/Release/net8.0/osx-arm64/publish
   
       - name: Setup lipo
         run: |
@@ -56,26 +56,26 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: OKP.Core-osx-x64-Release
-          path: OKP.Core/bin/Release/net6.0/osx-x64/publish
+          path: OKP.Core/bin/Release/net8.0/osx-x64/publish
   
       - name: Download arm64 build
         uses: actions/download-artifact@v3
         with:
           name: OKP.Core-osx-arm64-Release
-          path: OKP.Core/bin/Release/net6.0/osx-arm64/publish
+          path: OKP.Core/bin/Release/net8.0/osx-arm64/publish
   
       - name: Glue the binary
         run: |
-          mkdir -p OKP.Core/bin/Release/net6.0/osx-universal/publish
-          lipo -create OKP.Core/bin/Release/net6.0/osx-x64/publish/OKP.Core OKP.Core/bin/Release/net6.0/osx-arm64/publish/OKP.Core -output OKP.Core/bin/Release/net6.0/osx-universal/publish/OKP.Core
-          mv OKP.Core/bin/Release/net6.0/osx-x64/publish/config OKP.Core/bin/Release/net6.0/osx-universal/publish/config
+          mkdir -p OKP.Core/bin/Release/net8.0/osx-universal/publish
+          lipo -create OKP.Core/bin/Release/net8.0/osx-x64/publish/OKP.Core OKP.Core/bin/Release/net8.0/osx-arm64/publish/OKP.Core -output OKP.Core/bin/Release/net8.0/osx-universal/publish/OKP.Core
+          mv OKP.Core/bin/Release/net8.0/osx-x64/publish/config OKP.Core/bin/Release/net8.0/osx-universal/publish/config
   
       - name: Upload build artifacts
         uses: actions/upload-artifact@v3
         with:
           name: OKP.Core-osx-universal-Release
           path: |
-            OKP.Core/bin/Release/net6.0/osx-universal/publish/*
-            !OKP.Core/bin/Release/net6.0/osx-universal/publish/*.pdb
-            !OKP.Core/bin/Release/net6.0/osx-universal/publish/*.dbg
-            !OKP.Core/bin/Release/net6.0/osx-universal/publish/*.dwarf
+            OKP.Core/bin/Release/net8.0/osx-universal/publish/*
+            !OKP.Core/bin/Release/net8.0/osx-universal/publish/*.pdb
+            !OKP.Core/bin/Release/net8.0/osx-universal/publish/*.dbg
+            !OKP.Core/bin/Release/net8.0/osx-universal/publish/*.dwarf
