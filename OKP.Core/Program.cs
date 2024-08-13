@@ -77,7 +77,7 @@ namespace OKP.Core
                 var noReaction = result.GetValue(noReactionOption);
                 var allowSkip = result.GetValue(allowSkipOption);
 
-                ActionHandler(torrentFile, cookies , settingFile, logLevel, logFile, noReaction, allowSkip);
+                ActionHandler(torrentFile, cookies, settingFile!, logLevel!, logFile!, noReaction, allowSkip);
                 return Task.CompletedTask;
             });
 
@@ -85,11 +85,11 @@ namespace OKP.Core
             IOHelper.ReadLine();
         }
 
-        private static void ActionHandler(IEnumerable<string>? torrentFile, string? cookies, string? settingFile, string? logLevel, string logFile, bool noReaction, bool allowSkip)
+        private static void ActionHandler(IEnumerable<string>? torrentFile, string? cookies, string settingFile, string logLevel, string logFile, bool noReaction, bool allowSkip)
         {
             var levelSwitch = new LoggingLevelSwitch
             {
-                MinimumLevel = logLevel?.ToLower() switch
+                MinimumLevel = logLevel.ToLower() switch
                 {
                     "verbose" => LogEventLevel.Verbose,
                     "debug" => LogEventLevel.Debug,
