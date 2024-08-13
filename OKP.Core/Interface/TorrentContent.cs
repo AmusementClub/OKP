@@ -6,7 +6,6 @@ using Serilog;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.RegularExpressions;
-using Tomlyn;
 
 namespace OKP.Core.Interface
 {
@@ -46,8 +45,8 @@ namespace OKP.Core.Interface
         public string? FilenameRegex { get; set; }
         public string? ResolutionRegex { get; set; }
         public string? SettingPath { get; set; }
-        public bool HasSubtitle { get; set; }
-        public bool IsFinished { get; set; }
+        // public bool HasSubtitle { get; set; }
+        // public bool IsFinished { get; set; }
         public string? CookiePath { get; set; }
         public List<ContentTypes>? Tags { get; set; }
         public List<NyaaTorrentFlags>? TorrentFlags { get; set; }
@@ -116,7 +115,7 @@ namespace OKP.Core.Interface
                 throw new IOException();
             }
 
-            var torrentC = Toml.ToModel<TorrentContent>(File.ReadAllText(settingFilePath));
+            var torrentC = TomlParseHelper.DeserializeTorrentContent(settingFilePath);
             torrentC.SettingPath = Path.GetDirectoryName(settingFilePath);
             //if (!File.Exists(torrentC.CookiePath))
             //{
@@ -172,7 +171,7 @@ namespace OKP.Core.Interface
             var userPropPath = IOHelper.BasePath(Constants.DefaultUserPropsPath, Constants.UserPropertiesFileName);
             if (File.Exists(userPropPath))
             {
-                var userProp = Toml.ToModel<UserProperties>(File.ReadAllText(userPropPath));
+                var userProp = TomlParseHelper.DeserializeUserProperties(userPropPath);
 
                 if (userProp.UserProp == null)
                     return torrentC;
