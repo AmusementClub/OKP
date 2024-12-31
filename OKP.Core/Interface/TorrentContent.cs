@@ -6,10 +6,12 @@ using Serilog;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.RegularExpressions;
+using CsToml;
 
 namespace OKP.Core.Interface
 {
-    public class TorrentContent
+    [TomlSerializedObject]
+    public partial class TorrentContent
     {
         public class TorrentData
         {
@@ -37,29 +39,31 @@ namespace OKP.Core.Interface
         }
         public TorrentData? Data;
 
+        [TomlValueOnSerialized("intro_template")]
         public List<Template>? IntroTemplate { get; set; }
+        [TomlValueOnSerialized("display_name")]
         public string? DisplayName { get; set; }
+        [TomlValueOnSerialized("group_name")]
         public string? GroupName { get; set; }
+        [TomlValueOnSerialized("poster")]
         public string? Poster { get; set; }
+        [TomlValueOnSerialized("about")]
         public string? About { get; set; }
+        [TomlValueOnSerialized("filename_regex")]
         public string? FilenameRegex { get; set; }
+        [TomlValueOnSerialized("resolution_regex")]
         public string? ResolutionRegex { get; set; }
+        [TomlValueOnSerialized("setting_path")]
         public string? SettingPath { get; set; }
         // public bool HasSubtitle { get; set; }
         // public bool IsFinished { get; set; }
+        [TomlValueOnSerialized("cookie_path")]
         public string? CookiePath { get; set; }
+        [TomlValueOnSerialized("tags")]
         public List<ContentTypes>? Tags { get; set; }
+        [TomlValueOnSerialized("torrent_flags")]
         public List<NyaaTorrentFlags>? TorrentFlags { get; set; }
-        public class Template
-        {
-            public string? Site { get; set; }
-            public string? Name { get; set; }
-            public string? Content { get; set; }
-            public string? Cookie { get; set; }
-            public string? UserAgent { get; set; }
-            public string? Proxy { get; set; }
-            public string? DisplayName { get; set; }
-        }
+
         public enum ContentTypes
         {
             Anime,
@@ -266,8 +270,29 @@ namespace OKP.Core.Interface
         }
     }
 
-    public class UserProperties
+    [TomlSerializedObject]
+    public partial class Template
     {
-        public List<TorrentContent.Template>? UserProp { get; set; }
+        [TomlValueOnSerialized("site")]
+        public string? Site { get; set; }
+        [TomlValueOnSerialized("name")]
+        public string? Name { get; set; }
+        [TomlValueOnSerialized("content")]
+        public string? Content { get; set; }
+        [TomlValueOnSerialized("cookie")]
+        public string? Cookie { get; set; }
+        [TomlValueOnSerialized("user_agent")]
+        public string? UserAgent { get; set; }
+        [TomlValueOnSerialized("proxy")]
+        public string? Proxy { get; set; }
+        [TomlValueOnSerialized("display_name")]
+        public string? DisplayName { get; set; }
+    }
+
+    [TomlSerializedObject]
+    public partial class UserProperties
+    {
+        [TomlValueOnSerialized("user_prop")]
+        public List<Template>? UserProp { get; set; }
     }
 }

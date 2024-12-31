@@ -16,13 +16,18 @@ Released under the GNU GPLv3+.
 
 	<ItemGroup>
 		<PackageReference Include="BencodeNET" Version="5.0.0" />
+		<PackageReference Include="CsToml" Version="1.3.1" />
+		<PackageReference Include="CsToml.Extensions" Version="1.3.0" />
+		<PackageReference Include="CsToml.Generator" Version="1.3.1">
+		  <PrivateAssets>all</PrivateAssets>
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
 		<PackageReference Include="Polly.Extensions.Http" Version="3.0.0" />
 		<PackageReference Include="Serilog" Version="4.0.1" />
 		<PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
 		<PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
 		<PackageReference Include="System.CommandLine" Version="2.0.0-beta4.24324.3" />
 		<PackageReference Include="System.CommandLine.NamingConventionBinder" Version="2.0.0-beta4.24324.3" />
-		<PackageReference Include="Tommy" Version="3.1.2" />
 	</ItemGroup>
 
 	<ItemGroup>
