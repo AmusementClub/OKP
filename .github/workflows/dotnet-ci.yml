@@ -22,6 +22,11 @@ jobs:
       with:
         dotnet-version: 8.x
 
+    - name: Prepare
+      run: |
+        dotnet nuget add source --username sun128764 --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/MIRIMIRIM/index.json"
+        dotnet restore
+
     - name: Publish the application
       run: dotnet publish OKP.Core --configuration ${{ matrix.configuration }} --runtime ${{ matrix.runtime-identifier }} /p:PublishAot=false
 
