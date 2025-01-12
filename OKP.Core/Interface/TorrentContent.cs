@@ -94,7 +94,7 @@ namespace OKP.Core.Interface
             App,
             Game
         }
-        public static TorrentContent Build(string filename, string settingFile, string appLocation)
+        public static TorrentContent Build(string filename, string settingFile, string? baseTemplate, string appLocation)
         {
             var settingFilePath = settingFile;
 
@@ -116,6 +116,7 @@ namespace OKP.Core.Interface
             }
 
             var torrentC = TomlParseHelper.DeserializeTorrentContent(settingFilePath);
+            ProcessTemplate(torrentC, baseTemplate);
             torrentC.SettingPath = Path.GetDirectoryName(settingFilePath);
             //if (!File.Exists(torrentC.CookiePath))
             //{
@@ -194,6 +195,24 @@ namespace OKP.Core.Interface
 
             return torrentC;
         }
+
+        private static void ProcessTemplate(TorrentContent torrentC, string? baseTemplate)
+        {
+            if (baseTemplate is null) return;
+            if (torrentC.IntroTemplate is null) return;
+
+            if (Path.GetDirectoryName(baseTemplate) == "")
+            {
+                baseTemplate = Path.Combine(Environment.CurrentDirectory, baseTemplate);
+            }
+
+            // Automatically generate for sites with missing publishing content
+            foreach (var site in torrentC.IntroTemplate.Where(site => string.IsNullOrEmpty(site.Content)))
+            {
+                site.Content = baseTemplate;
+            }
+        }
+
         public bool IsV2()
         {
             if (Data?.TorrentObject is null)

@@ -12,9 +12,11 @@ Released under the GNU GPLv3+.
 		</Copyright>
     <InvariantGlobalization>true</InvariantGlobalization>
     <SatelliteResourceLanguages>en-US</SatelliteResourceLanguages>
+    <RestoreSources>https://api.nuget.org/v3/index.json;https://nuget.pkg.github.com/MIRIMIRIM/index.json</RestoreSources>
 	</PropertyGroup>
 
 	<ItemGroup>
+		<PackageReference Include="AC.Converter.MarkdownToBBCode.Shared" Version="1.0.0" />
 		<PackageReference Include="BencodeNET" Version="5.0.0" />
 		<PackageReference Include="Polly.Extensions.Http" Version="3.0.0" />
 		<PackageReference Include="Serilog" Version="4.0.1" />

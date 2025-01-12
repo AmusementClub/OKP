@@ -56,6 +56,13 @@ namespace OKP.Core
                 Description = "Ignore login fail and continue publishing."
             };
 
+            var baseTemplateOption = new CliOption<string?>("--base_template", "-b")
+            {
+                DefaultValueFactory = _ => null,
+                Description =
+                    "Base template. It needs to be a markdown file, and other site templates will be generated based on it which missing publishing content."
+            };
+
             var rootCommand = new CliRootCommand("One Key Publish")
             {
                 torrentArgument,
@@ -65,6 +72,7 @@ namespace OKP.Core
                 logFileOption,
                 noReactionOption,
                 allowSkipOption,
+                baseTemplateOption
             };
 
             rootCommand.SetAction((result, _) =>
@@ -76,8 +84,9 @@ namespace OKP.Core
                 var logFile = result.GetValue(logFileOption);
                 var noReaction = result.GetValue(noReactionOption);
                 var allowSkip = result.GetValue(allowSkipOption);
+                var baseTemplate = result.GetValue(baseTemplateOption);
 
-                ActionHandler(torrentFile, cookies, settingFile!, logLevel!, logFile!, noReaction, allowSkip);
+                ActionHandler(torrentFile, cookies, settingFile!, logLevel!, logFile!, noReaction, allowSkip, baseTemplate);
                 return Task.CompletedTask;
             });
 
@@ -85,7 +94,7 @@ namespace OKP.Core
             IOHelper.ReadLine();
         }
 
-        private static void ActionHandler(IEnumerable<string>? torrentFile, string? cookies, string settingFile, string logLevel, string logFile, bool noReaction, bool allowSkip)
+        private static void ActionHandler(IEnumerable<string>? torrentFile, string? cookies, string settingFile, string logLevel, string logFile, bool noReaction, bool allowSkip, string? baseTemplate)
         {
             var levelSwitch = new LoggingLevelSwitch
             {
@@ -110,6 +119,13 @@ namespace OKP.Core
                 Log.Fatal("o.TorrentFile is null");
                 return;
             }
+
+            if (!string.IsNullOrEmpty(baseTemplate) && Path.GetExtension(baseTemplate) != ".md")
+            {
+                Log.Fatal("base_template must be a .md file if specified");
+                return;
+            }
+
             var addCookieCount = 0;
             foreach (var file in torrentFile)
             {
@@ -123,7 +139,7 @@ namespace OKP.Core
                 if (extension.Equals(".torrent", StringComparison.OrdinalIgnoreCase))
                 {
                     Log.Information("正在发布 {File}", file);
-                    SinglePublish(file, settingFile, cookies, allowSkip);
+                    SinglePublish(file, settingFile, cookies, allowSkip, baseTemplate);
                     continue;
                 }
                 if (extension.Equals(".txt", StringComparison.OrdinalIgnoreCase))
@@ -190,7 +206,7 @@ namespace OKP.Core
             }
         }
 
-        private static void SinglePublish(string file, string settingFile, string? cookies,bool allowSkip)
+        private static void SinglePublish(string file, string settingFile, string? cookies, bool allowSkip, string? baseTemplate)
         {
             if (!File.Exists(file))
             {
@@ -198,7 +214,7 @@ namespace OKP.Core
                 IOHelper.ReadLine();
                 return;
             }
-            var torrent = TorrentContent.Build(file, settingFile, AppDomain.CurrentDomain.BaseDirectory);
+            var torrent = TorrentContent.Build(file, settingFile, baseTemplate, AppDomain.CurrentDomain.BaseDirectory);
             if (cookies is null)
             {
                 if (torrent.CookiePath is not null)
