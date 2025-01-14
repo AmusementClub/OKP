@@ -6,7 +6,7 @@ One-Key-Publish，一键发布 Torrent 到常见 BT 站。
 
 ## Quick Start
 
-依赖：[.NET 6 Runtime](https://dotnet.microsoft.com/en-us/download/dotnet/6.0)
+依赖：[.NET 8 Runtime](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
 
 1. 导出并添加 Cookie [参考这里](#导入-Cookie-到-OKP)，默认的 cookie 文件将保存在程序目录的 `config\cookies` 目录下。
 2. 编写一个配置文件 [示例](https://github.com/AmusementClub/OKP/blob/master/OKP.Core/example/setting.toml)，将配置文件置于种子文件同目录下。
@@ -17,21 +17,25 @@ One-Key-Publish，一键发布 Torrent 到常见 BT 站。
 `OKP.Core yourTorrent.torrent {-s yourSetting.toml} {--cookies yourCookieFile.txt}`
 
 ```
-  --cookies           (Default: cookies.txt) (Not required) Specific Cookie file.
+Description:
+  One Key Publish
 
-  -s, --setting       (Default: setting.toml) (Not required) Specific setting file.
+Usage:
+  okp [<torrent>...] [options]
 
-  -l, --log_level     (Default: Debug) Log level.
+Arguments:
+  <torrent>  Torrents to be published. (Or Cookie file exported by Get Cookies.txt.)
 
-  --log_file          (Default: log.txt) Log file.
-
-  -y                  Skip reaction.
-
-  --help              Display this help screen.
-
-  --version           Display version information.
-
-  torrent (pos. 0)    Required. Torrents to be published.(Or Cookie file exported by Get Cookies.txt.)
+Options:
+  -?, -h, --help       Show help and usage information
+  --version            Show version information
+  --cookies            Cookie file to be used. []
+  -s, --setting        (Not required) Specific setting file. [default: setting.toml]
+  -l, --log_level      Log level. [default: Debug]
+  --log_file           Log file. [default: log.txt]
+  -y, --no_reaction    Skip reaction.
+  --allow_skip         Ignore login fail and continue publishing.
+  -b, --base_template  Base template. It needs to be a markdown file, and other site templates will be generated based on it which missing publishing content. []
 ```
 
 ### 必选项
@@ -53,6 +57,8 @@ One-Key-Publish，一键发布 Torrent 到常见 BT 站。
 - `-l, --log_level`，指定输出的 log level，默认是 `Debug`，可以指定 `Verbose, Debug, Info`（不区分大小写）
 - `--log_file`，指定输出的 log 文件，默认命名为 `log{当前时间的4位年份}{当前时间的2位月份}.txt`，默认输出位置为执行目录
 - `-y`，跳过所有需要回车的地方
+- `--allow_skip`，如果有站点登录失败则自动跳过
+- `-b, --base_template`，在没有填写发布内容时，可以指定一个 markdown 文件，发布内容由这个 markdown 进行转换生成
 
 ## 配置文件
 
@@ -90,6 +96,7 @@ One-Key-Publish，一键发布 Torrent 到常见 BT 站。
 3. `proxy`：连接站点使用的代理
 4. `content`：发布正文，可以指定一个文件名或 raw string
    - 指定文件名的后缀同见 #支持站点
+   - 如果配合 `-b, --base_template` 使用可以不用填写
 
 ### publish template
 
