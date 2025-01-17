@@ -15,6 +15,7 @@ Released under the GNU GPLv3+.
 	</PropertyGroup>
 
 	<ItemGroup>
+		<PackageReference Include="AC.Converter.MarkdownToBBCode.Shared" Version="1.0.0" />
 		<PackageReference Include="BencodeNET" Version="5.0.0" />
 		<PackageReference Include="Polly.Extensions.Http" Version="3.0.0" />
 		<PackageReference Include="Serilog" Version="4.0.1" />

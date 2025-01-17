@@ -148,23 +148,8 @@ namespace OKP.Core.Interface.Dmhy
                 Log.Fatal("{Site} torrent.Data?.TorrentObject is null", site);
                 throw new ArgumentNullException(nameof(torrent.Data.TorrentObject));
             }
-            if (template.Content != null && template.Content.ToLower().EndsWith(".html"))
-            {
-                Log.Debug("开始寻找{Site} html文件 {File}", site, template.Content);
-                var templateFile = FileHelper.ParseFileFullPath(template.Content, torrent.SettingPath);
-                if (File.Exists(templateFile))
-                {
-                    Log.Debug("找到了{Site} html文件 {File}", site, templateFile);
-                    template.Content = File.ReadAllText(templateFile);
-                }
-                else
-                {
-                    Log.Error("发布模板看起来是个.html文件，但是这个.html文件不存在{NewLine}" +
-                        "{Source}-->{Dest}", template.Content, Environment.NewLine, templateFile);
-                    return false;
-                }
-            }
-            return true;
+
+            return ValidTemplate(template, site, torrent.SettingPath);
         }
     }
 }

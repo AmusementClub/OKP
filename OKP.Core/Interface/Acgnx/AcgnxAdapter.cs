@@ -186,23 +186,7 @@ namespace OKP.Core.Interface.Acgnx
                 throw new ArgumentNullException(nameof(torrent.Data.TorrentObject));
             }
 
-            if (template.Content != null && template.Content.ToLower().EndsWith(".html"))
-            {
-                Log.Debug("开始寻找{Site} .html文件 {File}", site, template.Content);
-                var templateFile = FileHelper.ParseFileFullPath(template.Content, torrent.SettingPath);
-                if (File.Exists(templateFile))
-                {
-                    Log.Debug("找到了{Site} .html文件 {File}", site, template.Content);
-                    template.Content = File.ReadAllText(templateFile);
-                }
-                else
-                {
-                    Log.Error("发布模板看起来是个.html文件，但是这个.html文件不存在{NewLine}" +
-                        "{Source}-->{Dest}", Environment.NewLine, template.Content, templateFile);
-                    return false;
-                }
-            }
-            return true;
+            return ValidTemplate(template, site, torrent.SettingPath);
         }
     }
 

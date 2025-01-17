@@ -147,23 +147,7 @@ namespace OKP.Core.Interface.Nyaa
                     return false;
                 }
             }
-            if (template.Content != null && template.Content.ToLower().EndsWith(".md"))
-            {
-                Log.Debug("开始寻找{Site} .md文件 {File}", site, template.Content);
-                var templateFile = FileHelper.ParseFileFullPath(template.Content, torrent.SettingPath);
-                if (File.Exists(templateFile))
-                {
-                    Log.Debug("找到了{Site} .md文件 {File}", site, template.Content);
-                    template.Content = File.ReadAllText(templateFile);
-                }
-                else
-                {
-                    Log.Error("发布模板看起来是个.md文件，但是这个.md文件不存在{NewLine}" +
-                        "{Source}-->{Dest}", Environment.NewLine, template.Content, templateFile);
-                    return false;
-                }
-            }
-            return true;
+            return ValidTemplate(template, site, torrent.SettingPath);
         }
 
         private NyaaTorrentFlags SetFlags(List<NyaaTorrentFlags>? flags, List<ContentTypes>? tags)
