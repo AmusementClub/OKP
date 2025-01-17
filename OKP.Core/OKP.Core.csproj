@@ -2,12 +2,12 @@
 
 	<PropertyGroup>
 		<OutputType>Exe</OutputType>
-		<TargetFramework>net8.0</TargetFramework>
+		<TargetFrameworks>net8.0;net9.0</TargetFrameworks>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<PublishAot>true</PublishAot>
-		<Version>1.0.2-beta</Version>
-		<Copyright>Copyright (C) 2023 AmusementClub
+		<Version>1.1.0</Version>
+		<Copyright>Copyright (C) 2023-2025 AmusementClub
 Released under the GNU GPLv3+.
 		</Copyright>
     <InvariantGlobalization>true</InvariantGlobalization>
