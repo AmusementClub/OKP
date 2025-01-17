@@ -20,7 +20,7 @@ jobs:
     - name: Setup .NET Core SDK
       uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: 8.x
+        dotnet-version: 9.x
 
     - name: Prepare
       run: |
@@ -28,7 +28,7 @@ jobs:
         dotnet restore
 
     - name: Publish the application
-      run: dotnet publish OKP.Core --configuration ${{ matrix.configuration }} --runtime ${{ matrix.runtime-identifier }} /p:PublishAot=false
+      run: dotnet publish OKP.Core --configuration ${{ matrix.configuration }} --runtime ${{ matrix.runtime-identifier }} -f net8.0 /p:PublishAot=false
 
     - name: Upload build artifacts
       uses: actions/upload-artifact@v3
