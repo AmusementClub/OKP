@@ -14,12 +14,13 @@ namespace OKP.Core.Interface
 
         internal static string ConvertMarkdownToHtml(string mdContent)
         {
-            return Markdown.ToHtml(mdContent);
+            var pipeline = new MarkdownPipelineBuilder().UseSoftlineBreakAsHardlineBreak().Build();
+            return Markdown.ToHtml(mdContent, pipeline);
         }
 
         internal static string ConvertMarkdownToBBCode(string mdContent)
         {
-            var pipeline = new MarkdownPipelineBuilder().EnableTrackTrivia().UseEmphasisExtras(EmphasisExtraOptions.Strikethrough).Build();
+            var pipeline = new MarkdownPipelineBuilder().EnableTrackTrivia().UseEmphasisExtras(EmphasisExtraOptions.Strikethrough).UseSoftlineBreakAsHardlineBreak().Build();
             var document = MarkdownParser.Parse(mdContent, pipeline);
 
             using var sw = new StringWriter();
