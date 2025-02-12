@@ -1,0 +1,65 @@
+name: Release OKP.Core on Tag
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  release:
+    name: publish-${{ matrix.target }}-${{ matrix.arch }}
+    runs-on: ${{ matrix.os }}
+    env:
+      identifier: ${{ matrix.target }}-${{ matrix.arch }}
+    strategy:
+      matrix:
+        target: [win, osx] # linux-musl
+        arch: [x64, arm64]
+        include:
+          - os: windows-latest
+            target: win
+          # - os: windows-latest
+          #   target: linux-musl
+          - os: macos-latest
+            target: osx
+        dotnet_version: ['9.x']
+        dotnet_target: ['net9.0']
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ matrix.dotnet_version }}
+
+    - name: Prepare
+      run: |
+        dotnet nuget add source --username sun128764 --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/MIRIMIRIM/index.json"
+        dotnet restore
+
+    - name: Publish the application
+      run: |
+        cd ./OKP.Core
+        dotnet publish -c Release -r ${{ env.identifier }} -f ${{ matrix.dotnet_target }}
+        7z a -t7z -mx9 "../OKP.Core-${{ env.identifier }}-Release.7z" "./bin/Release/${{ matrix.dotnet_target }}/${{ env.identifier }}/publish/*" "-x!*.pdb" "-x!*.dbg" "-x!*.dwarf" "-x!*.dSYM"
+
+    - name: Upload
+      uses: actions/upload-artifact@v4
+      with:
+        name: OKP.Core_${{ env.identifier }}
+        path: |
+          OKP.Core/bin/Release/${{ matrix.dotnet_target }}/${{ env.identifier }}/publish/
+        #   OKP.Core-${{ env.identifier }}-Release.7z
+
+    - name: Create GitHub Release
+      uses: softprops/action-gh-release@v2
+      with:
+        tag_name: ${{ github.ref_name }}
+        files: OKP.Core-${{ env.identifier }}-Release.7z
+        fail_on_unmatched_files: true
+        generate_release_notes: false
+        prerelease: false
+        make_latest: 'true'
