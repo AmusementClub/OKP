@@ -31,7 +31,7 @@ jobs:
       run: dotnet publish OKP.Core --configuration ${{ matrix.configuration }} --runtime ${{ matrix.runtime-identifier }} -f net8.0 /p:PublishAot=false
 
     - name: Upload build artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: OKP.Core-${{ matrix.runtime-identifier }}-${{ matrix.configuration }}
         path: |
@@ -58,13 +58,13 @@ jobs:
           sudo mv /tmp/lipo /usr/local/bin/lipo
   
       - name: Download x64 build
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: OKP.Core-osx-x64-Release
           path: OKP.Core/bin/Release/net8.0/osx-x64/publish
   
       - name: Download arm64 build
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: OKP.Core-osx-arm64-Release
           path: OKP.Core/bin/Release/net8.0/osx-arm64/publish
@@ -76,7 +76,7 @@ jobs:
           mv OKP.Core/bin/Release/net8.0/osx-x64/publish/config OKP.Core/bin/Release/net8.0/osx-universal/publish/config
   
       - name: Upload build artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: OKP.Core-osx-universal-Release
           path: |
