@@ -128,7 +128,8 @@ namespace OKP.Core.Interface.Acgnx
                 {
                     Log.Error("Cannot connect to {Site}.{NewLine}" +
                               "Code: {Code}{NewLine}" +
-                              "Raw: {Raw}", site, Environment.NewLine, result.StatusCode, Environment.NewLine, raw);
+                              "Raw: {Raw}", site, Environment.NewLine, result.StatusCode, Environment.NewLine, "Your IP may be blocked by Cloudflare.");
+                    Log.Debug("Raw: {Raw}", raw);
                     return new((int)result.StatusCode, raw, false);
                 }
             }
