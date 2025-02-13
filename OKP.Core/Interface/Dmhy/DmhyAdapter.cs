@@ -51,15 +51,10 @@ namespace OKP.Core.Interface.Dmhy
 
         public override async Task<HttpResult> PingAsync()
         {
-            var pingReq = await httpClient.GetAsync(pingUrl);
-            var raw = await pingReq.Content.ReadAsStringAsync();
-            if (!pingReq.IsSuccessStatusCode)
-            {
-                Log.Error("Cannot connect to {Site}.{NewLine}" +
-                   "Code: {Code}{NewLine}" +
-                   "Raw: {Raw}", site, Environment.NewLine, pingReq.StatusCode, Environment.NewLine, raw);
-                return new((int)pingReq.StatusCode, raw, false);
-            }
+            var (result, _) = await PingInternalAsync(httpClient, pingUrl, site);
+            if (!result.IsSuccess) return result;
+            var raw = result.Message;
+
             if (raw.Contains(@"<div class=""nav_title text_bold""><img src=""/images/login.gif"" align=""middle"" />&nbsp;登入發佈系統</div>"))
             {
                 Log.Error("{Site} login failed", site);

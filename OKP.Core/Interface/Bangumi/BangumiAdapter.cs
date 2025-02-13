@@ -51,15 +51,14 @@ namespace OKP.Core.Interface.Bangumi
 
         public override async Task<HttpResult> PingAsync()
         {
-            var pingReq = await httpClient.GetAsync(pingUrl);
-            var raw = await pingReq.Content.ReadAsStringAsync();
-            var teamList = await pingReq.Content.ReadFromJsonAsync(BangumiModelsSourceGenerationContext.Default.TeamInfoArray);
-            if (!pingReq.IsSuccessStatusCode || teamList == null)
+            var (result, pingReq) = await PingInternalAsync(httpClient, pingUrl, site);
+            if (!result.IsSuccess) return result;
+            var raw = result.Message;
+
+            var teamList = await pingReq!.Content.ReadFromJsonAsync(BangumiModelsSourceGenerationContext.Default.TeamInfoArray);
+            if (teamList == null)
             {
-                Log.Error("Cannot connect to {Site}.{NewLine}" +
-                   "Code: {Code}{NewLine}" +
-                   "Raw: {Raw}", site, Environment.NewLine, pingReq.StatusCode, Environment.NewLine, raw);
-                return new((int)pingReq.StatusCode, raw, false);
+                return result;
             }
             if (teamList.Length == 0)
             {

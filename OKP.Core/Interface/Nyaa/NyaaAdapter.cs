@@ -52,15 +52,10 @@ namespace OKP.Core.Interface.Nyaa
 
         public override async Task<HttpResult> PingAsync()
         {
-            var pingReq = await httpClient.GetAsyncWithRetry(pingUrl);
-            var raw = await pingReq.Content.ReadAsStringAsync();
-            if (!pingReq.IsSuccessStatusCode)
-            {
-                Log.Error("Cannot connect to {Site}.{NewLine}" +
-                    "Code: {Code}{NewLine}" +
-                    "Raw: {Raw}", site, Environment.NewLine, pingReq.StatusCode, Environment.NewLine, raw);
-                return new((int)pingReq.StatusCode, raw, false);
-            }
+            var (result, _) = await PingInternalAsync(httpClient, pingUrl, site);
+            if (!result.IsSuccess) return result;
+            var raw = result.Message;
+
             if (raw.Contains(@"You are not logged in"))
             {
                 Log.Error("{Site} login failed", site);

@@ -95,37 +95,46 @@ namespace OKP.Core.Interface.Acgnx
             }
             };
             Log.Verbose("{Site} formdata content: {@MultipartFormDataContent}", site, request.Content);
-            var result = await httpClient.SendAsync(request);
-            var raw = await result.Content.ReadAsStringAsync();
-
-            if (result.IsSuccessStatusCode && !raw.Contains("<html"))
+            try
             {
-                var apiContent = await result.Content.ReadFromJsonAsync(AcgnxModelsSourceGenerationContext.Default.AcgnxApiStatus);
-                if (apiContent == null)
+                var result = await httpClient.SendAsync(request);
+                var raw = await result.Content.ReadAsStringAsync();
+
+                if (result.IsSuccessStatusCode && !raw.Contains("<html"))
                 {
-                    Log.Error("{Site} api server down", site);
-                    return new(403, "Login failed, api server down", false);
-                }
-                else
-                {
-                    if (apiContent.Code >= 101 && apiContent.Code < 110)
+                    var apiContent =
+                        await result.Content.ReadFromJsonAsync(
+                            AcgnxModelsSourceGenerationContext.Default.AcgnxApiStatus);
+                    if (apiContent == null)
                     {
-                        Log.Error("{Site} login failed", site);
-                        return new(403, "Login failed" + apiContent.Value, false);
+                        Log.Error("{Site} api server down", site);
+                        return new(403, "Login failed, api server down", false);
                     }
                     else
                     {
-                        Log.Debug("{Site} login success", site);
-                        return new(200, "Success", true);
+                        if (apiContent.Code >= 101 && apiContent.Code < 110)
+                        {
+                            Log.Error("{Site} login failed", site);
+                            return new(403, "Login failed" + apiContent.Value, false);
+                        }
+                        else
+                        {
+                            Log.Debug("{Site} login success", site);
+                            return new(200, "Success", true);
+                        }
                     }
                 }
+                else
+                {
+                    Log.Error("Cannot connect to {Site}.{NewLine}" +
+                              "Code: {Code}{NewLine}" +
+                              "Raw: {Raw}", site, Environment.NewLine, result.StatusCode, Environment.NewLine, raw);
+                    return new((int)result.StatusCode, raw, false);
+                }
             }
-            else
+            catch (Exception e)
             {
-                Log.Error("Cannot connect to {Site}.{NewLine}" +
-                    "Code: {Code}{NewLine}" +
-                    "Raw: {Raw}", site, Environment.NewLine, result.StatusCode, Environment.NewLine, raw);
-                return new((int)result.StatusCode, raw, false);
+                return new(1000, e.Message, false);
             }
         }
 

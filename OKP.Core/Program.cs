@@ -294,50 +294,42 @@ namespace OKP.Core
                 };
                 adapterList.Add(adapter);
             }
-            List<Task<HttpResult>> pingTask = new();
-            adapterList.ForEach(p => pingTask.Add(p.PingAsync()));
-            var pingRes = Task.WhenAll(pingTask).Result;
+
+            var pingTasks = adapterList.Select(async adapter =>
+            {
+                var result = await adapter.PingAsync();
+                return (adapter, httpResult: result);
+            }).ToArray();
+
+            var pingRes = Task.WhenAll(pingTasks).GetAwaiter().GetResult();
+
             foreach (var res in pingRes)
             {
-                if (!res.IsSuccess)
+                if (res.httpResult.IsSuccess) continue;
+
+                if (allowSkip)
                 {
-                    Log.Debug("Code: {Code}\tMessage: {Message}", res.Code, res.Message);
+                    adapterList.Remove(res.adapter);
+                }
+                else
+                {
                     IOHelper.ReadLine();
-                    if (!allowSkip)
-                    {
-                        return;
-                    }
+                    return;
                 }
             }
+
             Log.Information("登录成功，继续发布？");
             IOHelper.ReadLine();
-            if(allowSkip)
+
+            foreach (var result in adapterList.Select(item => item.PostAsync().Result))
             {
-                Parallel.ForEach(adapterList, p =>
+                if (result.IsSuccess)
                 {
-                    var res = p.PostAsync().Result;
-                    if (res.IsSuccess)
-                    {
-                        Log.Information("发布成功");
-                    }
-                    else
-                    {
-                        Log.Error("发布失败");
-                    }
-                });
-            }
-            else
-            {
-                foreach (var result in adapterList.Select(item => item.PostAsync().Result))
+                    Log.Information("发布成功");
+                }
+                else
                 {
-                    if (result.IsSuccess)
-                    {
-                        Log.Information("发布成功");
-                    }
-                    else
-                    {
-                        Log.Error("发布失败");
-                    }
+                    Log.Error("发布失败");
                 }
             }
             Log.Information("发布完成");

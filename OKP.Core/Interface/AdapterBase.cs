@@ -127,6 +127,32 @@ namespace OKP.Core.Interface
 
             return true;
         }
+
+        internal static async Task<(HttpResult, HttpResponseMessage?)> PingInternalAsync(HttpClient httpClient, string pingUrl, string site)
+        {
+            try
+            {
+                var pingReq = await httpClient.GetAsync(pingUrl);
+                var raw = await pingReq.Content.ReadAsStringAsync();
+
+                if (!pingReq.IsSuccessStatusCode)
+                {
+                    Log.Error("Cannot connect to {Site}.{NewLine}" +
+                              "Code: {Code}{NewLine}" +
+                              "Raw: {Raw}", site, Environment.NewLine, pingReq.StatusCode, Environment.NewLine, raw);
+                    return (new((int)pingReq.StatusCode, raw, false), null);
+                }
+
+                return (new((int)pingReq.StatusCode, raw, true), pingReq);
+            }
+            catch (Exception e)
+            {
+                Log.Error("Cannot connect to {Site}.{NewLine}" +
+                          "Code: {Code}{NewLine}" +
+                          "Raw: {Raw}", site, Environment.NewLine, null, Environment.NewLine, e.Message);
+                return (new (1000, e.Message, false), null);
+            }
+        }
     }
     public class HttpResult
     {
