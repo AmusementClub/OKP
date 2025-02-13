@@ -6,7 +6,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<PublishAot>true</PublishAot>
-		<Version>1.1.0</Version>
+		<Version>1.1.1</Version>
 		<Copyright>Copyright (C) 2023-2025 AmusementClub
 Released under the GNU GPLv3+.
 		</Copyright>
