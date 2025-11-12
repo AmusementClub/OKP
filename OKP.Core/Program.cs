@@ -17,53 +17,53 @@ namespace OKP.Core
     {
         public static void Main(string[] args)
         {
-            var torrentArgument = new CliArgument<IEnumerable<string>?>("torrent")
+            var torrentArgument = new Argument<IEnumerable<string>?>("torrent")
             {
                 Description = "Torrents to be published. (Or Cookie file exported by Get Cookies.txt.)"
             };
 
-            var cookiesOption = new CliOption<string?>("--cookies")
+            var cookiesOption = new Option<string?>("--cookies")
             {
                 DefaultValueFactory = _ => null,
                 Description = "Cookie file to be used."
             };
 
-            var settingOption = new CliOption<string>("--setting", "-s")
+            var settingOption = new Option<string>("--setting", "-s")
             {
                 DefaultValueFactory = _ => Constants.DefaultSettingFileName,
                 Description = "(Not required) Specific setting file."
             };
 
-            var logLevelOption = new CliOption<string>("--log_level", "-l")
+            var logLevelOption = new Option<string>("--log_level", "-l")
             {
                 DefaultValueFactory = _ => "Debug",
                 Description = "Log level."
             };
 
-            var logFileOption = new CliOption<string>("--log_file")
+            var logFileOption = new Option<string>("--log_file")
             {
                 DefaultValueFactory = _ => Constants.DefaultLogFileName,
                 Description = "Log file."
             };
 
-            var noReactionOption = new CliOption<bool>("--no_reaction", "-y")
+            var noReactionOption = new Option<bool>("--no_reaction", "-y")
             {
                 Description = "Skip reaction."
             };
 
-            var allowSkipOption = new CliOption<bool>("--allow_skip")
+            var allowSkipOption = new Option<bool>("--allow_skip")
             {
                 Description = "Ignore login fail and continue publishing."
             };
 
-            var baseTemplateOption = new CliOption<string?>("--base_template", "-b")
+            var baseTemplateOption = new Option<string?>("--base_template", "-b")
             {
                 DefaultValueFactory = _ => null,
                 Description =
                     "Base template. It needs to be a markdown file, and other site templates will be generated based on it which missing publishing content."
             };
 
-            var rootCommand = new CliRootCommand("One Key Publish")
+            var rootCommand = new RootCommand("One Key Publish")
             {
                 torrentArgument,
                 cookiesOption,
@@ -303,13 +303,13 @@ namespace OKP.Core
 
             var pingRes = Task.WhenAll(pingTasks).GetAwaiter().GetResult();
 
-            foreach (var res in pingRes)
+            foreach (var (adapter, httpResult) in pingRes)
             {
-                if (res.httpResult.IsSuccess) continue;
+                if (httpResult.IsSuccess) continue;
 
                 if (allowSkip)
                 {
-                    adapterList.Remove(res.adapter);
+                    adapterList.Remove(adapter);
                 }
                 else
                 {
