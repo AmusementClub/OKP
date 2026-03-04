@@ -16,7 +16,7 @@ namespace OKP.Core.Interface.Bangumi
         private const string pingUrl = "team/myteam";
         private const string postUrl = "torrent/add";
         private const string uploadUrl = "v2/torrent/upload";
-        private string category;
+        private readonly string category;
         private string teamID = "";
         private string tagID = "";  // string[]?
         private const string site = "bangumi";
@@ -52,7 +52,8 @@ namespace OKP.Core.Interface.Bangumi
         public override async Task<HttpResult> PingAsync()
         {
             var (result, pingReq) = await PingInternalAsync(httpClient, pingUrl, site);
-            if (!result.IsSuccess) return result;
+            if (!result.IsSuccess)
+                return result;
             var raw = result.Message;
 
             var teamList = await pingReq!.Content.ReadFromJsonAsync(BangumiModelsSourceGenerationContext.Default.TeamInfoArray);
@@ -101,7 +102,7 @@ namespace OKP.Core.Interface.Bangumi
                 category_tag_id = category,
                 title = template.DisplayName ?? torrent.DisplayName ?? "",
                 introduction = template.Content ?? "",
-                tag_ids = CastTags(torrent.Tags ?? new List<ContentTypes>()).ToArray(),
+                tag_ids = [.. CastTags(torrent.Tags ?? [])],
                 team_id = teamID,
                 teamsync = false,
                 file_id = fileId,
@@ -130,7 +131,8 @@ namespace OKP.Core.Interface.Bangumi
             }
             var form = new MultipartFormDataContent
             {
-                { torrent.Data.ByteArrayContent, "file", torrent.Data.FileInfo.Name }
+                { torrent.Data.ByteArrayContent, "file", torrent.Data.FileInfo.Name },
+                { new StringContent(teamID), "team_id" }
             };
             var response = await httpClient.PostAsyncWithRetry(uploadUrl, form);
             var result = await response.Content.ReadFromJsonAsync(BangumiModelsSourceGenerationContext.Default.UploadResponse);
