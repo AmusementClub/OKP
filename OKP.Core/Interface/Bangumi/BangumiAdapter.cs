@@ -90,24 +90,29 @@ namespace OKP.Core.Interface.Bangumi
 
         public override async Task<HttpResult> PostAsync()
         {
-            var fileId = await UploadTorrent(torrent);
             Log.Information("正在发布{Site}", site);
             if (torrent.Data is null)
             {
                 Log.Fatal("{Site} torrent.Data is null", site);
                 throw new NotImplementedException();
             }
-            AddRequest addRequest = new()
+
+            var tags = CastTags(torrent.Tags ?? []);
+            var tagIdsString = string.Join(",", tags.Where(t => t != null));
+
+            var form = new MultipartFormDataContent
             {
-                category_tag_id = category,
-                title = template.DisplayName ?? torrent.DisplayName ?? "",
-                introduction = template.Content ?? "",
-                tag_ids = [.. CastTags(torrent.Tags ?? [])],
-                team_id = teamID,
-                teamsync = false,
-                file_id = fileId,
+                { new StringContent(category), "category_tag_id" },
+                { new StringContent(template.DisplayName ?? torrent.DisplayName ?? ""), "title" },
+                { new StringContent(template.Content ?? ""), "introduction" },
+                { new StringContent(tagIdsString), "tag_ids" },
+                { new StringContent("undefined"), "btskey" },
+                { new StringContent(teamID), "team_id" },
+                { new StringContent("0"), "teamsync" },
+                { torrent.Data.ByteArrayContent, "file", torrent.Data.FileInfo.Name }
             };
-            var response = await httpClient.PostAsJsonAsyncWithRetry(postUrl, addRequest, BangumiModelsSourceGenerationContext.Default.AddRequest);
+
+            var response = await httpClient.PostAsyncWithRetry(postUrl, form);
             var raw = await response.Content.ReadAsStringAsync();
             var result = await response.Content.ReadFromJsonAsync(BangumiModelsSourceGenerationContext.Default.AddResponse);
             if (!response.IsSuccessStatusCode || result == null)
@@ -122,32 +127,6 @@ namespace OKP.Core.Interface.Bangumi
             }
             Log.Information("{Site} post success", site);
             return new(200, "Success", true);
-        }
-        private async Task<string> UploadTorrent(TorrentContent torrent)
-        {
-            if (torrent.Data is null)
-            {
-                throw new NotImplementedException();
-            }
-            var form = new MultipartFormDataContent
-            {
-                { torrent.Data.ByteArrayContent, "file", torrent.Data.FileInfo.Name },
-                { new StringContent(teamID), "team_id" }
-            };
-            var response = await httpClient.PostAsyncWithRetry(uploadUrl, form);
-            var result = await response.Content.ReadFromJsonAsync(BangumiModelsSourceGenerationContext.Default.UploadResponse);
-            if (result == null || !result.success || result.file_id == null)
-            {
-                Log.Debug("可能是 {Site} 发布频率限制，先等 1 分钟", site);
-                Thread.Sleep(60000);
-                response = await httpClient.PostAsyncWithRetry(uploadUrl, form);
-                result = await response.Content.ReadFromJsonAsync(BangumiModelsSourceGenerationContext.Default.UploadResponse);
-                if (result == null || !result.success || result.file_id == null)
-                {
-                    throw new HttpRequestException("Failed to upload torrent file");
-                }
-            }
-            return result.file_id;
         }
         private bool Valid()
         {
