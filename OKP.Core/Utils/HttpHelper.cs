@@ -1,5 +1,4 @@
-using Polly;
-using Polly.Extensions.Http;
+﻿using Polly;
 using Polly.Retry;
 using Serilog;
 using System.Net;
@@ -10,21 +9,36 @@ using System.Text.RegularExpressions;
 
 namespace OKP.Core.Utils
 {
-    internal static class HttpHelper
+    internal static partial class HttpHelper
     {
         public static CookieContainer GlobalCookieContainer = new();
         public static string GlobalUserAgent = "";
-        public static Regex UaRegex = new(@"\((?<info>.*?)\)(\s|$)|(?<name>.*?)\/(?<version>.*?)(\s|$)");
-        private static readonly AsyncRetryPolicy<HttpResponseMessage> policy = HttpPolicyExtensions
-                .HandleTransientHttpError()
-                .WaitAndRetryAsync(5, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)));
+        public static Regex UaRegex = UserAgentPattern();
+        private static readonly ResiliencePipeline<HttpResponseMessage> pipeline = new ResiliencePipelineBuilder<HttpResponseMessage>()
+            .AddRetry(new RetryStrategyOptions<HttpResponseMessage>
+            {
+                MaxRetryAttempts = 5,
+                Delay = TimeSpan.FromSeconds(1),
+                BackoffType = DelayBackoffType.Exponential,
+                UseJitter = true,
+                ShouldHandle = args =>
+                {
+                    // Retry on transient HTTP errors (5xx) and HttpRequestException
+                    if (args.Outcome.Exception is HttpRequestException)
+                        return ValueTask.FromResult(true);
+                    var result = args.Outcome.Result;
+                    var should = result != null && (int)result.StatusCode >= 500;
+                    return ValueTask.FromResult(should);
+                }
+            })
+            .Build();
         public static async Task<HttpResponseMessage> PostAsyncWithRetry(this HttpClient httpClient, string? uri, HttpContent? content, bool setCookie = true)
         {
             if (httpClient.BaseAddress is null)
             {
                 throw new NotImplementedException("httpClient.BaseAddress is null");
             }
-            var res = await policy.ExecuteAsync(() => httpClient.PostAsync(uri, content));
+            var res = await pipeline.ExecuteAsync(async _ => await httpClient.PostAsync(uri, content), ResilienceContextPool.Shared.Get("PostAsync"));
             HandleSetCookie(httpClient, setCookie, res);
             return res;
         }
@@ -34,7 +48,7 @@ namespace OKP.Core.Utils
             {
                 throw new NotImplementedException("httpClient.BaseAddress is null");
             }
-            var res = await policy.ExecuteAsync(() => httpClient.GetAsync(uri));
+            var res = await pipeline.ExecuteAsync(async _ => await httpClient.GetAsync(uri), ResilienceContextPool.Shared.Get("GetAsync"));
             HandleSetCookie(httpClient, setCookie, res);
             return res;
         }
@@ -44,7 +58,7 @@ namespace OKP.Core.Utils
             {
                 throw new NotImplementedException("httpClient.BaseAddress is null");
             }
-            var res = await policy.ExecuteAsync(() => httpClient.PostAsJsonAsync(uri, content, jsonTypeInfo, cancellationToken));
+            var res = await pipeline.ExecuteAsync(async _ => await httpClient.PostAsJsonAsync(uri, content, jsonTypeInfo, cancellationToken), ResilienceContextPool.Shared.Get("PostAsJsonAsync", cancellationToken));
             HandleSetCookie(httpClient, setCookie, res);
             return res;
         }
@@ -106,5 +120,8 @@ namespace OKP.Core.Utils
                 catch { }
             }
         }
+
+        [GeneratedRegex(@"\((?<info>.*?)\)(\s|$)|(?<name>.*?)\/(?<version>.*?)(\s|$)")]
+        private static partial Regex UserAgentPattern();
     }
 }
