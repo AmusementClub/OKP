@@ -15,10 +15,8 @@ namespace OKP.Core.Interface.Bangumi
         private readonly Uri baseUrl = new("https://bangumi.moe/api/");
         private const string pingUrl = "team/myteam";
         private const string postUrl = "torrent/add";
-        private const string uploadUrl = "v2/torrent/upload";
         private readonly string category;
         private string teamID = "";
-        private string tagID = "";  // string[]?
         private const string site = "bangumi";
 
         public BangumiAdapter(TorrentContent torrent, Template template)
@@ -76,7 +74,6 @@ namespace OKP.Core.Interface.Bangumi
                 foreach (var team in teamList.Where(team => team.name.Equals(template.Name, StringComparison.OrdinalIgnoreCase)))
                 {
                     teamID = team._id;
-                    tagID = team.tag_id;
                 }
                 if (teamID.Equals(""))
                 {
@@ -108,7 +105,6 @@ namespace OKP.Core.Interface.Bangumi
                 { new StringContent(tagIdsString), "tag_ids" },
                 { new StringContent("undefined"), "btskey" },
                 { new StringContent(teamID), "team_id" },
-                { new StringContent("0"), "teamsync" },
                 { torrent.Data.ByteArrayContent, "file", torrent.Data.FileInfo.Name }
             };
 
