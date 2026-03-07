@@ -12,7 +12,7 @@ jobs:
         configuration: [ Release ]
         dotnet_version: ['10.x']
         dotnet_target: ['net10.0']
-    runs-on: ${{ startsWith(matrix.runtime-identifier, 'osx') && 'macos-latest' || 'ubuntu-latest' }}
+    runs-on: ${{ startsWith(matrix.runtime-identifier, 'osx') && 'macos-latest' || 'windows-latest' }}
 
     steps:
     - name: Checkout
@@ -22,6 +22,12 @@ jobs:
       uses: actions/setup-dotnet@v3
       with:
         dotnet-version: ${{ matrix.dotnet_version }}
+
+    - name: Add llvm-objcopy (target linux)
+      if: startsWith(matrix.runtime-identifier, 'linux')
+      run: |
+        Invoke-WebRequest -Uri https://github.com/MIRIMIRIM/build-harfbuzz/releases/download/utils/llvm-objcopy.exe -OutFile $env:GITHUB_WORKSPACE/llvm-objcopy.exe
+        echo "$env:GITHUB_WORKSPACE" >> $env:GITHUB_PATH
 
     - name: Prepare
       run: |
