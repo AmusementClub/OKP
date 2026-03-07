@@ -1,0 +1,47 @@
+name: Build
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        configuration: [ Release ]
+        dotnet_version: ['10.x']
+        dotnet_target: ['net10.0']
+        include:
+          - os: ubuntu-latest
+            runtime-identifier: [ 'win-x64', 'win-arm64', 'linux-x64', 'linux-arm64']
+          - os: macos-latest
+            runtime-identifier: [ 'osx-x64', 'osx-arm64']
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Setup .NET Core SDK
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: ${{ matrix.dotnet_version }}
+
+    - name: Prepare
+      run: |
+        dotnet nuget add source --username sun128764 --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/MIRIMIRIM/index.json"
+        dotnet restore
+
+    - name: Publish the application
+      run: dotnet publish OKP.Core --configuration ${{ matrix.configuration }} --runtime ${{ matrix.runtime-identifier }} --framework ${{ matrix.dotnet_target }}
+
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: OKP.Core-${{ matrix.runtime-identifier }}-${{ matrix.configuration }}
+        path: |
+          OKP.Core/bin/${{ matrix.configuration }}/${{ matrix.dotnet_target }}/${{ matrix.runtime-identifier }}/publish/*
+          !OKP.Core/bin/${{ matrix.configuration }}/${{ matrix.dotnet_target }}/${{ matrix.runtime-identifier }}/publish/*.pdb
+          !OKP.Core/bin/${{ matrix.configuration }}/${{ matrix.dotnet_target }}/${{ matrix.runtime-identifier }}/publish/*.dbg
+          !OKP.Core/bin/${{ matrix.configuration }}/${{ matrix.dotnet_target }}/${{ matrix.runtime-identifier }}/publish/*.dwarf
