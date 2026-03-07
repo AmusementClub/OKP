@@ -8,16 +8,11 @@ jobs:
   build:
     strategy:
       matrix:
+        runtime-identifier: [win-x64, win-arm64, linux-x64, linux-arm64, osx-x64, osx-arm64]
         configuration: [ Release ]
         dotnet_version: ['10.x']
         dotnet_target: ['net10.0']
-        include:
-          - os: ubuntu-latest
-            runtime-identifier: [ 'win-x64', 'win-arm64', 'linux-x64', 'linux-arm64']
-          - os: macos-latest
-            runtime-identifier: [ 'osx-x64', 'osx-arm64']
-
-    runs-on: ${{ matrix.os }}
+    runs-on: ${{ startsWith(matrix.runtime-identifier, 'osx') && 'macos-latest' || 'ubuntu-latest' }}
 
     steps:
     - name: Checkout
