@@ -24,10 +24,10 @@ Released under the GNU GPLv3+.
 		<PackageReference Include="System.CommandLine" Version="2.0.3" />
 		<PackageReference Include="Tommy" Version="3.1.2" />
 	</ItemGroup>
-
+<!-- 
 	<ItemGroup Condition="!$(RuntimeIdentifier.StartsWith('osx'))">
-		<PackageReference Include="Fallenwood.PublishAotCross" Version="0.3.0" />
-	</ItemGroup>
+		<PackageReference Include="PublishAotCross" Version="1.0.0" />
+	</ItemGroup> -->
 
 	<ItemGroup>
 		<None Update="config\tags\acgnx_asia.json">
