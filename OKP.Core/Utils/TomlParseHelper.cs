@@ -40,11 +40,11 @@ internal static class TomlParseHelper
         if (torrentFlags.HasValue)
         {
             torrenC.TorrentFlags = new List<NyaaTorrentFlags>(torrentFlags.ChildrenCount);
-            foreach (var tag in tags)
+            foreach (var flag in torrentFlags)
             {
-                if (Enum.TryParse(tag.ToString(), out NyaaTorrentFlags tagEnum))
+                if (Enum.TryParse(flag.ToString(), out NyaaTorrentFlags flagEnum))
                 {
-                    torrenC.TorrentFlags.Add(tagEnum);
+                    torrenC.TorrentFlags.Add(flagEnum);
                 }
             }
         }
