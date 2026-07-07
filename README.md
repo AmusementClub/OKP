@@ -97,6 +97,7 @@ Options:
 4. `content`：发布正文，可以指定一个文件名或 raw string
    - 指定文件名的后缀同见 #支持站点
    - 如果配合 `-b, --base_template` 使用可以不用填写
+5. `api_token`：API 发布用 token，目前用于 acgrip，建议放在 `userprop.toml` 中
 
 ### publish template
 
@@ -124,7 +125,9 @@ Options:
 
 需要放在使用的应用程序同级的 `config` 目录下，文件名为 `userprop.toml`，[示例](https://github.com/AmusementClub/OKP/blob/master/OKP.Core/example/userprop.toml)
 
-可以使用它来指定一些不方便写在 setting 中的敏感信息，现在支持 `proxy` 和 `cookie`（可以用来指定 acgnx 的 api token）。二者同时指定时，userprop 中的数据会覆盖 setting 的数据。
+可以使用它来指定一些不方便写在 setting 中的敏感信息，现在支持 `proxy`、`cookie`（可以用来指定 acgnx 的 api token）和 `api_token`（可以用来指定 acgrip 的 API token）。同时指定时，userprop 中的数据会覆盖 setting 的数据。
+
+acgrip 的 token 可以从控制台的 `tpx://acg.rip/1234-abcdefgh...` 中取得，填写 `1234-abcdefgh...` 这一段即可。配置了 `api_token` 的 acgrip 发布不需要 Cookie。
 
 想要替换 / 指定的配置需要与 setting 中的 `site` 和 `name` 相同
 

@@ -65,6 +65,7 @@ namespace OKP.Core.Interface
             public string? Name { get; set; }
             public string? Content { get; set; }
             public string? Cookie { get; set; }
+            public string? ApiToken { get; set; }
             public string? UserAgent { get; set; }
             public string? Proxy { get; set; }
             public string? DisplayName { get; set; }
@@ -195,6 +196,7 @@ namespace OKP.Core.Interface
                             {
                                 tp.Proxy = p.Proxy ?? tp.Proxy;
                                 tp.Cookie = p.Cookie ?? tp.Cookie;
+                                tp.ApiToken = p.ApiToken ?? tp.ApiToken;
                                 tp.UserAgent = p.UserAgent ?? tp.UserAgent;
                             }
                         }

@@ -88,6 +88,7 @@ internal static class TomlParseHelper
                     Name = ConvertToString(introTemplate["name"]),
                     Content = ConvertToString(introTemplate["content"]),
                     Cookie = ConvertToString(introTemplate["cookie"]),
+                    ApiToken = ConvertToString(introTemplate["api_token"]),
                     UserAgent = ConvertToString(introTemplate["user_agent"]),
                     Proxy = ConvertToString(introTemplate["proxy"]),
                     DisplayName = ConvertToString(introTemplate["display_name"]),

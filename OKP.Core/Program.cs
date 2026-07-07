@@ -225,49 +225,64 @@ namespace OKP.Core
                 IOHelper.ReadLine();
                 return;
             }
-            if (cookies is null)
+            if (torrent.IntroTemplate is null)
             {
-                if (torrent.CookiePath is not null)
+                Log.Error("没有配置发布站你发个啥？");
+                IOHelper.ReadLine();
+                return;
+            }
+
+            var requiresCookie = torrent.IntroTemplate.Any(RequiresCookie);
+            if (requiresCookie)
+            {
+                if (cookies is null)
                 {
-                    if (File.Exists(torrent.CookiePath))
+                    if (torrent.CookiePath is not null)
                     {
-                        cookies = torrent.CookiePath;
-                        Log.Information("在{Setting}中找到Cookie文件{Cookies}", settingFile, cookies);
+                        if (File.Exists(torrent.CookiePath))
+                        {
+                            cookies = torrent.CookiePath;
+                            Log.Information("在{Setting}中找到Cookie文件{Cookies}", settingFile, cookies);
+                        }
+                        else
+                        {
+                            Log.Error("在{Setting}中找到的Cookie文件{Cookies}不存在!", settingFile, torrent.CookiePath);
+                            IOHelper.ReadLine();
+                            return;
+                        }
                     }
                     else
                     {
-                        Log.Error("在{Setting}中找到的Cookie文件{Cookies}不存在!", settingFile, torrent.CookiePath);
-                        IOHelper.ReadLine();
-                        return;
+                        cookies = IOHelper.BasePath(Constants.DefaultCookiePath, Constants.DefaultCookieFile + ".txt");
+                        Log.Information("使用默认的Cookie文件{Cookies}", cookies);
+                        if (!File.Exists(cookies))
+                        {
+                            Log.Error("默认的Cookie文件{Cookies}不存在！", cookies);
+                            IOHelper.ReadLine();
+                            return;
+                        }
                     }
                 }
                 else
                 {
-                    cookies = IOHelper.BasePath(Constants.DefaultCookiePath, Constants.DefaultCookieFile + ".txt");
-                    Log.Information("使用默认的Cookie文件{Cookies}", cookies);
                     if (!File.Exists(cookies))
                     {
-                        Log.Error("默认的Cookie文件{Cookies}不存在！", cookies);
-                        IOHelper.ReadLine();
-                        return;
+                        cookies = IOHelper.BasePath(Constants.DefaultCookiePath, cookies);
+                        if (!File.Exists(cookies))
+                        {
+                            Log.Error("你指定了Cookie文件{Cookies}，但是这个文件不存在。", cookies);
+                            IOHelper.ReadLine();
+                            return;
+                        }
                     }
+                    Log.Information("找到Cookie文件{Cookies}", cookies);
                 }
+                HttpHelper.GlobalCookieContainer.LoadFromTxt(cookies);
             }
             else
             {
-                if (!File.Exists(cookies))
-                {
-                    cookies = IOHelper.BasePath(Constants.DefaultCookiePath, cookies);
-                    if (!File.Exists(cookies))
-                    {
-                        Log.Error("你指定了Cookie文件{Cookies}，但是这个文件不存在。", cookies);
-                        IOHelper.ReadLine();
-                        return;
-                    }
-                }
-                Log.Information("找到Cookie文件{Cookies}", cookies);
+                Log.Information("当前发布配置不需要Cookie，跳过Cookie加载。");
             }
-            HttpHelper.GlobalCookieContainer.LoadFromTxt(cookies);
             if (torrent.IsV2())
             {
                 Log.Error("V2达咩！回去换！");
@@ -276,12 +291,6 @@ namespace OKP.Core
             }
             torrent.DisplayFileTree();
             List<AdapterBase> adapterList = new();
-            if (torrent.IntroTemplate is null)
-            {
-                Log.Error("没有配置发布站你发个啥？");
-                IOHelper.ReadLine();
-                return;
-            }
             Log.Information("即将发布");
             foreach (var site in torrent.IntroTemplate)
             {
@@ -343,9 +352,22 @@ namespace OKP.Core
                 }
             }
             Log.Information("发布完成");
-            HttpHelper.GlobalCookieContainer.SaveToTxt(cookies, HttpHelper.GlobalUserAgent);
+            if (requiresCookie && cookies is not null)
+            {
+                HttpHelper.GlobalCookieContainer.SaveToTxt(cookies, HttpHelper.GlobalUserAgent);
+            }
             IOHelper.ReadLine();
         }
+
+        private static bool RequiresCookie(TorrentContent.Template site)
+        {
+            return site.Site?.ToLowerInvariant().Replace(".", "") switch
+            {
+                "acgrip" => string.IsNullOrWhiteSpace(site.ApiToken),
+                _ => true
+            };
+        }
+
         private static void AddCookies(string file)
         {
             var content = File.ReadAllLines(file);
