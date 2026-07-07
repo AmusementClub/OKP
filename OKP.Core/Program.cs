@@ -214,7 +214,17 @@ namespace OKP.Core
                 IOHelper.ReadLine();
                 return;
             }
-            var torrent = TorrentContent.Build(file, settingFile, baseTemplate, AppDomain.CurrentDomain.BaseDirectory);
+            TorrentContent torrent;
+            try
+            {
+                torrent = TorrentContent.Build(file, settingFile, baseTemplate, AppDomain.CurrentDomain.BaseDirectory);
+            }
+            catch (NotSupportedException ex) when (ex.Message.Contains("BitTorrent v2 torrents", StringComparison.Ordinal))
+            {
+                Log.Error("暂时不支持V2种子，请重新制作！");
+                IOHelper.ReadLine();
+                return;
+            }
             if (cookies is null)
             {
                 if (torrent.CookiePath is not null)

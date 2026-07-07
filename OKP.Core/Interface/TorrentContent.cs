@@ -1,6 +1,4 @@
-﻿using BencodeNET.Objects;
-using BencodeNET.Parsing;
-using BencodeNET.Torrents;
+﻿using TorrentUtils;
 using OKP.Core.Utils;
 using Serilog;
 using System.Net.Http.Headers;
@@ -26,13 +24,24 @@ namespace OKP.Core.Interface
                 }
             }
             public Torrent TorrentObject;
+            public int MetaVersion { get; }
             private readonly byte[] bytes;
             public TorrentData(string filename)
             {
                 FileInfo = new FileInfo(filename);
                 bytes = File.ReadAllBytes(filename);
-                var parser = new BencodeParser(); // Default encoding is Encoding.UTF8, but you can specify another if you need to
-                TorrentObject = parser.Parse<Torrent>(filename);
+                if (!TorrentVersion.TryReadMetaVersion(bytes, out var version))
+                {
+                    throw new InvalidOperationException("Could not read torrent metadata version.");
+                }
+                MetaVersion = version;
+                if (version == TorrentVersion.V2)
+                {
+                    throw new NotSupportedException("BitTorrent v2 torrents are not supported.");
+                }
+
+                TorrentObject = new Torrent();
+                TorrentObject.ReadTorrent(bytes);
             }
         }
         public TorrentData? Data;
@@ -220,18 +229,7 @@ namespace OKP.Core.Interface
                 Log.Fatal("Data?.TorrentObject is null");
                 throw new ArgumentNullException(nameof(Data.TorrentObject));
             }
-            if (Data.TorrentObject.ExtraFields["info"] is BDictionary infoValue)
-            {
-                if (infoValue["meta version"] is BNumber versionValue)
-                {
-                    if (versionValue == 2)
-                    {
-                        Log.Verbose("{@TorrentObject}", Data.TorrentObject);
-                        return true;
-                    }
-                }
-            }
-            return false;
+            return Data.MetaVersion == TorrentVersion.V2;
         }
 
         public void DisplayFiles()
@@ -243,16 +241,9 @@ namespace OKP.Core.Interface
             }
             StringBuilder fileList = new();
 
-            if (Data.TorrentObject.FileMode == TorrentFileMode.Multi)
+            foreach (var file in Data.TorrentObject.FileList)
             {
-                foreach (var file in Data.TorrentObject.Files)
-                {
-                    fileList.AppendLine(file.FullPath);
-                }
-            }
-            else
-            {
-                fileList.AppendLine(Data.TorrentObject.File.FileName);
+                fileList.AppendLine(file.RelativePath);
             }
             Log.Information("文件列表：{FileList}", fileList);
         }
@@ -266,7 +257,8 @@ namespace OKP.Core.Interface
             }
             StringBuilder fileList = new();
 
-            var rootNode = Data.TorrentObject.FileMode == TorrentFileMode.Multi ? new Node(Data.TorrentObject.Files) : new Node(Data.TorrentObject.File);
+            var rootNode = new Node(Data.TorrentObject.FileList.Select(file =>
+                (path: (IEnumerable<string>)file.RelativePath.Split('/', '\\'), size: new FileSize(file.Size))));
             foreach (var line in Node.GetFileTree(rootNode))
             {
                 fileList.AppendLine(line);

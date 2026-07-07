@@ -143,7 +143,7 @@ namespace OKP.Core.Interface.Acgrip
             }
             foreach (var tracker in trackers)
             {
-                if (!torrent.Data.TorrentObject.Trackers.SelectMany(p => p).Any(p => p.TrimEnd('/').Equals(tracker.TrimEnd('/'), StringComparison.OrdinalIgnoreCase)))
+                if (!torrent.Data.TorrentObject.TrackerTiers.SelectMany(p => p).Any(p => p.TrimEnd('/').Equals(tracker.TrimEnd('/'), StringComparison.OrdinalIgnoreCase)))
                 {
                     Log.Error("缺少Tracker：{0}", tracker);
                     return false;

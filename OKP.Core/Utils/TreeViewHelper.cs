@@ -1,6 +1,4 @@
 ﻿
-using BencodeNET.Torrents;
-
 namespace OKP.Core.Utils
 {
     public class FileSize
@@ -51,19 +49,6 @@ namespace OKP.Core.Utils
             {
                 Insert(path, size);
             }
-        }
-
-        public Node(MultiFileInfoList multiFileInfos)
-        {
-            foreach (var fileInfo in multiFileInfos)
-            {
-                Insert(fileInfo.Path, new FileSize(fileInfo.FileSize));
-            }
-        }
-
-        public Node(SingleFileInfo singleFileInfo)
-        {
-            Insert(new[] { singleFileInfo.FileName }, new FileSize(singleFileInfo.FileSize));
         }
 
         private Node(string node)
