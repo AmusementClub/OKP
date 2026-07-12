@@ -15,6 +15,8 @@ internal static class TomlParseHelper
         {
             DisplayName = ConvertToString(table["display_name"]),
             GroupName = ConvertToString(table["group_name"]),
+            AnimeIdType = ConvertToString(table["anime_id_type"]),
+            AnimeId = ConvertToString(table["anime_id"]),
             Poster = ConvertToString(table["poster"]),
             About = ConvertToString(table["about"]),
             FilenameRegex = ConvertToString(table["filename_regex"]),

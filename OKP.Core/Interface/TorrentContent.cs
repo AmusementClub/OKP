@@ -49,6 +49,8 @@ namespace OKP.Core.Interface
         public List<Template>? IntroTemplate { get; set; }
         public string? DisplayName { get; set; }
         public string? GroupName { get; set; }
+        public string? AnimeIdType { get; set; }
+        public string? AnimeId { get; set; }
         public string? Poster { get; set; }
         public string? About { get; set; }
         public string? FilenameRegex { get; set; }

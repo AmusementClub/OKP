@@ -2,6 +2,7 @@
 using OKP.Core.Interface;
 using OKP.Core.Interface.Acgnx;
 using OKP.Core.Interface.Acgrip;
+using OKP.Core.Interface.Anibt;
 using OKP.Core.Interface.Bangumi;
 using OKP.Core.Interface.Dmhy;
 using OKP.Core.Interface.Nyaa;
@@ -309,6 +310,7 @@ namespace OKP.Core
                     "acgrip" => new AcgripAdapter(torrent, site),
                     "acgnx_asia" => new AcgnxAdapter(torrent, site, "asia"),
                     "acgnx_global" => new AcgnxAdapter(torrent, site, "global"),
+                    "anibt" => new AnibtAdapter(torrent, site),
                     _ => throw new NotImplementedException()
                 };
                 adapterList.Add(adapter);
@@ -364,6 +366,7 @@ namespace OKP.Core
             return site.Site?.ToLowerInvariant().Replace(".", "") switch
             {
                 "acgrip" => string.IsNullOrWhiteSpace(site.ApiToken),
+                "anibt" => false,
                 _ => true
             };
         }

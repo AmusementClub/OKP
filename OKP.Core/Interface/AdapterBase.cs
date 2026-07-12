@@ -60,6 +60,7 @@ namespace OKP.Core.Interface
                 "acgrip" => ContentType.BBCodeFile,
                 "bangumi" => ContentType.HtmlFile,
                 "nyaa" => ContentType.MarkdownFile,
+                "anibt" => ContentType.MarkdownFile,
                 _ => throw new ArgumentOutOfRangeException(nameof(site), site, null)
             };
         }

@@ -5,7 +5,7 @@ public static class Constants
     public const string DefaultSettingFileName = "setting.toml";
     public const string DefaultLogFileName = "log.txt";
     public const string UserPropertiesFileName = "userprop.toml";
-    public static readonly string[] SupportSiteName = { "nyaa", "dmhy", "acgrip", "acgnx_asia", "acgnx_global", "bangumi" };
+    public static readonly string[] SupportSiteName = { "nyaa", "dmhy", "acgrip", "acgnx_asia", "acgnx_global", "bangumi", "anibt" };
     public static readonly string DefaultCookiePath = Path.Join("config", "cookies");
     public const string DefaultCookieFile = "cookies";
     public const string DefaultUserPropsPath = "config";
