@@ -16,7 +16,10 @@ namespace OKP.Core.Interface.Anibt
         private readonly Uri baseUrl = new("https://anibt.net/api/");
         private const string pingUrl = "subtitle-groups/me";
         private const string postUrl = "releases/publish";
+        private const string otherPostUrl = "other-releases/publish";
         private const string site = "anibt";
+        // 非番剧分类：manga/music/raw/stage，走 other-releases 端点、不需要 bgmid；null 表示番剧
+        private readonly string? otherCategory;
 
         public AnibtAdapter(TorrentContent torrent, Template template)
         {
@@ -44,13 +47,6 @@ namespace OKP.Core.Interface.Anibt
             }
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", template.ApiToken);
 
-            if (string.IsNullOrWhiteSpace(torrent.AnimeIdType) || string.IsNullOrWhiteSpace(torrent.AnimeId))
-            {
-                Log.Error("{Site}需要在setting里配置anime_id_type和anime_id", site);
-                IOHelper.ReadLine();
-                throw new();
-            }
-
             if (template.Proxy is not null)
             {
                 httpClientHandler.Proxy = new WebProxy(
@@ -62,6 +58,80 @@ namespace OKP.Core.Interface.Anibt
             {
                 IOHelper.ReadLine();
                 throw new();
+            }
+
+            // 按 tag 分流：漫画/音乐/RAW/舞台剧走 other-releases（不需要 bgmid），其余当番剧
+            otherCategory = ResolveCategory();
+
+            // 番剧才需要 bgmid。站点侧不做匹配，没填就 OKP 自己查：有把握直接填，没把握列候选让人选
+            if (otherCategory is null && string.IsNullOrWhiteSpace(torrent.AnimeId))
+            {
+                ResolveAnimeId();
+            }
+        }
+
+        // 带 Anime tag 一律当番剧；否则按 anibt.json 映射到 manga/music/raw/stage，映射不到也当番剧
+        private string? ResolveCategory()
+        {
+            if (torrent.Tags?.Contains(ContentTypes.Anime) == true)
+            {
+                return null;
+            }
+            return TagHelper.LoadTagConfig("anibt.json").FindTag(torrent.Tags);
+        }
+
+        private void ResolveAnimeId()
+        {
+            var title = template.DisplayName ?? torrent.DisplayName;
+            if (string.IsNullOrWhiteSpace(title))
+            {
+                return;
+            }
+            Log.Information("{Site} 没填 bgmid，尝试自动匹配：{Title}", site, title);
+            BangumiMatcher.MatchResult match;
+            try
+            {
+                match = BangumiMatcher.MatchAsync(title, template.Proxy).GetAwaiter().GetResult();
+            }
+            catch (Exception ex)
+            {
+                Log.Warning("{Site} 自动匹配 bgmid 出错，跳过：{Msg}", site, ex.Message);
+                return;
+            }
+
+            if (match.Status == BangumiMatcher.MatchStatus.Matched)
+            {
+                torrent.AnimeIdType = AnimeIdTypes.Bgm;
+                torrent.AnimeId = match.BgmId.ToString();
+                Log.Information("{Site} 自动匹配到 bgmid={BgmId}《{Name}》(相似度 {Score:0.00})，不对的话请在确认发布前中止",
+                    site, match.BgmId, match.NameCn ?? match.Name, match.Score);
+                return;
+            }
+
+            if (match.Candidates.Count == 0)
+            {
+                Log.Warning("{Site} 没搜到匹配的 bgmid，将不带 bgmid 发布（放送表里会显示未匹配）", site);
+                return;
+            }
+            Log.Warning("{Site} 拿不准 bgmid，你自己挑一个（标题：{Title}）", site, title);
+            for (var i = 0; i < match.Candidates.Count; i++)
+            {
+                var c = match.Candidates[i];
+                Log.Information("  [{Index}] bgmid={BgmId} {Name} / {NameCn} {Date} (相似度 {Score:0.00})",
+                    i + 1, c.BgmId, c.Name, c.NameCn, c.Date, c.Score);
+            }
+            Log.Information("输入编号选择，直接回车跳过（不带 bgmid 发布）：");
+            var input = IOHelper.ReadLine();
+            if (int.TryParse(input, out var pick) && pick >= 1 && pick <= match.Candidates.Count)
+            {
+                var chosen = match.Candidates[pick - 1];
+                torrent.AnimeIdType = AnimeIdTypes.Bgm;
+                torrent.AnimeId = chosen.BgmId.ToString();
+                Log.Information("{Site} 已选 bgmid={BgmId}《{Name}》", site, chosen.BgmId, chosen.NameCn ?? chosen.Name);
+            }
+            else
+            {
+                Log.Information("{Site} 跳过 bgmid，将不带 bgmid 发布", site);
             }
         }
 
@@ -89,16 +159,38 @@ namespace OKP.Core.Interface.Anibt
                 Log.Fatal("{Site} torrent.Data is null", site);
                 throw new NotImplementedException();
             }
+            // 漫画/音乐/RAW/舞台剧走 other-releases：只要 category + title + 种子，不绑 bgmid
+            if (otherCategory is not null)
+            {
+                MultipartFormDataContent otherForm = new()
+                {
+                    { torrent.Data.ByteArrayContent, "torrent", torrent.Data.FileInfo.Name },
+                    { new StringContent(otherCategory), "category" },
+                    { new StringContent(template.DisplayName ?? torrent.DisplayName ?? ""), "title" }
+                };
+                Log.Verbose("{Site} other-releases formdata content: {@MultipartFormDataContent}", site, otherForm);
+                return await PostFormAsync(otherPostUrl, otherForm);
+            }
+
             MultipartFormDataContent form = new()
             {
                 { torrent.Data.ByteArrayContent, "torrent", torrent.Data.FileInfo.Name },
                 { new StringContent(template.DisplayName ?? torrent.DisplayName ?? ""), "title" },
-                { new StringContent(torrent.AnimeIdType ?? ""), "animeIdType" },
-                { new StringContent(torrent.AnimeId ?? ""), "animeId" },
                 { new StringContent(template.Content ?? ""), "notes" }
             };
+            // 没填 anime_id 就交给站点自己匹配或人工添加，不强求发布者填
+            if (torrent.AnimeIdType is not null && !string.IsNullOrWhiteSpace(torrent.AnimeId))
+            {
+                form.Add(new StringContent(torrent.AnimeIdType.Value.ToString().ToLowerInvariant()), "animeIdType");
+                form.Add(new StringContent(torrent.AnimeId), "animeId");
+            }
             Log.Verbose("{Site} formdata content: {@MultipartFormDataContent}", site, form);
-            var result = await httpClient.PostAsyncWithRetry(postUrl, form, setCookie: false);
+            return await PostFormAsync(postUrl, form);
+        }
+
+        private async Task<HttpResult> PostFormAsync(string url, MultipartFormDataContent form)
+        {
+            var result = await httpClient.PostAsyncWithRetry(url, form, setCookie: false);
             var raw = await result.Content.ReadAsStringAsync();
             var resp = TryParse(raw);
 

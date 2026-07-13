@@ -15,7 +15,7 @@ internal static class TomlParseHelper
         {
             DisplayName = ConvertToString(table["display_name"]),
             GroupName = ConvertToString(table["group_name"]),
-            AnimeIdType = ConvertToString(table["anime_id_type"]),
+            AnimeIdType = ConvertToAnimeIdType(table["anime_id_type"]),
             AnimeId = ConvertToString(table["anime_id"]),
             Poster = ConvertToString(table["poster"]),
             About = ConvertToString(table["about"]),
@@ -78,6 +78,9 @@ internal static class TomlParseHelper
     }
 
     private static string? ConvertToString(TomlNode v) => v.HasValue ? v.ToString() : null;
+
+    private static AnimeIdTypes? ConvertToAnimeIdType(TomlNode v)
+        => v.HasValue && Enum.TryParse<AnimeIdTypes>(v.ToString(), true, out var t) ? t : null;
 
     private static void GetTemplates(TomlNode node, List<Template> templates)
     {

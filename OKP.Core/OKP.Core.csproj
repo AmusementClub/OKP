@@ -30,6 +30,9 @@ Released under the GNU GPLv3+.
 	</ItemGroup> -->
 
 	<ItemGroup>
+		<None Update="config\tags\anibt.json">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
 		<None Update="config\tags\acgnx_asia.json">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>

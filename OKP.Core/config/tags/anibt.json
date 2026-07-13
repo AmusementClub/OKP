@@ -1,0 +1,26 @@
+{
+  "Key": null,
+  "Value": null,
+  "SubTags": [
+    {
+      "Key": "Comic",
+      "Value": "manga",
+      "SubTags": []
+    },
+    {
+      "Key": "Music",
+      "Value": "music",
+      "SubTags": []
+    },
+    {
+      "Key": "Raw",
+      "Value": "raw",
+      "SubTags": []
+    },
+    {
+      "Key": "Stage",
+      "Value": "stage",
+      "SubTags": []
+    }
+  ]
+}
