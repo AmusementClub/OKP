@@ -28,10 +28,10 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@v7
 
     - name: Setup .NET
-      uses: actions/setup-dotnet@v4
+      uses: actions/setup-dotnet@v6
       with:
         dotnet-version: ${{ matrix.dotnet_version }}
 
@@ -47,7 +47,7 @@ jobs:
         7z a -t7z -mx9 "../OKP.Core-${{ env.identifier }}-Release.7z" "./bin/Release/${{ matrix.dotnet_target }}/${{ env.identifier }}/publish/*" "-x!*.pdb" "-x!*.dbg" "-x!*.dwarf" "-x!*.dSYM"
 
     - name: Upload
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: OKP.Core_${{ env.identifier }}
         path: |
@@ -55,7 +55,7 @@ jobs:
         #   OKP.Core-${{ env.identifier }}-Release.7z
 
     - name: Create GitHub Release
-      uses: softprops/action-gh-release@v2
+      uses: softprops/action-gh-release@v3
       with:
         tag_name: ${{ github.ref_name }}
         files: OKP.Core-${{ env.identifier }}-Release.7z
